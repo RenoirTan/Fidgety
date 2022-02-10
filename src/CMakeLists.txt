@@ -1,0 +1,5 @@
+add_subdirectory(decoder)
+add_subdirectory(editor)
+add_subdirectory(encoder)
+add_subdirectory(selector)
+add_subdirectory(verifier)
