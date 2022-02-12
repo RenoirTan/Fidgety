@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 project(Fidgety)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -14,5 +14,30 @@ find_package(nlohmann_json REQUIRED)
 include_directories(include)
 file(GLOB_RECURSE fidgety_headers "include/*")
 install(FILES ${fidgety_headers} DESTINATION include)
+
+set(FIDGETY_BUILD_TESTING ON CACHE BOOL "whether to build fidgety's tests")
+set(
+    FIDGETY_GTEST_FROM_SOURCE ON
+    CACHE BOOL "whether to download googletest and build it from source (recommended for windows)"
+)
+if(FIDGETY_BUILD_TESTING)
+    message(STATUS "downloading googletest's source code and building it from source")
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+else()
+    message(STATUS "searching for googletest using CMake's find_package")
+endif()
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    enable_testing()
+endif()
+if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
 
 add_subdirectory(src)
