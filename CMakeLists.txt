@@ -12,5 +12,7 @@ find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
 include_directories(include)
+file(GLOB_RECURSE fidgety_headers "include/*")
+install(FILES ${fidgety_headers} DESTINATION include)
 
 add_subdirectory(src)
