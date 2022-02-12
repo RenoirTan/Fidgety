@@ -9,4 +9,6 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 
+include_directories(include)
+
 add_subdirectory(src)
