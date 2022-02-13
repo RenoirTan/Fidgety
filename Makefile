@@ -22,7 +22,7 @@ build: generate
 setup_test_env:
 	mkdir -p tmp/tests/decoder
 
-test: build
+test: build setup_test_env
 	$(CTEST) $(CMAKE_TEST_FLAGS)
 
 install: build
