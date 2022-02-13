@@ -50,3 +50,13 @@ TEST(DecoderDecoding, DumpConf) {
     nlohmann::json my_answer = load_json_from_file("../../../tmp/tests/decoder/test_0.json");
     EXPECT_EQ(my_answer, answer_key);
 }
+
+TEST(DecoderDecoding, NoEqualsError) {
+    NormalConfDecoder decoder;
+    decoder.openConf("../../../resources/tests/decoder/test_1.conf");
+    decoder.openIntermediate("../../../tmp/tests/decoder/test_1.json");
+    EXPECT_TRUE(decoder.isConfOpened());
+    EXPECT_TRUE(decoder.isIntermediateOpened());
+    DecoderStatus status = decoder.dumpToIntermediate();
+    EXPECT_EQ(status, DecoderStatus::SyntaxError);
+}
