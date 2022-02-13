@@ -15,6 +15,8 @@ include_directories(include)
 file(GLOB_RECURSE fidgety_headers "include/*")
 install(FILES ${fidgety_headers} DESTINATION include)
 
+add_subdirectory(src)
+
 set(FIDGETY_BUILD_TESTING ON CACHE BOOL "whether to build fidgety's tests")
 set(
     FIDGETY_GTEST_FROM_SOURCE ON
@@ -42,5 +44,3 @@ endif()
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()
-
-add_subdirectory(src)
