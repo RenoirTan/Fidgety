@@ -60,3 +60,13 @@ TEST(DecoderDecoding, NoEqualsError) {
     DecoderStatus status = decoder.dumpToIntermediate();
     EXPECT_EQ(status, DecoderStatus::SyntaxError);
 }
+
+TEST(DecoderDecoding, NoKeyError) {
+    NormalConfDecoder decoder;
+    decoder.openConf("../../../resources/tests/decoder/test_2.conf");
+    decoder.openIntermediate("../../../tmp/tests/decoder/test_2.json");
+    EXPECT_TRUE(decoder.isConfOpened());
+    EXPECT_TRUE(decoder.isIntermediateOpened());
+    DecoderStatus status = decoder.dumpToIntermediate();
+    EXPECT_EQ(status, DecoderStatus::SyntaxError);
+}

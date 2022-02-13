@@ -73,6 +73,10 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
         std::string value = no_comment.substr(equals_index + 1);
         trim(key); trim(value);
         
+        if (key == "") {
+            spdlog::error("no key before '=' at line {0}", line_no);
+            return DecoderStatus::SyntaxError;
+        }
         if (intermediate.contains(key)) {
             spdlog::warn(
                 "{0} already set. However, the config file has another definition for {0} at {1}",
