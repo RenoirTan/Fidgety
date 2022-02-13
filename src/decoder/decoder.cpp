@@ -23,7 +23,7 @@ bool Decoder::isConfOpened(void) {
     return mConfFile.is_open();
 }
 
-DecoderStatus Decoder::openConf(std::string &inPath) {
+DecoderStatus Decoder::openConf(const std::string &inPath) {
     spdlog::trace("opening Decoder::mConfFile with filepath: {0}", inPath);
     if (isConfOpened()) {
         spdlog::error("Decoder::mConfFile already open");
@@ -74,7 +74,7 @@ bool Decoder::isIntermediateOpened(void) {
     return mIntermediateFile.is_open();
 }
 
-DecoderStatus Decoder::openIntermediate(std::string &outPath) {
+DecoderStatus Decoder::openIntermediate(const std::string &outPath) {
     spdlog::trace("opening Decoder::mIntermediateFile with filepath: {0}", outPath);
     if (isIntermediateOpened()) {
         spdlog::error("Decoder::mIntermediateFile already open");

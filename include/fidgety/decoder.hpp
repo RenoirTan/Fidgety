@@ -20,11 +20,11 @@ namespace Fidgety {
             Decoder(void);
             ~Decoder(void);
             bool isConfOpened(void);
-            DecoderStatus openConf(std::string &inPath);
+            DecoderStatus openConf(const std::string &inPath);
             DecoderStatus closeConf(void);
             DecoderStatus useNewConf(std::ifstream &&newConf);
             bool isIntermediateOpened(void);
-            DecoderStatus openIntermediate(std::string &outPath);
+            DecoderStatus openIntermediate(const std::string &outPath);
             DecoderStatus closeIntermediate(void);
             DecoderStatus useNewIntermediate(std::ofstream &&newIntermediate);
             virtual DecoderStatus dumpToIntermediate(void) = 0;
