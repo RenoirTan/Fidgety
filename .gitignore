@@ -37,3 +37,6 @@ Testing/
 
 # VSCode
 .vscode/
+
+# Testing
+tmp/

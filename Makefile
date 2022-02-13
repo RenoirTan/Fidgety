@@ -19,6 +19,9 @@ generate: CMakeLists.txt
 build: generate
 	$(CMAKE) $(CMAKE_BUILD_FLAGS)
 
+setup_test_env:
+	mkdir -p tmp/tests/decoder
+
 test: build
 	$(CTEST) $(CMAKE_TEST_FLAGS)
 
