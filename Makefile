@@ -29,4 +29,5 @@ install: build
 	$(CMAKE) $(CMAKE_INSTALL_FLAGS)
 
 clean:
-	rm -r $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
+	rm -rf $(DIST_DIR)
