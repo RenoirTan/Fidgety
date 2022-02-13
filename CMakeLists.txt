@@ -22,35 +22,39 @@ set(
     FIDGETY_GTEST_FROM_SOURCE ON
     CACHE BOOL "whether to download googletest and build it from source (recommended for windows)"
 )
-if(FIDGETY_BUILD_TESTING)
-    message(STATUS "downloading googletest's source code and building it from source")
-    include(FetchContent)
-    FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
-    )
-    # For Windows: Prevent overriding the parent project's compiler/linker settings
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
-    include(GoogleTest)
-    set(GTEST gtest)
-    set(GTEST_MAIN gtest_main)
-    set(GMOCK gmock)
-    set(GMOCK_MAIN gmock_main)
-else()
-    message(STATUS "searching for googletest using CMake's find_package")
-    find_package(gtest CONFIG REQUIRED)
-    include(GoogleTest)
-    set(GTEST GTest::gtest)
-    set(GTEST_MAIN GTest::gtest)
-    set(GMOCK GTest::gmock)
-    set(GMOCK_MAIN GTest::gmock)
-endif()
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     message(STATUS "enabling testing")
     include(CTest)
 endif()
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
+
+    # googletest stuff
+    if(FIDGETY_GTEST_FROM_SOURCE)
+        message(STATUS "downloading googletest's source code and building it from source")
+        include(FetchContent)
+        FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+        )
+        # For Windows: Prevent overriding the parent project's compiler/linker settings
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(googletest)
+        include(GoogleTest)
+        set(GTEST gtest)
+        set(GTEST_MAIN gtest_main)
+        set(GMOCK gmock)
+        set(GMOCK_MAIN gmock_main)
+    else()
+        message(STATUS "searching for googletest using CMake's find_package")
+        find_package(gtest CONFIG REQUIRED)
+        include(GoogleTest)
+        set(GTEST GTest::gtest)
+        set(GTEST_MAIN GTest::gtest)
+        set(GMOCK GTest::gmock)
+        set(GMOCK_MAIN GTest::gmock)
+    endif()
+
+    # test directory
     message(STATUS "adding 'tests' subdirectory")
     add_subdirectory(tests)
 endif()
