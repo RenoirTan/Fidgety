@@ -7,6 +7,7 @@
 #include <string>
 #include <fidgety/decoder.hpp>
 #include <gtest/gtest.h>
+#include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
 
 using namespace Fidgety;
@@ -18,7 +19,7 @@ std::string present_working_directory(void) {
     return pwd;
 }
 
-TEST(DecoderDecoding, OpenFile) {
+TEST(DecoderDecoding, DumpConf) {
     std::string pwd = present_working_directory();
     spdlog::set_level(spdlog::level::trace);
     spdlog::debug("present working directory: {0}", pwd);
@@ -27,4 +28,6 @@ TEST(DecoderDecoding, OpenFile) {
     decoder.openIntermediate("../../../tmp/tests/decoder/test_0.json");
     EXPECT_TRUE(decoder.isConfOpened());
     EXPECT_TRUE(decoder.isIntermediateOpened());
+    DecoderStatus status = decoder.dumpToIntermediate();
+    EXPECT_EQ(status, DecoderStatus::Ok);
 }
