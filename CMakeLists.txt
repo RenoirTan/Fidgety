@@ -23,10 +23,10 @@ set(
     CACHE BOOL "whether to download googletest and build it from source (recommended for windows)"
 )
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    message(STATUS "enabling testing")
     include(CTest)
 endif()
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
+    message(STATUS "enabling testing")
 
     # googletest stuff
     if(FIDGETY_GTEST_FROM_SOURCE)
