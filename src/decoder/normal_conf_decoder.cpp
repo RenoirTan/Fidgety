@@ -25,6 +25,14 @@ static inline void trim(std::string &s) {
     rtrim(s);
 }
 
+// empty or all spaces
+static inline bool is_effectively_empty(const std::string &s) {
+    return (
+        s.empty() ||
+        std::all_of(s.begin(), s.end(), [](char c) { return std::isspace(c); })
+    );
+}
+
 DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
     spdlog::trace("dumping NormalConfDecoder::mConfFile to NormalConfDecoder::mIntermediateFile");
     if (!isConfOpened() || !isIntermediateOpened()) {
@@ -51,6 +59,9 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
             no_comment = line;
         } else {
             no_comment = line.substr(0, pound_index);
+        }
+        if (is_effectively_empty(no_comment)) {
+            continue;
         }
 
         size_t equals_index = no_comment.find('=');
