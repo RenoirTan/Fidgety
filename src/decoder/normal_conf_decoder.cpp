@@ -1,37 +1,9 @@
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
 #include <fidgety/decoder.hpp>
+#include <fidgety/_utils.hpp>
 
 using namespace Fidgety;
-
-// https://stackoverflow.com/a/217605
-// trim from start (in place)
-static inline void ltrim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }));
-}
-
-// trim from end (in place)
-static inline void rtrim(std::string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
-
-// trim from both ends (in place)
-static inline void trim(std::string &s) {
-    ltrim(s);
-    rtrim(s);
-}
-
-// empty or all spaces
-static inline bool is_effectively_empty(const std::string &s) {
-    return (
-        s.empty() ||
-        std::all_of(s.begin(), s.end(), [](char c) { return std::isspace(c); })
-    );
-}
 
 DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
     spdlog::trace("dumping NormalConfDecoder::mConfFile to NormalConfDecoder::mIntermediateFile");
