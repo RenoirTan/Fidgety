@@ -12,7 +12,8 @@ namespace Fidgety {
         CannotCloseFile = 4,
         ResourceBusy = 5,
         CannotOpenMultipleFiles = 6,
-        FilesNotOpen = 7
+        FilesNotOpen = 7,
+        SyntaxError = 8
     };
 
     class Decoder {

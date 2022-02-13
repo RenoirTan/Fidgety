@@ -67,6 +67,7 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
         size_t equals_index = no_comment.find('=');
         if (equals_index == std::string::npos) {
             spdlog::error("could not find '=' at line {0}", line_no);
+            return DecoderStatus::SyntaxError;
         }
         std::string key = no_comment.substr(0, equals_index);
         std::string value = no_comment.substr(equals_index + 1);
