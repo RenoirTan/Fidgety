@@ -7,11 +7,11 @@
 
 using namespace Fidgety;
 
-#define CREATE_ENCODER(test_no)                                           \
+#define CREATE_ENCODER(testNo)                                           \
     NormalConfEncoder encoder;                                            \
     std::ostringstream cs, is;                                            \
-    cs << "../../../tmp/tests/encoder/test_" << test_no << ".conf";       \
-    is << "../../../resources/tests/encoder/test_" << test_no << ".json"; \
+    cs << "../../../tmp/tests/encoder/test_" << testNo << ".conf";       \
+    is << "../../../resources/tests/encoder/test_" << testNo << ".json"; \
     encoder.openConf(cs.str());                                           \
     encoder.openIntermediate(is.str());
 

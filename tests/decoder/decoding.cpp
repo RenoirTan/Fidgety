@@ -13,14 +13,14 @@
 
 using namespace Fidgety;
 
-std::string present_working_directory(void) {
+std::string presentWorkingDirectory(void) {
     char buffer[FILENAME_MAX]; // FILENAME_MAX is the maximum length of a file
     getcwd(buffer, FILENAME_MAX);
     std::string pwd(buffer);
     return pwd;
 }
 
-nlohmann::json load_json_from_file(const std::string &path) {
+nlohmann::json loadJsonFromFile(const std::string &path) {
     spdlog::trace("opening json file '{0}'", path);
     std::ifstream handle(path, std::ifstream::in);
     spdlog::debug("is json file open? {0}", handle.is_open());
@@ -30,7 +30,7 @@ nlohmann::json load_json_from_file(const std::string &path) {
 }
 
 TEST(DecoderDecoding, DumpConf) {
-    std::string pwd = present_working_directory();
+    std::string pwd = presentWorkingDirectory();
     spdlog::set_level(spdlog::level::trace);
     spdlog::debug("present working directory: {0}", pwd);
     NormalConfDecoder decoder;
@@ -42,13 +42,13 @@ TEST(DecoderDecoding, DumpConf) {
     EXPECT_EQ(status, DecoderStatus::Ok);
     decoder.closeConf();
     decoder.closeIntermediate();
-    spdlog::debug("opening answer_key");
-    nlohmann::json answer_key = load_json_from_file(
+    spdlog::debug("opening answerKey");
+    nlohmann::json answerKey = loadJsonFromFile(
         "../../../resources/tests/decoder/test_0_answer.json"
     );
-    spdlog::debug("opening my_answer");
-    nlohmann::json my_answer = load_json_from_file("../../../tmp/tests/decoder/test_0.json");
-    EXPECT_EQ(my_answer, answer_key);
+    spdlog::debug("opening myAnswer");
+    nlohmann::json myAnswer = loadJsonFromFile("../../../tmp/tests/decoder/test_0.json");
+    EXPECT_EQ(myAnswer, answerKey);
 }
 
 TEST(DecoderDecoding, NoEqualsError) {

@@ -19,41 +19,41 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
     // PARSING PART
 
     nlohmann::json intermediate;
-    size_t line_no = 0;
+    size_t lineNo = 0;
     while (mConfFile.good()) {
         std::string line;
         std::getline(mConfFile, line);
-        ++line_no;
+        ++lineNo;
         
-        size_t pound_index = line.find('#');
-        std::string no_comment;
-        if (pound_index == std::string::npos) {
-            no_comment = line;
+        size_t poundIndex = line.find('#');
+        std::string noComment;
+        if (poundIndex == std::string::npos) {
+            noComment = line;
         } else {
-            no_comment = line.substr(0, pound_index);
+            noComment = line.substr(0, poundIndex);
         }
-        if (is_effectively_empty(no_comment)) {
+        if (isEffectivelyEmpty(noComment)) {
             continue;
         }
 
-        size_t equals_index = no_comment.find('=');
-        if (equals_index == std::string::npos) {
-            spdlog::error("could not find '=' at line {0}", line_no);
+        size_t equalsIndex = noComment.find('=');
+        if (equalsIndex == std::string::npos) {
+            spdlog::error("could not find '=' at line {0}", lineNo);
             return DecoderStatus::SyntaxError;
         }
-        std::string key = no_comment.substr(0, equals_index);
-        std::string value = no_comment.substr(equals_index + 1);
+        std::string key = noComment.substr(0, equalsIndex);
+        std::string value = noComment.substr(equalsIndex + 1);
         trim(key); trim(value);
         
         if (key == "") {
-            spdlog::error("no key before '=' at line {0}", line_no);
+            spdlog::error("no key before '=' at line {0}", lineNo);
             return DecoderStatus::SyntaxError;
         }
         if (intermediate.contains(key)) {
             spdlog::warn(
                 "{0} already set. However, the config file has another definition for {0} at {1}",
                 key,
-                line_no
+                lineNo
             );
             spdlog::warn("overriding previous value of {0}", key);
         }

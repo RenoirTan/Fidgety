@@ -23,21 +23,21 @@ EncoderStatus NormalConfEncoder::dumpToConf(void) {
         spdlog::error("NormalConfEncoder::mIntermediateFile is not a canonical JavaScript Object");
         return EncoderStatus::VerifierError;
     }
-    size_t lines_written = 0;
+    size_t linesWritten = 0;
     for (auto& item : intermediate.items()) {
-        std::string original_key = item.key();
-        std::string key = original_key;
+        std::string originalKey = item.key();
+        std::string key = originalKey;
         trim(key);
         if (key.empty()) {
             spdlog::warn("empty key found by NormalConfEncoder::dumpToConf");
-        } else if (key != original_key) {
-            spdlog::warn("whitespace found around the edges of this key: '{0}'", original_key);
+        } else if (key != originalKey) {
+            spdlog::warn("whitespace found around the edges of this key: '{0}'", originalKey);
         }
         auto value = item.value();
-        json_value_t value_type = value.type();
-        std::string value_type_name = value.type_name();
+        json_value_t valueType = value.type();
+        std::string valueTypeName = value.type_name();
         std::ostringstream ss;
-        switch (value_type) {
+        switch (valueType) {
             case json_value_t::boolean: {
                 bool bvalue = (bool) value;
                 ss << key << "=" << (bvalue ? "y" : "n");
@@ -55,17 +55,17 @@ EncoderStatus NormalConfEncoder::dumpToConf(void) {
                 spdlog::error(
                     "NormalConfEncoder does not accept data types of type {0} "
                     "encountered at key '{1}'",
-                    value_type_name,
-                    original_key
+                    valueTypeName,
+                    originalKey
                 );
                 return EncoderStatus::InvalidDataType;
             }
         }
         mConfFile << ss.str() << std::endl;
-        ++lines_written;
+        ++linesWritten;
     }
 
-    spdlog::trace("{0} lines written to NormalConfEncoder::mConfFile", lines_written);
+    spdlog::trace("{0} lines written to NormalConfEncoder::mConfFile", linesWritten);
     mConfFile.flush();
     spdlog::debug(
         "successfully dumped NormalConfEncoder::mConfFile "

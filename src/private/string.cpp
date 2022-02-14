@@ -23,7 +23,7 @@ void Fidgety::trim(std::string &s) {
 }
 
 // empty or all spaces
-bool Fidgety::is_effectively_empty(const std::string &s) {
+bool Fidgety::isEffectivelyEmpty(const std::string &s) {
     return (
         s.empty() ||
         std::all_of(s.begin(), s.end(), [](char c) { return std::isspace(c); })

@@ -7,7 +7,7 @@ namespace Fidgety {
     void ltrim(std::string &s);
     void rtrim(std::string &s);
     void trim(std::string &s);
-    bool is_effectively_empty(const std::string &s);
+    bool isEffectivelyEmpty(const std::string &s);
 }
 
 #endif
