@@ -18,44 +18,54 @@ EncoderStatus NormalConfEncoder::dumpToConf(void) {
     spdlog::trace("NormalConfEncoder::mConfFile and NormalConfEncoder::mIntermediateFile opened");
 
     // DUMPING PART
-    auto intermediate = nlohmann::json::parse(mIntermediateFile);
+    nlohmann::json intermediate = nlohmann::json::parse(mIntermediateFile);
     if (intermediate.type() != json_value_t::object) {
         spdlog::error("NormalConfEncoder::mIntermediateFile is not a canonical JavaScript Object");
         return EncoderStatus::VerifierError;
     }
-    size_t lines_read = 0;
-    for (auto item = intermediate.cbegin(); item != intermediate.cend(); ++item) {
-        json_value_t value_type = item->type();
-        std::ostringstream line_stream;
-        std::string key = item->key();
+    size_t lines_written = 0;
+    for (auto& item : intermediate.items()) {
+        std::string original_key = item.key();
+        std::string key = original_key;
+        trim(key);
+        if (key.empty()) {
+            spdlog::warn("empty key found by NormalConfEncoder::dumpToConf");
+        } else if (key != original_key) {
+            spdlog::warn("whitespace found around the edges of this key: '{0}'", original_key);
+        }
+        auto value = item.value();
+        json_value_t value_type = value.type();
+        std::string value_type_name = value.type_name();
+        std::ostringstream ss;
         switch (value_type) {
-            case json_value_t::null:
-                line_stream << "# " << key << "=";
+            case json_value_t::boolean: {
+                bool bvalue = (bool) value;
+                ss << key << "=" << (bvalue ? "y" : "n");
                 break;
-            case json_value_t::boolean:
-                bool bvalue = item->value();
-                line_stream << key << "=" << bvalue ? "y" : "n";
-                break;
+            }
             case json_value_t::string:
-            case json_value_t::number_integer:
-            case json_value_t::number_unsigned:
             case json_value_t::number_float:
-            case json_value_t::binary:
-                std::string svalue = item->value();
-                line_stream << key << "=" << svalue;
+            case json_value_t::number_integer:
+            case json_value_t::number_unsigned: {
+                std::string svalue = (std::string) value;
+                ss << key << "=" << svalue;
                 break;
-            default:
+            }
+            default: {
                 spdlog::error(
-                    "Could not handle data type ({0}) of value whose key is '{1}'",
-                    item->type_name(),
-                    item->key()
+                    "NormalConfEncoder does not accept data types of type {0} "
+                    "encountered at key '{1}'",
+                    value_type_name,
+                    original_key
                 );
                 return EncoderStatus::InvalidDataType;
+            }
         }
-        std::string line = line_stream.str();
-        mConfFile << line << std::endl;
+        mConfFile << ss.str() << std::endl;
+        ++lines_written;
     }
 
+    spdlog::trace("{0} lines written to NormalConfEncoder::mConfFile", lines_written);
     mConfFile.flush();
     spdlog::debug(
         "successfully dumped NormalConfEncoder::mConfFile "
