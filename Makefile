@@ -20,7 +20,7 @@ build: generate
 	$(CMAKE) $(CMAKE_BUILD_FLAGS)
 
 setup_test_env:
-	mkdir -p tmp/tests/decoder
+	mkdir -p tmp/tests/{decoder,encoder}
 
 test: build setup_test_env
 	$(CTEST) $(CMAKE_TEST_FLAGS)
