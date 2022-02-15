@@ -15,7 +15,7 @@ include(GNUInstallDirs)
 
 set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/cmake/spdlog")
 
-include_directories(include)
+#include_directories(include)
 #file(GLOB_RECURSE fidgety_headers "include/*")
 add_library(FidgetyHeaders INTERFACE)
 add_library(Fidgety::FidgetyHeaders ALIAS FidgetyHeaders)
