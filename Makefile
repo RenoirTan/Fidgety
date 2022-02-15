@@ -13,6 +13,8 @@ CMAKE_BUILD_FLAGS ?= --build $(BUILD_DIR) $(CMAKE_BUILD_SUPPFLAGS)
 CMAKE_TEST_FLAGS ?= --test-dir $(BUILD_DIR) --progress --verbose $(CMAKE_TEST_SUPPFLAGS)
 CMAKE_INSTALL_FLAGS ?= --install $(BUILD_DIR) --prefix $(DIST_DIR) $(CMAKE_INSTALL_SUPPFLAGS)
 
+.PHONY: generate build setup_test_env test install clean_build clean_dist clean
+
 generate: CMakeLists.txt
 	$(CMAKE) $(CMAKE_GENERATE_FLAGS)
 
@@ -28,6 +30,10 @@ test: build setup_test_env
 install: build
 	$(CMAKE) $(CMAKE_INSTALL_FLAGS)
 
-clean:
+clean_build:
 	rm -rf $(BUILD_DIR)
+
+clean_dist:
 	rm -rf $(DIST_DIR)
+
+clean: clean_build clean_dist
