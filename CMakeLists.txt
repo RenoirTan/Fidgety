@@ -11,9 +11,28 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
+include(GNUInstallDirs)
+
+set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/cmake/spdlog")
+
 include_directories(include)
 #file(GLOB_RECURSE fidgety_headers "include/*")
+add_library(FidgetyHeaders INTERFACE)
+add_library(Fidgety::FidgetyHeaders ALIAS FidgetyHeaders)
+# include everything under the include/ folder
+target_include_directories(
+    FidgetyHeaders INTERFACE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
 install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.hpp)
+install(TARGETS FidgetyHeaders EXPORT FidgetyHeaders DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(
+    EXPORT FidgetyHeaders
+    DESTINATION ${export_dest_dir}
+    NAMESPACE Fidgety::
+    FILE fidgety_headers_config.cmake
+)
 
 add_subdirectory(src)
 
