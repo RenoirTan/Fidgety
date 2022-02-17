@@ -1,3 +1,13 @@
+/**
+ * @file src/private/string.cpp
+ * @author your name (you@domain.com)
+ * @brief Private string utilities.
+ * @version 0.1
+ * @date 2022-02-17
+ * 
+ * @copyright Copyright (c) 2022
+ */
+
 #include <algorithm>
 #include <fidgety/_utils.hpp>
 

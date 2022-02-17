@@ -1,3 +1,14 @@
+/**
+ * @file src/encoder/normal_conf_encoder.cpp
+ * @author RenoirTan
+ * @brief Implementation of the default encoder class
+ * (Fidgety::NormalConfEncoder).
+ * @version 0.1
+ * @date 2022-02-17
+ * 
+ * @copyright Copyright (c) 2022
+ */
+
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
 #include <fidgety/encoder.hpp>

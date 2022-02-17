@@ -1,3 +1,13 @@
+/**
+ * @file src/encoder/encoder.cpp
+ * @author RenoirTan
+ * @brief Translation unit for the base encoder class.
+ * @version 0.1
+ * @date 2022-02-17
+ * 
+ * @copyright Copyright (c) 2022
+ */
+
 #include "spdlog/spdlog.h"
 #include <fidgety/encoder.hpp>
 

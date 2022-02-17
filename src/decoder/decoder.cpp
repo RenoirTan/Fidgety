@@ -1,3 +1,14 @@
+/**
+ * @file src/decoder/decoder.cpp
+ * @author RenoirTan
+ * @brief Translation unit containing the implementation for the base decoder
+ * class.
+ * @version 0.1
+ * @date 2022-02-17
+ * 
+ * @copyright Copyright (c) 2022
+ */
+
 #include "spdlog/spdlog.h"
 #include <fidgety/decoder.hpp>
 
