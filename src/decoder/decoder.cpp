@@ -109,7 +109,7 @@ DecoderStatus Decoder::closeIntermediate(void) {
 }
 
 DecoderStatus Decoder::useNewIntermediate(std::ofstream &&newIntermediate) {
-    spdlog::trace("switching out Decoder::mINtermediateFile using std::ofstream");
+    spdlog::trace("switching out Decoder::mIntermediateFile using std::ofstream");
     if (isIntermediateOpened()) {
         spdlog::error("Decoder::mIntermediateFile already opened");
         return DecoderStatus::CannotOpenMultipleFiles;
