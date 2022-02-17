@@ -1,5 +1,5 @@
 /**
- * @file encoder.hpp
+ * @file include/fidgety/encoder.hpp
  * @author your name (you@domain.com)
  * @brief Main header library for the encoder in Fidgety. The encoder converts
  * the intermediate JSON used by the verifier and editor into the config file
