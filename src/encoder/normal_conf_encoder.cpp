@@ -54,14 +54,16 @@ EncoderStatus NormalConfEncoder::dumpToConf(void) {
                 ss << key << "=" << (bvalue ? "y" : "n");
                 break;
             }
-            case json_value_t::string:
-            case json_value_t::number_float:
-            case json_value_t::number_integer:
-            case json_value_t::number_unsigned: {
-                std::string svalue = (std::string) value;
-                ss << key << "=" << svalue;
-                break;
-            }
+#define VALUE_TO_LINE(datatype) {             \
+    datatype forced_value = (datatype) value; \
+    ss << key << "=" << forced_value;         \
+    break;                                    \
+}
+            case json_value_t::string: VALUE_TO_LINE(std::string)
+            case json_value_t::number_float: VALUE_TO_LINE(std::double_t)
+            case json_value_t::number_integer: VALUE_TO_LINE(std::int64_t)
+            case json_value_t::number_unsigned: VALUE_TO_LINE(std::uint64_t)
+#undef VALUE_TO_LINE
             default: {
                 spdlog::error(
                     "NormalConfEncoder does not accept data types of type {0} "
