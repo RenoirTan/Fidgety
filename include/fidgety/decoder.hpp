@@ -1,3 +1,16 @@
+/**
+ * @file include/fidgety/decoder.hpp
+ * @author RenoirTan
+ * @brief Main header library for the decoder in Fidgety. The decoder converts
+ * a config file (such as /etc/tlp.conf) into an intermediate JSON that is
+ * readable by the verifier and editor. It is one of the first few things to
+ * be called up when a user wants to edit a config file through Fidgety.
+ * @version 0.1
+ * @date 2022-02-17
+ * 
+ * @copyright Copyright (c) 2022
+ */
+
 #ifndef FIDGETY_DECODER_HPP
 #   define FIDGETY_DECODER_HPP
 

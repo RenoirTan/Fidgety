@@ -1,3 +1,18 @@
+/**
+ * @file encoder.hpp
+ * @author your name (you@domain.com)
+ * @brief Main header library for the encoder in Fidgety. The encoder converts
+ * the intermediate JSON used by the verifier and editor into the config file
+ * the user wants to edit. The encoder is usually called when the user presses
+ * the 'Save Changes' button in Fidgety (note that this does not mean that the
+ * changes will take effect immediately, because a daemon has to be restarted
+ * for example).
+ * @version 0.1
+ * @date 2022-02-17
+ * 
+ * @copyright Copyright (c) 2022
+ */
+
 #ifndef FIDGETY_ENCODER_HPP
 #   define FIDGETY_ENCODER_HPP
 
