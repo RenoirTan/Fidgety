@@ -6,7 +6,7 @@
 #endif
 #include <iostream>
 #include <string>
-#include <fidgety/decoder.hpp>
+#include <fidgety/decoder/normal_conf_decoder.hpp>
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"

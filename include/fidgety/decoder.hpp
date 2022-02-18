@@ -47,11 +47,6 @@ namespace Fidgety {
             std::ifstream mConfFile;
             std::ofstream mIntermediateFile;
     };
-
-    class NormalConfDecoder : public Decoder {
-        public:
-            DecoderStatus dumpToIntermediate(void);
-    };
 }
 
 #endif
