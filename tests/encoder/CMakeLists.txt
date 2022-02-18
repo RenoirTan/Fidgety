@@ -1,6 +1,5 @@
 add_executable(encoder_encoding encoding.cpp)
 target_link_libraries(encoder_encoding PRIVATE Fidgety::FidgetyNormalConfEncoder)
-target_link_libraries(encoder_encoding PRIVATE Fidgety::FidgetyHeaders)
 target_link_libraries(encoder_encoding PRIVATE nlohmann_json spdlog::spdlog)
 target_link_libraries(encoder_encoding PRIVATE ${GTEST} ${GTEST_MAIN})
 add_test(NAME encoder_encoding_test COMMAND encoder_encoding)
