@@ -11,7 +11,7 @@
 
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
-#include <fidgety/encoder.hpp>
+#include <fidgety/encoder/normal_conf_encoder.hpp>
 #include <fidgety/_utils.hpp>
 
 using namespace Fidgety;

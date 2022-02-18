@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <fidgety/encoder.hpp>
+#include <fidgety/encoder/normal_conf_encoder.hpp>
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
@@ -8,11 +8,11 @@
 using namespace Fidgety;
 
 #define CREATE_ENCODER(testNo)                                           \
-    NormalConfEncoder encoder;                                            \
-    std::ostringstream cs, is;                                            \
+    NormalConfEncoder encoder;                                           \
+    std::ostringstream cs, is;                                           \
     cs << "../../../tmp/tests/encoder/test_" << testNo << ".conf";       \
     is << "../../../resources/tests/encoder/test_" << testNo << ".json"; \
-    encoder.openConf(cs.str());                                           \
+    encoder.openConf(cs.str());                                          \
     encoder.openIntermediate(is.str());
 
 bool filesEqual(const std::string &pathA, const std::string &pathB) {
