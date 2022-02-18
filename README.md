@@ -13,11 +13,11 @@ This app got its name from those fidget toys with buttons and joysticks.
 This project was created to address the UI problem in Linux where users are
 usually expected to configure their system by editing config files instead of
 through a simple GUI as seen on a Windows or MacOS system. Therefore, this
-app will have first-class support on Linux and will be tested according to this
-policy. You can try and contribute by porting this project to other operating
-systems (especially on Windows, where CMake's documentation really failed me
-with the find_package part). Due to differences between the versions of
-various dependencies in different distributions, Fidgety may fail to compile.
+app will have first-class support on Linux and will be developed according to
+this policy. You can try and contribute by porting this project to other
+operating systems (especially on Windows, where CMake's documentation really
+failed me with the find_package part). Due to differences between the versions
+of various dependencies in different distributions, Fidgety may fail to compile.
 Currently, Fidgety compiles *without warnings* on Arch Linux but I have yet to
 test it on Debian.
 
@@ -44,7 +44,7 @@ The table below shows the targets defined in the Makefile and what they do.
 
 | Target | Function |
 | ------ | -------- |
-| generate | Generate the build directory that CMake stores its cache in. This is also the step where dependencies are searched for googletest is downloaded (unless specified otherwise). |
+| generate | Generate the build directory that CMake stores its cache in. This is also the step where dependencies are searched for and googletest is downloaded (unless specified otherwise). |
 | build | Compile Fidgety and the test suite (can be opted out). |
 | test | Run the test suites written for Fidgety. This will fail if the tests aren't built. |
 | install | Install to the dist/ prefix. The folder can be changed by adding `DIST_DIR=<directory>` to the end of the make command. |
