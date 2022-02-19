@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 project(Fidgety)
+list(APPEND CMAKE_MODULE_PATH cmake/)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 90)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -15,6 +18,11 @@ include(GNUInstallDirs)
 
 set(export_cmake_dir "${CMAKE_INSTALL_LIBDIR}/cmake/fidgety")
 set(export_lib_dir "${CMAKE_INSTALL_LIBDIR}/fidgety")
+set(
+    FIDGETY_GOOGLETEST_RELEASE_URL
+    "https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"
+    CACHE STRING "The URL of the release of googletest to use"
+)
 
 #include_directories(include)
 #file(GLOB_RECURSE fidgety_headers "include/*")
@@ -47,33 +55,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 endif()
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
     message(STATUS "enabling testing")
-
     # googletest stuff
-    if(FIDGETY_GTEST_FROM_SOURCE)
-        message(STATUS "downloading googletest's source code and building it from source")
-        include(FetchContent)
-        FetchContent_Declare(
-            googletest
-            URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
-        )
-        # For Windows: Prevent overriding the parent project's compiler/linker settings
-        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-        FetchContent_MakeAvailable(googletest)
-        include(GoogleTest)
-        set(GTEST gtest)
-        set(GTEST_MAIN gtest_main)
-        set(GMOCK gmock)
-        set(GMOCK_MAIN gmock_main)
-    else()
-        message(STATUS "searching for googletest using CMake's find_package")
-        find_package(gtest CONFIG REQUIRED)
-        include(GoogleTest)
-        set(GTEST GTest::gtest)
-        set(GTEST_MAIN GTest::gtest)
-        set(GMOCK GTest::gmock)
-        set(GMOCK_MAIN GTest::gmock)
-    endif()
-
+    include(googletest_include)
     # test directory
     message(STATUS "adding 'tests' subdirectory")
     add_subdirectory(tests)
