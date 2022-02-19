@@ -1,10 +1,5 @@
-add_executable(decoder_sanity_check sanity_check.cpp)
+fidgety_create_test(decoder_sanity_check sanity_check.cpp)
 target_link_libraries(decoder_sanity_check PRIVATE Fidgety::FidgetyNormalConfDecoder)
-target_link_libraries(decoder_sanity_check PRIVATE ${GTEST} ${GTEST_MAIN})
-add_test(NAME decoder_sanity_check_test COMMAND decoder_sanity_check)
 
-add_executable(decoder_decoding decoding.cpp)
+fidgety_create_test(decoder_decoding decoding.cpp)
 target_link_libraries(decoder_decoding PRIVATE Fidgety::FidgetyNormalConfDecoder)
-target_link_libraries(decoder_decoding PRIVATE nlohmann_json spdlog::spdlog)
-target_link_libraries(decoder_decoding PRIVATE ${GTEST} ${GTEST_MAIN})
-add_test(NAME decoder_decoding_test COMMAND decoder_decoding)

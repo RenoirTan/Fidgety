@@ -1,35 +1,11 @@
-add_library(FidgetyDecoder STATIC decoder.cpp)
-add_library(Fidgety::FidgetyDecoder ALIAS FidgetyDecoder)
+fidgety_add_my_library(FidgetyDecoder STATIC decoder.cpp)
 set_target_properties(FidgetyDecoder PROPERTIES OUTPUT_NAME fidgety_decoder)
-target_link_libraries(FidgetyDecoder PUBLIC Fidgety::FidgetyHeaders)
-target_link_libraries(FidgetyDecoder PRIVATE Fidgety::_FidgetyUtils)
-target_link_libraries(FidgetyDecoder PRIVATE spdlog::spdlog)
-install(
-    TARGETS FidgetyDecoder
-    EXPORT FidgetyDecoder
-    DESTINATION ${FIDGETY_EXPORT_LIB_DIR})
-install(
-    EXPORT FidgetyDecoder
-    DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
-    NAMESPACE Fidgety::
-    FILE fidgety_decoder_config.cmake
-)
+fidgety_link_common_libraries(FidgetyDecoder)
+fidgety_install_library(FidgetyDecoder fidgety_decoder_config.cmake)
 
-add_library(FidgetyNormalConfDecoder STATIC normal_conf_decoder.cpp)
-add_library(Fidgety::FidgetyNormalConfDecoder ALIAS FidgetyNormalConfDecoder)
+fidgety_add_my_library(FidgetyNormalConfDecoder STATIC normal_conf_decoder.cpp)
 set_target_properties(FidgetyNormalConfDecoder PROPERTIES OUTPUT_NAME fidgety_normal_conf_decoder)
+fidgety_link_common_libraries(FidgetyNormalConfDecoder)
 target_link_libraries(FidgetyNormalConfDecoder PUBLIC Fidgety::FidgetyDecoder)
-target_link_libraries(FidgetyNormalConfDecoder PRIVATE Fidgety::_FidgetyUtils)
-target_link_libraries(FidgetyNormalConfDecoder PRIVATE spdlog::spdlog)
 target_link_libraries(FidgetyNormalConfDecoder PRIVATE nlohmann_json)
-install(
-    TARGETS FidgetyNormalConfDecoder
-    EXPORT FidgetyNormalConfDecoder
-    DESTINATION ${FIDGETY_EXPORT_LIB_DIR}
-)
-install(
-    EXPORT FidgetyNormalConfDecoder
-    DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
-    NAMESPACE Fidgety::
-    FILE fidgety_normal_conf_decoder_config.cmake
-)
+fidgety_install_library(FidgetyNormalConfDecoder fidgety_normal_conf_decoder_config.cmake)

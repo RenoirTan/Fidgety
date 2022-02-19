@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.14)
 project(Fidgety)
 list(APPEND CMAKE_MODULE_PATH cmake/)
 
+include(GNUInstallDirs)
+include(add_my_library)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 90)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,8 +16,6 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
-
-include(GNUInstallDirs)
 
 set(
     FIDGETY_EXPORT_CMAKE_DIR
