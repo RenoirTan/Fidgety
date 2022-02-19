@@ -6,11 +6,11 @@ install(
     TARGETS
     _FidgetyUtils
     EXPORT _FidgetyUtils
-    DESTINATION ${export_lib_dir}
+    DESTINATION ${FIDGETY_EXPORT_LIB_DIR}
 )
 install(
     EXPORT _FidgetyUtils
-    DESTINATION ${export_cmake_dir}
+    DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
     NAMESPACE Fidgety::
     FILE _fidgety_utils_config.cmake
 )

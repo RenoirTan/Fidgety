@@ -7,11 +7,11 @@ target_link_libraries(FidgetyEncoder PRIVATE spdlog::spdlog)
 install(
     TARGETS FidgetyEncoder
     EXPORT FidgetyEncoder
-    DESTINATION ${export_lib_dir}
+    DESTINATION ${FIDGETY_EXPORT_LIB_DIR}
 )
 install(
     EXPORT FidgetyEncoder
-    DESTINATION ${export_cmake_dir}
+    DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
     NAMESPACE Fidgety::
     FILE fidgety_encoder_config.cmake
 )
@@ -26,11 +26,11 @@ target_link_libraries(FidgetyNormalConfDecoder PRIVATE nlohmann_json)
 install(
     TARGETS FidgetyNormalConfEncoder
     EXPORT FidgetyNormalConfEncoder
-    DESTINATION ${export_lib_dir}
+    DESTINATION ${FIDGETY_EXPORT_LIB_DIR}
 )
 install(
     EXPORT FidgetyNormalConfEncoder
-    DESTINATION ${export_cmake_dir}
+    DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
     NAMESPACE Fidgety::
     FILE fidgety_normal_conf_encoder_config.cmake
 )

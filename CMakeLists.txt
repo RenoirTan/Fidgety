@@ -16,8 +16,16 @@ find_package(nlohmann_json REQUIRED)
 
 include(GNUInstallDirs)
 
-set(export_cmake_dir "${CMAKE_INSTALL_LIBDIR}/cmake/fidgety")
-set(export_lib_dir "${CMAKE_INSTALL_LIBDIR}/fidgety")
+set(
+    FIDGETY_EXPORT_CMAKE_DIR
+    "${CMAKE_INSTALL_LIBDIR}/cmake/fidgety"
+    CACHE STRING "The directory to dump all the *.cmake files used to find fidgety."
+)
+set(
+    FIDGETY_EXPORT_LIB_DIR
+    "${CMAKE_INSTALL_LIBDIR}/fidgety"
+    CACHE STRING "The directory to dump all of fidgety's library files."
+)
 set(
     FIDGETY_GOOGLETEST_RELEASE_URL
     "https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"
@@ -38,7 +46,7 @@ install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.hpp)
 install(TARGETS FidgetyHeaders EXPORT FidgetyHeaders DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(
     EXPORT FidgetyHeaders
-    DESTINATION ${export_cmake_dir}
+    DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
     NAMESPACE Fidgety::
     FILE fidgety_headers_config.cmake
 )
