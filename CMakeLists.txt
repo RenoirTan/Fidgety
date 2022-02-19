@@ -32,24 +32,25 @@ set(
     CACHE STRING "The URL of the release of googletest to use"
 )
 
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    set(FIDGETY_MASTER_PROJECT ON)
+else()
+    set(FIDGETY_MASTER_PROJECT OFF)
+endif()
+
 #include_directories(include)
 #file(GLOB_RECURSE fidgety_headers "include/*")
-add_library(FidgetyHeaders INTERFACE)
-add_library(Fidgety::FidgetyHeaders ALIAS FidgetyHeaders)
+fidgety_add_my_library(FidgetyHeaders INTERFACE)
 # include everything under the include/ folder
 target_include_directories(
     FidgetyHeaders INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
-install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.hpp)
-install(TARGETS FidgetyHeaders EXPORT FidgetyHeaders DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(
-    EXPORT FidgetyHeaders
-    DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
-    NAMESPACE Fidgety::
-    FILE fidgety_headers_config.cmake
-)
+if(FIDGETY_MASTER_PROJECT)
+    install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.hpp)
+endif()
+fidgety_install_library(FidgetyHeaders fidgety_headers_config.cmake)
 
 add_subdirectory(src)
 
@@ -58,10 +59,10 @@ set(
     FIDGETY_GTEST_FROM_SOURCE ON
     CACHE BOOL "whether to download googletest and build it from source (recommended for windows)"
 )
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if(FIDGETY_MASTER_PROJECT)
     include(CTest)
 endif()
-if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
+if((FIDGETY_MASTER_PROJECT OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
     message(STATUS "enabling testing")
     # googletest stuff
     include(cmake/googletest_include.cmake)

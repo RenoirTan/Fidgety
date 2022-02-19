@@ -31,17 +31,19 @@ macro(fidgety_install_library)
             "you need to provide the name of the library and the name its CMake file"
         )
     endif()
-    install(
-        TARGETS ${ARGV0}
-        EXPORT ${ARGV0}
-        DESTINATION ${FIDGETY_EXPORT_LIB_DIR}
-    )
-    install(
-        EXPORT ${ARGV0}
-        DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
-        NAMESPACE Fidgety::
-        FILE ${ARGV1}
-    )
+    if(FIDGETY_MASTER_PROJECT)
+        install(
+            TARGETS ${ARGV0}
+            EXPORT ${ARGV0}
+            DESTINATION ${FIDGETY_EXPORT_LIB_DIR}
+        )
+        install(
+            EXPORT ${ARGV0}
+            DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
+            NAMESPACE Fidgety::
+            FILE ${ARGV1}
+        )
+    endif()
 endmacro()
 
 macro(fidgety_link_test_libraries)
