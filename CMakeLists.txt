@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(Fidgety)
-list(APPEND CMAKE_MODULE_PATH cmake/)
 
 include(GNUInstallDirs)
-include(add_my_library)
+include(cmake/add_my_library.cmake)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 90)
@@ -65,7 +64,7 @@ endif()
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
     message(STATUS "enabling testing")
     # googletest stuff
-    include(googletest_include)
+    include(cmake/googletest_include.cmake)
     # test directory
     message(STATUS "adding 'tests' subdirectory")
     add_subdirectory(tests)
