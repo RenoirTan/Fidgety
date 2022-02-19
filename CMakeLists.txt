@@ -13,7 +13,8 @@ find_package(nlohmann_json REQUIRED)
 
 include(GNUInstallDirs)
 
-set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/cmake/spdlog")
+set(export_cmake_dir "${CMAKE_INSTALL_LIBDIR}/cmake/fidgety")
+set(export_lib_dir "${CMAKE_INSTALL_LIBDIR}/fidgety")
 
 #include_directories(include)
 #file(GLOB_RECURSE fidgety_headers "include/*")
@@ -29,7 +30,7 @@ install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.hpp)
 install(TARGETS FidgetyHeaders EXPORT FidgetyHeaders DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(
     EXPORT FidgetyHeaders
-    DESTINATION ${export_dest_dir}
+    DESTINATION ${export_cmake_dir}
     NAMESPACE Fidgety::
     FILE fidgety_headers_config.cmake
 )
