@@ -1,6 +1,7 @@
 add_subdirectory(decoder)
 add_subdirectory(editor)
 add_subdirectory(encoder)
+add_subdirectory(exception)
 add_subdirectory(private)
 add_subdirectory(selector)
 add_subdirectory(verifier)

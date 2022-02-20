@@ -15,10 +15,36 @@
 #   include <string>
 
 namespace Fidgety {
+    class StringEditor {
+        public:
+            virtual void mutateString(std::string &s);
+            virtual std::string convertString(const std::string &s);
+    };
+
+    class StringIndenter : public StringEditor {
+        public:
+            StringIndenter(void);
+            StringIndenter(bool useTabs);
+            StringIndenter(size_t size);
+            StringIndenter(bool useTabs, size_t size);
+
+            void mutateString(std::string &s);
+            std::string convertString(const std::string &s);
+
+            static StringIndenter tabs(void);
+            static StringIndenter spaces(void);
+
+        protected:
+            std::string mHeader;
+    };
+
     void ltrim(std::string &s);
     void rtrim(std::string &s);
     void trim(std::string &s);
     bool isEffectivelyEmpty(const std::string &s);
+    std::string sed(const std::string &s, StringEditor &m);
+    std::string tabIndentSed(const std::string &s, uint32_t tabs=1);
+    std::string spaceIndentSed(const std::string &s, uint32_t spaces=4);
 }
 
 #endif

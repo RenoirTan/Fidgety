@@ -130,3 +130,5 @@ DecoderStatus Decoder::useNewIntermediate(std::ofstream &&newIntermediate) {
         return DecoderStatus::Ok;
     }
 }
+
+DecoderStatus Decoder::dumpToIntermediate(void) { return DecoderStatus::Ok; }

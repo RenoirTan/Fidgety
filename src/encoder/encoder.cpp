@@ -129,3 +129,5 @@ EncoderStatus Encoder::useNewIntermediate(std::ifstream &&newIntermediate) {
         return EncoderStatus::Ok;
     }
 }
+
+EncoderStatus Encoder::dumpToConf(void) { return EncoderStatus::Ok; }
