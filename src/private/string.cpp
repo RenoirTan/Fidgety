@@ -95,6 +95,8 @@ std::string Fidgety::sed(const std::string &s, StringEditor &m) {
     if (std::getline(iss, line)) {
         m.mutateString(line);
         oss << line;
+    } else {
+        return "";
     }
     while (std::getline(iss, line)) {
         m.mutateString(line);
