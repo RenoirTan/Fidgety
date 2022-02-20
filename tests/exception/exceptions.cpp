@@ -19,3 +19,8 @@ TEST(ExceptionExceptions, StringFormat) {
         ": information\nDetails:\n\tdetail 1\n\tdetail 2\n\tdetail 3"
     );
 }
+
+TEST(ExceptionExceptions, Exit) {
+    Exception exception(1, "information", "supporting info");
+    EXPECT_EXIT(exception.exit(true, true), testing::ExitedWithCode(1), "");
+}

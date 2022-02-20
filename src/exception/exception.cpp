@@ -8,7 +8,10 @@
  * @copyright Copyright (c) 2022
  */
 
+#include <cstdlib>
+#include <iostream>
 #include <sstream>
+#include "spdlog/spdlog.h"
 #include <fidgety/exception.hpp>
 #include <fidgety/_utils.hpp>
 
@@ -94,4 +97,14 @@ std::string Exception::getLongDescription(void) const {
     }
 
     return oss.str();
+}
+
+void Exception::exit(bool printToStdErr, bool outputToLog) {
+    if (printToStdErr) {
+        std::cerr << getLongDescription();
+    }
+    if (outputToLog) {
+        spdlog::critical(getGenericDescription());
+    }
+    std::exit(getCode());
 }
