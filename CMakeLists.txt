@@ -11,6 +11,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(spdlog REQUIRED)
@@ -19,12 +20,17 @@ find_package(nlohmann_json REQUIRED)
 set(
     FIDGETY_EXPORT_CMAKE_DIR
     "${CMAKE_INSTALL_LIBDIR}/cmake/fidgety"
-    CACHE STRING "The directory to dump all the *.cmake files used to find fidgety."
+    CACHE STRING "The directory to dump all the *.cmake files used to find fidgety"
 )
 set(
     FIDGETY_EXPORT_LIB_DIR
     "${CMAKE_INSTALL_LIBDIR}/fidgety"
-    CACHE STRING "The directory to dump all of fidgety's library files."
+    CACHE STRING "The directory to dump all of fidgety's library files"
+)
+set(
+    FIGETY_EXPORT_EXTLIB_DIR
+    "${CMAKE_INSTALL_LIBDIR}/fidgety/extensions"
+    CACHE STRING "The directory where fidgety's extension libraries are installed to"
 )
 set(
     FIDGETY_GOOGLETEST_RELEASE_URL
@@ -37,6 +43,11 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 else()
     set(FIDGETY_MASTER_PROJECT OFF)
 endif()
+
+set(
+    FIDGETY_BUILD_EXTENSIONS ${FIDGETY_MASTER_PROJECT}
+    CACHE BOOL "Whether to build the extensions used by the fidgety editor"
+)
 
 #include_directories(include)
 #file(GLOB_RECURSE fidgety_headers "include/*")
