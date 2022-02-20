@@ -41,7 +41,7 @@ namespace Fidgety {
             DecoderStatus openIntermediate(const std::string &outPath);
             DecoderStatus closeIntermediate(void);
             DecoderStatus useNewIntermediate(std::ofstream &&newIntermediate);
-            virtual DecoderStatus dumpToIntermediate(void) = 0;
+            virtual DecoderStatus dumpToIntermediate(void);
         
         protected:
             std::ifstream mConfFile;
