@@ -17,8 +17,17 @@
 #   include <string>
 
 namespace Fidgety {
-    class Exception {
+    class Exception : public std::exception {
         public:
+            // overriding std::exception
+            Exception(void) noexcept;
+            Exception(const std::exception &origin) noexcept;
+            Exception(const Exception &origin) noexcept;
+            Exception &operator=(const std::exception &origin) noexcept;
+            Exception &operator=(const Exception &origin) noexcept;
+            ~Exception(void);
+            const char *what(void) const noexcept;
+
             Exception(
                 const int32_t code,
                 const std::string &info,

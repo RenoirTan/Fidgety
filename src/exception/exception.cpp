@@ -17,6 +17,38 @@
 
 using namespace Fidgety;
 
+Exception::Exception(void) noexcept : mCode(1) { }
+
+Exception::Exception(const std::exception &origin) noexcept :
+    mCode(1),
+    mInformation(origin.what())
+{ }
+
+Exception::Exception(const Exception &origin) noexcept :
+    mCode(origin.mCode),
+    mInformation(origin.mInformation),
+    mSupportingInformation(origin.mSupportingInformation)
+{ }
+
+Exception &Exception::operator=(const std::exception &origin) noexcept {
+    mCode = 1;
+    mInformation = origin.what();
+    return *this;
+}
+
+Exception &Exception::operator=(const Exception &origin) noexcept {
+    mCode = origin.mCode;
+    mInformation = origin.mInformation;
+    mSupportingInformation = origin.mSupportingInformation;
+    return *this;
+}
+
+Exception::~Exception(void) { }
+
+const char *Exception::what(void) const noexcept {
+    return "A Fidgety::Exception occurred.";
+}
+
 Exception::Exception(
     const int32_t code,
     const std::string &info,
