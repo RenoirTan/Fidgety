@@ -9,6 +9,7 @@
  * @copyright Copyright (c) 2022
  */
 
+#include <sstream>
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
 #include <fidgety/encoder/normal_conf_encoder.hpp>
