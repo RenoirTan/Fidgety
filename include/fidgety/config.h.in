@@ -1,0 +1,6 @@
+#ifndef FIDGETY_CONFIG_H
+#   define FIDGETY_CONFIG_H
+
+#   cmakedefine FIDGETY_QT_MAJOR ${FIDGETY_QT_MAJOR}
+
+#endif

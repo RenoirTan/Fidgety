@@ -13,10 +13,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
-find_package(spdlog REQUIRED)
-find_package(nlohmann_json REQUIRED)
-
 set(
     FIDGETY_EXPORT_CMAKE_DIR
     "${CMAKE_INSTALL_LIBDIR}/cmake/fidgety"
@@ -37,6 +33,7 @@ set(
     "https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"
     CACHE STRING "The URL of the release of googletest to use"
 )
+set(FIDGETY_QT_MAJOR 6 CACHE STRING "The major version number of Qt being used to build Fidgety")
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     set(FIDGETY_MASTER_PROJECT ON)
@@ -49,6 +46,23 @@ set(
     CACHE BOOL "Whether to build the extensions used by the fidgety editor"
 )
 
+set(FIDGETY_CONFIG_HEADER_IN "${PROJECT_SOURCE_DIR}/include/fidgety/config.h.in")
+set(FIDGETY_CONFIG_HEADER_OUT "${PROJECT_SOURCE_DIR}/include/fidgety/config.h")
+
+if(FIDGETY_QT_MAJOR STREQUAL 6)
+    find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+elseif(FIDGETY_QT_MAJOR STREQUAL 5)
+    find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+else()
+    message(FATAL_ERROR "Invalid value for FIDGETY_QT_MAJOR: ${FIDGETY_QT_MAJOR}. \
+Fidgety only targets Qt6 or Qt5 (legacy)")
+endif()
+message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
+configure_file(${FIDGETY_CONFIG_HEADER_IN} ${FIDGETY_CONFIG_HEADER_OUT})
+
+find_package(spdlog REQUIRED)
+find_package(nlohmann_json REQUIRED)
+
 #include_directories(include)
 #file(GLOB_RECURSE fidgety_headers "include/*")
 fidgety_add_my_library(FidgetyHeaders INTERFACE)
@@ -60,6 +74,7 @@ target_include_directories(
 )
 if(FIDGETY_MASTER_PROJECT)
     install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.hpp)
+    install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.h)
 endif()
 fidgety_install_library(FidgetyHeaders fidgety_headers_config.cmake)
 
