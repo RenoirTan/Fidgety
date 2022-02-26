@@ -18,14 +18,15 @@ this policy. You can try and contribute by porting this project to other
 operating systems (especially on Windows, where CMake's documentation really
 failed me with the find_package part). Due to differences between the versions
 of various dependencies in different distributions, Fidgety may fail to compile.
-Currently, Fidgety compiles *without warnings* on Arch Linux but I have yet to
-test it on Debian.
+Currently, Fidgety compiles *without warnings* on Arch Linux and Debian 11
+(Bullseye).
 
 # Building
 
 Fidgety requires that you have [CMake](https://cmake.org) (>= 3.14) installed
 as it is the build system used by this project. CMake version 3.14 and above
-provides important functionality that this project relies on.
+provides important functionality that this project relies on. However, only
+CMake 3.18 and above have been tested.
 
 You also need a working copy of git to download
 [googletest](https://github.com/google/googletest)
@@ -48,6 +49,10 @@ The table below shows the targets defined in the Makefile and what they do.
 | build | Compile Fidgety and the test suite (can be opted out). |
 | test | Run the test suites written for Fidgety. This will fail if the tests aren't built. |
 | install | Install to the dist/ prefix. The folder can be changed by adding `DIST_DIR=<directory>` to the end of the make command. |
+
+These targets require the use of certain coreutils (provided by GNU) like `env`
+or `mkdir`. Coreutils should already be installed by your distro so you most
+likely don't have to check that these programs exist.
 
 ## Supplementary Build Flags
 
