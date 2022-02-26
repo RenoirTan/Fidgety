@@ -15,6 +15,7 @@
 #   define FIDGETY_DECODER_HPP
 
 #   include <fstream>
+#   include <fidgety/exception.hpp>
 
 namespace Fidgety {
     enum class DecoderStatus : int32_t {
@@ -27,6 +28,14 @@ namespace Fidgety {
         CannotOpenMultipleFiles = 6,
         FilesNotOpen = 7,
         SyntaxError = 8
+    };
+
+    class DecoderException : public Exception {
+        public:
+            std::string codeAsErrorType(void) const;
+        
+        protected:
+            const char *getSimpleWhat(void) const noexcept;
     };
 
     class Decoder {

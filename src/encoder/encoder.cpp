@@ -13,6 +13,27 @@
 
 using namespace Fidgety;
 
+std::string EncoderException::codeAsErrorType(void) const {
+    switch (mCode) {
+        case 0: return "Ok";
+        case 1: return "FileNotFound";
+        case 2: return "CannotReadFile";
+        case 3: return "CannotWriteFile";
+        case 4: return "CannotCloseFile";
+        case 5: return "ResourceBusy";
+        case 6: return "CannotOpenMultipleFiles";
+        case 7: return "FilesNotOpen";
+        case 8: return "SyntaxError";
+        case 9: return "InvalidDataType";
+        case 10: return "VerifierError";
+        default: return "Other";
+    }
+}
+
+const char *EncoderException::getSimpleWhat(void) const noexcept {
+    return "A Fidgety::EncoderException occurred.";
+}
+
 Encoder::Encoder(void) {
     spdlog::debug("Encoder opened.");
 }

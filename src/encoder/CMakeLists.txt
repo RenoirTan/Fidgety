@@ -1,6 +1,7 @@
 fidgety_add_my_library(FidgetyEncoder STATIC encoder.cpp)
 set_target_properties(FidgetyEncoder PROPERTIES OUTPUT_NAME fidgety_encoder)
 fidgety_link_common_libraries(FidgetyEncoder)
+fidgety_link_exception(FidgetyEncoder)
 fidgety_install_library(FidgetyEncoder fidgety_encoder_config.cmake)
 
 if(FIDGETY_BUILD_EXTENSIONS)

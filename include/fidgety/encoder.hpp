@@ -17,6 +17,7 @@
 #   define FIDGETY_ENCODER_HPP
 
 #   include <fstream>
+#   include <fidgety/exception.hpp>
 
 namespace Fidgety {
     enum class EncoderStatus : int32_t {
@@ -31,6 +32,14 @@ namespace Fidgety {
         SyntaxError = 8,
         InvalidDataType = 9,
         VerifierError = 10
+    };
+
+    class EncoderException : public Exception {
+        public:
+            std::string codeAsErrorType(void) const;
+        
+        protected:
+            const char *getSimpleWhat(void) const noexcept;
     };
 
     class Encoder {

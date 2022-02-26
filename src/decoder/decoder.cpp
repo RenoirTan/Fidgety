@@ -14,6 +14,25 @@
 
 using namespace Fidgety;
 
+std::string DecoderException::codeAsErrorType(void) const {
+    switch (mCode) {
+        case 0: return "Ok";
+        case 1: return "FileNotFound";
+        case 2: return "CannotReadFile";
+        case 3: return "CannotWriteFile";
+        case 4: return "CannotCloseFile";
+        case 5: return "ResourceBusy";
+        case 6: return "CannotOpenMultipleFiles";
+        case 7: return "FilesNotOpen";
+        case 8: return "SyntaxError";
+        default: return "Other";
+    }
+}
+
+const char *DecoderException::getSimpleWhat(void) const noexcept {
+    return "A Fidgety::DecoderException occurred.";
+}
+
 Decoder::Decoder(void) {
     spdlog::debug("Decoder opened");
 }

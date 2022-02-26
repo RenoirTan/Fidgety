@@ -54,6 +54,8 @@ namespace Fidgety {
             int32_t mCode;
             std::string mInformation;
             std::string mSupportingInformation;
+
+            virtual const char *getSimpleWhat(void) const noexcept;
     };
 }
 

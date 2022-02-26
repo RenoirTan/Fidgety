@@ -52,7 +52,7 @@ const char *Exception::what(void) const noexcept {
     std::strcpy(error_what, description.c_str());
     return error_what;
 #else
-    return "A Fidgety::Exception occurred.";
+    return getSimpleWhat();
 #endif
 }
 
@@ -146,4 +146,8 @@ void Exception::exit(bool printToStdErr, bool outputToLog) {
         spdlog::critical(getGenericDescription());
     }
     std::exit(getCode());
+}
+
+const char *Exception::getSimpleWhat(void) const noexcept {
+    return "A Fidgety::Exception occurred.";
 }

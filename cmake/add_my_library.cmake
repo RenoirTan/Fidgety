@@ -22,6 +22,17 @@ macro(fidgety_link_common_libraries)
     target_link_libraries(${ARGV0} PRIVATE spdlog::spdlog)
 endmacro()
 
+macro(fidgety_link_exception)
+    # ARGV0: name of the library
+    if(ARGC LESS 1)
+        message(
+            FATAL_ERROR
+            "you must provide the name of the target to link Fidgety::FidgetyException to"
+        )
+    endif()
+    target_link_libraries(${ARGV0} PUBLIC Fidgety::FidgetyException)
+endmacro()
+
 macro(fidgety_install_library)
     # ARGV0: name of the library
     # ARGV1: name of the CMake file
