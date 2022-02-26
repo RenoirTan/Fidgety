@@ -110,11 +110,26 @@ If you do not want to conduct tests (and not have googletest pollute the dist/)
 directory, you can add the following environment variable to the `make` command.
 
 ```
-CMAKE_GENERATE_SUPPFLAGS=-DBUILD_TESTING=OFF
+CMAKE_GENERATE_SUPPFLAGS="-DBUILD_TESTING=OFF"
 ```
 
 For example, to build Fidgety without tests, you can enter:
 
 ```shell
-make -j8 build CMAKE_GENERATE_SUPPFLAGS=-DBUILD_TESTING=OFF
+make -j8 build CMAKE_GENERATE_SUPPFLAGS="-DBUILD_TESTING=OFF"
+```
+
+### Selecting Qt version
+
+Fidgety uses Qt6 as it is the latest version of Qt. However, some distros only
+ship Qt5 with no convenient way of installing Qt6 through that distro's package
+manager using some workaround (I'm looking at you, Debian). For backwards
+compatibility, Fidgety allows you to select which major version of Qt to use
+using the variable `FIDGETY_QT_MAJOR`. This variable only accepts `5` or `6`
+as a value and defaults to using Qt6 if no value was specified. Just like the in
+the [building tests](#opting-out-of-building-tests) section, you can specify
+which major version of Qt to use through the Makefile using this command:
+
+```shell
+make -j8 generate CMAKE_GENERATE_SUPPFLAGS="-DFIDGETY_QT_MAJOR=5"
 ```
