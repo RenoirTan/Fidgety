@@ -17,7 +17,7 @@
 namespace Fidgety {
     class NormalConfDecoder : public Decoder {
         public:
-            DecoderStatus dumpToIntermediate(void);
+            void dumpToIntermediate(void);
     };
 }
 

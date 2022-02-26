@@ -18,22 +18,26 @@
 using namespace Fidgety;
 using json_value_t = nlohmann::detail::value_t;
 
-EncoderStatus NormalConfEncoder::dumpToConf(void) {
+void NormalConfEncoder::dumpToConf(void) {
     spdlog::trace("dumping NormalConfEncoder::mIntermediateFile to NormalConfEncoder::mConfFile");
     if (!isConfOpened() || !isIntermediateOpened()) {
-        spdlog::error(
-            "NormalConfEncoder::mConfFile and NormalConfEncoder::mIntermediateFile not open ({0})",
-            (((uint8_t) isConfOpened()) << 1) | ((uint8_t) isIntermediateOpened())
-        );
-        return EncoderStatus::FilesNotOpen;
+        std::ostringstream oss;
+        oss
+            << "NormalConfEncoder::mConfFile and NormalConfEncoder::mIntermediateFile not open ("
+            << ((((uint8_t) isConfOpened()) << 1) | ((uint8_t) isIntermediateOpened()))
+            << ")";
+        const std::string error_msg = oss.str();
+        spdlog::error(error_msg);
+        throw EncoderException((int32_t) EncoderStatus::FilesNotOpen, error_msg);
     }
     spdlog::trace("NormalConfEncoder::mConfFile and NormalConfEncoder::mIntermediateFile opened");
 
     // DUMPING PART
     nlohmann::json intermediate = nlohmann::json::parse(mIntermediateFile);
     if (intermediate.type() != json_value_t::object) {
-        spdlog::error("NormalConfEncoder::mIntermediateFile is not a canonical JavaScript Object");
-        return EncoderStatus::VerifierError;
+        const std::string error_msg = "NormalConfEncoder::mIntermediateFile is not a canonical JavaScript Object";
+        spdlog::error(error_msg);
+        throw EncoderException((int32_t) EncoderStatus::VerifierError, error_msg);
     }
     size_t linesWritten = 0;
     for (auto& item : intermediate.items()) {
@@ -66,13 +70,16 @@ EncoderStatus NormalConfEncoder::dumpToConf(void) {
             case json_value_t::number_unsigned: VALUE_TO_LINE(std::uint64_t)
 #undef VALUE_TO_LINE
             default: {
-                spdlog::error(
-                    "NormalConfEncoder does not accept data types of type {0} "
-                    "encountered at key '{1}'",
-                    valueTypeName,
-                    originalKey
-                );
-                return EncoderStatus::InvalidDataType;
+                std::ostringstream oss;
+                oss
+                    << "NormalConfEncoder does not accept data types of type "
+                    << valueTypeName
+                    << " encountered at key '"
+                    << originalKey
+                    << "'";
+                const std::string error_msg = oss.str();
+                spdlog::error(error_msg);
+                throw EncoderException((int32_t) EncoderStatus::InvalidDataType, error_msg);
             }
         }
         mConfFile << ss.str() << std::endl;
@@ -85,5 +92,4 @@ EncoderStatus NormalConfEncoder::dumpToConf(void) {
         "successfully dumped NormalConfEncoder::mConfFile "
         "to NormalConfEncoder::mIntermediateFile"
     );
-    return EncoderStatus::Ok;
 }

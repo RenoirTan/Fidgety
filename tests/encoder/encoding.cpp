@@ -38,8 +38,7 @@ TEST(EncoderEncoding, EmptyJson) {
     CREATE_ENCODER(0);
     ASSERT_TRUE(encoder.isConfOpened());
     ASSERT_TRUE(encoder.isIntermediateOpened());
-    EncoderStatus status = encoder.dumpToConf();
-    ASSERT_EQ(status, EncoderStatus::Ok);
+    encoder.dumpToConf();
 }
 
 TEST(EncoderEncoding, WellFormedJson) {
@@ -47,7 +46,7 @@ TEST(EncoderEncoding, WellFormedJson) {
     CREATE_ENCODER(1);
     ASSERT_TRUE(encoder.isConfOpened());
     ASSERT_TRUE(encoder.isIntermediateOpened());
-    EncoderStatus status = encoder.dumpToConf();
+    encoder.dumpToConf();
     encoder.closeConf();
     encoder.closeIntermediate();
     ASSERT_TRUE(filesEqual(

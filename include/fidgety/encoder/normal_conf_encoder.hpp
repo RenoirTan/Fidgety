@@ -17,7 +17,7 @@
 namespace Fidgety {
     class NormalConfEncoder : public Encoder {
         public:
-            EncoderStatus dumpToConf(void);
+            void dumpToConf(void);
     };
 }
 

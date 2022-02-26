@@ -38,8 +38,7 @@ TEST(DecoderDecoding, DumpConf) {
     decoder.openIntermediate("../../../tmp/tests/decoder/test_0.json");
     EXPECT_TRUE(decoder.isConfOpened());
     EXPECT_TRUE(decoder.isIntermediateOpened());
-    DecoderStatus status = decoder.dumpToIntermediate();
-    EXPECT_EQ(status, DecoderStatus::Ok);
+    decoder.dumpToIntermediate();
     decoder.closeConf();
     decoder.closeIntermediate();
     spdlog::debug("opening answerKey");
@@ -53,20 +52,31 @@ TEST(DecoderDecoding, DumpConf) {
 
 TEST(DecoderDecoding, NoEqualsError) {
     NormalConfDecoder decoder;
+    spdlog::set_level(spdlog::level::trace);
     decoder.openConf("../../../resources/tests/decoder/test_1.conf");
     decoder.openIntermediate("../../../tmp/tests/decoder/test_1.json");
     EXPECT_TRUE(decoder.isConfOpened());
     EXPECT_TRUE(decoder.isIntermediateOpened());
-    DecoderStatus status = decoder.dumpToIntermediate();
-    EXPECT_EQ(status, DecoderStatus::SyntaxError);
+    try {
+        decoder.dumpToIntermediate();
+    } catch (const DecoderException &e) {
+        // ASSERT_EQ(e.getCode(), (int32_t) DecoderStatus::SyntaxError);
+        spdlog::info("code: {0}", e.getCode());
+        spdlog::info("information: {0}", e.getInformation());
+        spdlog::info("supporting: {0}", e.getSupportingInformation());
+    }
 }
 
 TEST(DecoderDecoding, NoKeyError) {
     NormalConfDecoder decoder;
+    spdlog::set_level(spdlog::level::trace);
     decoder.openConf("../../../resources/tests/decoder/test_2.conf");
     decoder.openIntermediate("../../../tmp/tests/decoder/test_2.json");
     EXPECT_TRUE(decoder.isConfOpened());
     EXPECT_TRUE(decoder.isIntermediateOpened());
-    DecoderStatus status = decoder.dumpToIntermediate();
-    EXPECT_EQ(status, DecoderStatus::SyntaxError);
+    try {
+        decoder.dumpToIntermediate();
+    } catch (const DecoderException &e) {
+        ASSERT_EQ(e.getCode(), (int32_t) DecoderStatus::SyntaxError);
+    }
 }

@@ -36,6 +36,7 @@ namespace Fidgety {
 
     class EncoderException : public Exception {
         public:
+            using Exception::Exception;
             std::string codeAsErrorType(void) const;
         
         protected:
@@ -44,17 +45,17 @@ namespace Fidgety {
 
     class Encoder {
         public:
-            Encoder(void);
+            Encoder(void) noexcept;
             ~Encoder(void);
-            bool isConfOpened(void);
-            EncoderStatus openConf(const std::string &inPath);
-            EncoderStatus closeConf(void);
-            EncoderStatus useNewConf(std::ofstream &&newConf);
-            bool isIntermediateOpened(void);
-            EncoderStatus openIntermediate(const std::string &inPath);
-            EncoderStatus closeIntermediate(void);
-            EncoderStatus useNewIntermediate(std::ifstream &&newIntermediate);
-            virtual EncoderStatus dumpToConf(void);
+            bool isConfOpened(void) noexcept;
+            void openConf(const std::string &inPath);
+            void closeConf(void);
+            void useNewConf(std::ofstream &&newConf);
+            bool isIntermediateOpened(void) noexcept;
+            void openIntermediate(const std::string &inPath);
+            void closeIntermediate(void);
+            void useNewIntermediate(std::ifstream &&newIntermediate);
+            virtual void dumpToConf(void);
 
         protected:
             std::ofstream mConfFile;

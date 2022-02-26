@@ -32,6 +32,7 @@ namespace Fidgety {
 
     class DecoderException : public Exception {
         public:
+            using Exception::Exception;
             std::string codeAsErrorType(void) const;
         
         protected:
@@ -40,17 +41,17 @@ namespace Fidgety {
 
     class Decoder {
         public:
-            Decoder(void);
+            Decoder(void) noexcept;
             ~Decoder(void);
-            bool isConfOpened(void);
-            DecoderStatus openConf(const std::string &inPath);
-            DecoderStatus closeConf(void);
-            DecoderStatus useNewConf(std::ifstream &&newConf);
-            bool isIntermediateOpened(void);
-            DecoderStatus openIntermediate(const std::string &outPath);
-            DecoderStatus closeIntermediate(void);
-            DecoderStatus useNewIntermediate(std::ofstream &&newIntermediate);
-            virtual DecoderStatus dumpToIntermediate(void);
+            bool isConfOpened(void) noexcept;
+            void openConf(const std::string &inPath);
+            void closeConf(void);
+            void useNewConf(std::ifstream &&newConf);
+            bool isIntermediateOpened(void) noexcept;
+            void openIntermediate(const std::string &outPath);
+            void closeIntermediate(void);
+            void useNewIntermediate(std::ofstream &&newIntermediate);
+            virtual void dumpToIntermediate(void);
         
         protected:
             std::ifstream mConfFile;

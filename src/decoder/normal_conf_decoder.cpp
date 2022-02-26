@@ -9,6 +9,7 @@
  * @copyright Copyright (c) 2022
  */
 
+#include <sstream>
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
 #include <fidgety/decoder/normal_conf_decoder.hpp>
@@ -16,14 +17,17 @@
 
 using namespace Fidgety;
 
-DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
+void NormalConfDecoder::dumpToIntermediate(void) {
     spdlog::trace("dumping NormalConfDecoder::mConfFile to NormalConfDecoder::mIntermediateFile");
     if (!isConfOpened() || !isIntermediateOpened()) {
-        spdlog::error(
-            "NormalConfDecoder::mConfFile and NormalConfDecoder::mIntermediateFile not open ({0})",
-            (((uint8_t) isConfOpened()) << 1) | ((uint8_t) isIntermediateOpened())
-        );
-        return DecoderStatus::FilesNotOpen;
+        std::ostringstream oss;
+        oss
+            << "NormalConfDecoder::mConfFile and NormalConfDecoder::mIntermediateFile not open ("
+            << ((((uint8_t) isConfOpened()) << 1) | ((uint8_t) isIntermediateOpened()))
+            << ")";
+        const std::string error_msg = oss.str();
+        spdlog::error(error_msg);
+        throw DecoderException((int32_t) DecoderStatus::FilesNotOpen, error_msg);
     }
     spdlog::trace("NormalConfDecoder::mConfFile and NormalConfDecoder::mIntermediateFile opened");
 
@@ -49,16 +53,23 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
 
         size_t equalsIndex = noComment.find('=');
         if (equalsIndex == std::string::npos) {
-            spdlog::error("could not find '=' at line {0}", lineNo);
-            return DecoderStatus::SyntaxError;
+            std::ostringstream oss;
+            oss << "could not find '=' at line " << lineNo;
+            const std::string error_msg = oss.str();
+            spdlog::error(error_msg);
+            DecoderException exception((int32_t) DecoderStatus::SyntaxError, error_msg);
+            throw exception;
         }
         std::string key = noComment.substr(0, equalsIndex);
         std::string value = noComment.substr(equalsIndex + 1);
         trim(key); trim(value);
         
         if (key == "") {
-            spdlog::error("no key before '=' at line {0}", lineNo);
-            return DecoderStatus::SyntaxError;
+            std::ostringstream oss;
+            oss << "no key before '=' at line " << lineNo;
+            const std::string error_msg = oss.str();
+            spdlog::error(error_msg);
+            throw DecoderException((int32_t) DecoderStatus::SyntaxError, error_msg);
         }
         if (intermediate.contains(key)) {
             spdlog::warn(
@@ -76,5 +87,4 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
         "successfully dumped NormalConfDecoder::mConfFile "
         "to NormalConfDecoder::mIntermediateFile"
     );
-    return DecoderStatus::Ok;
 }
