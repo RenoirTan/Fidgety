@@ -2,5 +2,6 @@
 #   define FIDGETY_CONFIG_H
 
 #   cmakedefine FIDGETY_QT_MAJOR ${FIDGETY_QT_MAJOR}
+#   cmakedefine FIDGETY_EXCEPTION_WHAT_USE_DESCRIPTION
 
 #endif

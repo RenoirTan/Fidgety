@@ -58,6 +58,15 @@ else()
 Fidgety only targets Qt6 or Qt5 (legacy)")
 endif()
 message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
+
+set(
+    FIDGETY_EXCEPTION_WHAT_USE_DESCRIPTION OFF CACHE BOOL
+    "Whether to use Exception::getLongDescription(void) for Exception::what(void). \
+This may cause memory leaks if turned on. \
+If this option is turned off (which it is by default), Exception::what(void) \
+will used a constant char[] expression instead."
+)
+
 configure_file(${FIDGETY_CONFIG_HEADER_IN} ${FIDGETY_CONFIG_HEADER_OUT})
 
 find_package(spdlog REQUIRED)

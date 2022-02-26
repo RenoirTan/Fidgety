@@ -18,8 +18,12 @@ TEST(ExceptionExceptions, StringFormat) {
     EXPECT_EQ(exception.getShortDescription(), "");
     EXPECT_EQ(exception.getGenericDescription(), ": information");
     EXPECT_EQ(exception.getLongDescription(), EXPECTED_ANSWER);
-#undef EXPECTED_ANSWER
+#ifdef FIDGETY_EXCEPTION_WHAT_USE_DESCRIPTION
+    EXPECT_EQ(strcmp(exception.what(), EXPECTED_ANSWER), 0);
+#else
     EXPECT_EQ(strcmp(exception.what(), "A Fidgety::Exception occurred."), 0);
+#endif
+#undef EXPECTED_ANSWER
 }
 
 TEST(ExceptionExceptions, Exit) {

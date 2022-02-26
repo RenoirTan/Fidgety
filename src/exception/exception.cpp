@@ -46,7 +46,14 @@ Exception &Exception::operator=(const Exception &origin) noexcept {
 Exception::~Exception(void) { }
 
 const char *Exception::what(void) const noexcept {
+#ifdef FIDGETY_EXCEPTION_WHAT_USE_DESCRIPTION
+    std::string description = getLongDescription();
+    char *error_what = new char[description.length()+1];
+    std::strcpy(error_what, description.c_str());
+    return error_what;
+#else
     return "A Fidgety::Exception occurred.";
+#endif
 }
 
 Exception::Exception(

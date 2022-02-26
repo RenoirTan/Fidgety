@@ -15,6 +15,7 @@
 #   include <cstdint>
 #   include <exception>
 #   include <string>
+#   include <fidgety/config.h>
 
 namespace Fidgety {
     class Exception : public std::exception {
