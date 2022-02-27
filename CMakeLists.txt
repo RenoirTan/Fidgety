@@ -1,18 +1,27 @@
 cmake_minimum_required(VERSION 3.14)
 project(Fidgety)
 
+##### INCLUDES #####
+
 include(GNUInstallDirs)
+include(FetchContent)
 include(cmake/add_my_library.cmake)
+include(cmake/add_dependencies.cmake)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_C_STANDARD 90)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+#~~~~ INCLUDES ~~~~#
 
+##### PROJECT BUILD OPTIONS #####
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    set(FIDGETY_MASTER_PROJECT ON)
+else()
+    set(FIDGETY_MASTER_PROJECT OFF)
+endif()
+
+set(
+    FIDGETY_BUILD_EXTENSIONS ${FIDGETY_MASTER_PROJECT}
+    CACHE BOOL "Whether to build the extensions used by the fidgety editor"
+)
 set(
     FIDGETY_EXPORT_CMAKE_DIR
     "${CMAKE_INSTALL_LIBDIR}/cmake/fidgety"
@@ -29,37 +38,69 @@ set(
     CACHE STRING "The directory where fidgety's extension libraries are installed to"
 )
 set(
+    FIDGETY_GTEST_FROM_SOURCE ON
+    CACHE BOOL "whether to download googletest and build it from source (recommended for windows)"
+)
+set(
     FIDGETY_GOOGLETEST_RELEASE_URL
     "https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"
     CACHE STRING "The URL of the release of googletest to use"
 )
-set(FIDGETY_FMTLIB_HEADER_ONLY ON CACHE BOOL "Whether to use the header-only version of fmt")
-set(FIDGETY_QT_MAJOR 6 CACHE STRING "The major version number of Qt being used to build Fidgety")
-
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    set(FIDGETY_MASTER_PROJECT ON)
-else()
-    set(FIDGETY_MASTER_PROJECT OFF)
-endif()
-
 set(
-    FIDGETY_BUILD_EXTENSIONS ${FIDGETY_MASTER_PROJECT}
-    CACHE BOOL "Whether to build the extensions used by the fidgety editor"
+    FIDGETY_FMTLIB_FROM_SOURCE OFF
+    CACHE BOOL "whether to download fmtlib/fmt and build it from source"
 )
-
-set(FIDGETY_CONFIG_HEADER_IN "${PROJECT_SOURCE_DIR}/include/fidgety/config.h.in")
-set(FIDGETY_CONFIG_HEADER_OUT "${PROJECT_SOURCE_DIR}/include/fidgety/config.h")
-
-if(FIDGETY_QT_MAJOR STREQUAL 6)
-    find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
-elseif(FIDGETY_QT_MAJOR STREQUAL 5)
-    find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
-else()
-    message(FATAL_ERROR "Invalid value for FIDGETY_QT_MAJOR: ${FIDGETY_QT_MAJOR}. \
-Fidgety only targets Qt6 or Qt5 (legacy)")
+set(
+    FIDGETY_FMTLIB_RELEASE_URL
+    "https://github.com/fmtlib/fmt/archive/refs/tags/8.1.1.zip"
+    CACHE STRING "The URL of the release of fmt to use"
+)
+set(
+    FIDGETY_SPDLOG_FROM_SOURCE OFF
+    CACHE BOOL "whether to download spdlog and build it from source (recommended for windows)"
+)
+set(
+    FIDGETY_SPDLOG_RELEASE_URL
+    "https://github.com/gabime/spdlog/archive/refs/tags/v1.9.2.zip"
+    CACHE STRING "The URL of the release of spdlog to use"
+)
+set(
+    FIDGETY_NLOHMANNJSON_FROM_SOURCE OFF CACHE BOOL
+    "whether to download nlohmann/json and build it from source (recommended for windows)"
+)
+set(
+    FIDGETY_NLOHMANNJSON_RELEASE_URL
+    "https://github.com/nlohmann/json/archive/refs/tags/v3.10.5.zip"
+    CACHE STRING "The URL of the release of nlohmann/json to use"
+)
+set(
+    FIDGETY_QT_FROM_SOURCE OFF
+    CACHE BOOL "whether to download Qt and build it from source"
+)
+set(FIDGETY_QT_MAJOR 6 CACHE STRING "The major version number of Qt being used to build Fidgety")
+set(
+    FIDGETY_QT_REPO_URL
+    "https://code.qt.io/qt/qtbase.git"
+    CACHE STRING "The URL to the git repository containing the source code of qtbase"
+)
+if(${FIDGETY_QT_FROM_SOURCE})
+    if(FIDGETY_QT_MAJOR STREQUAL 6)
+        set(
+            FIDGETY_QT_REPO_TAG "0145fe008894c3b280649b02725e6ec5a5605006"
+            CACHE STRING "The tag in the Qt source tree to use"
+        )
+    elseif(FIDGETY_QT_MAJOR STREQUAL 5)
+        set(
+            FIDGETY_QT_REPO_TAG "f5bcf9b017a84c08983d8e8d00d7177ecd6bbd2e"
+            CACHE STRING "The tag in the Qt source tree to use"
+        )
+    else()
+        set(
+            FIDGETY_QT_REPO_TAG ""
+            CACHE STRING "The tag in the Qt source tree to use"
+        )
+    endif()
 endif()
-message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
-
 set(
     FIDGETY_EXCEPTION_WHAT_USE_DESCRIPTION OFF CACHE BOOL
     "Whether to use Exception::getLongDescription(void) for Exception::what(void). \
@@ -67,11 +108,68 @@ This may cause memory leaks if turned on. \
 If this option is turned off (which it is by default), Exception::what(void) \
 will used a constant char[] expression instead."
 )
+set(FIDGETY_FMTLIB_HEADER_ONLY ON CACHE BOOL "Whether to use the header-only version of fmt")
+set(FIDGETY_BUILD_TESTING ON CACHE BOOL "whether to build fidgety's tests")
 
+#~~~~ PROJECT BUILD OPTIONS ~~~~#
+
+##### CMAKE SETTINGS #####
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 90)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+#~~~~ CMAKE SETTINGS ~~~~#
+
+##### CONFIG.H.IN #####
+
+set(FIDGETY_CONFIG_HEADER_IN "${PROJECT_SOURCE_DIR}/include/fidgety/config.h.in")
+set(FIDGETY_CONFIG_HEADER_OUT "${PROJECT_SOURCE_DIR}/include/fidgety/config.h")
 configure_file(${FIDGETY_CONFIG_HEADER_IN} ${FIDGETY_CONFIG_HEADER_OUT})
 
-find_package(spdlog REQUIRED)
-find_package(nlohmann_json REQUIRED)
+#~~~~ CONFIG.H.IN ~~~~#
+
+##### BUILD DEPENDENCIES #####
+
+if(${FIDGETY_QT_FROM_SOURCE})
+    fidgety_add_dependency_sourced_git(Qt ${FIDGETY_QT_REPO_URL} ${FIDGETY_QT_REPO_TAG})
+else()
+    if(FIDGETY_QT_MAJOR STREQUAL 6)
+        find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+    elseif(FIDGETY_QT_MAJOR STREQUAL 5)
+        find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+    else()
+        message(FATAL_ERROR "Invalid value for FIDGETY_QT_MAJOR: ${FIDGETY_QT_MAJOR}. \
+Fidgety only targets Qt6 or Qt5 (legacy)")
+    endif()
+    message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
+endif()
+if(${FIDGETY_FMTLIB_FROM_SOURCE})
+    set(FMT_INSTALL ON)
+    fidgety_add_dependency_sourced_url(fmt ${FIDGETY_FMTLIB_RELEASE_URL})
+else()
+    fidgety_add_dependency_installed(fmt)
+endif()
+if(${FIDGETY_SPDLOG_FROM_SOURCE})
+    set(SPDLOG_INSTALL ON)
+    fidgety_add_dependency_sourced_url(spdlog ${FIDGETY_SPDLOG_RELEASE_URL})
+else()
+    fidgety_add_dependency_installed(spdlog)
+endif()
+if(${FIDGETY_NLOHMANNJSON_FROM_SOURCE})
+    fidgety_add_dependency_sourced_url(nlohmann_json ${FIDGETY_NLOHMANNJSON_RELEASE_URL})
+else()
+    fidgety_add_dependency_installed(nlohmann_json)
+endif()
+
+#~~~~ BUILD DEPENDENCIES ~~~~#
+
+##### FIDGETY HEADERS #####
 
 #include_directories(include)
 #file(GLOB_RECURSE fidgety_headers "include/*")
@@ -88,13 +186,12 @@ if(FIDGETY_MASTER_PROJECT)
 endif()
 fidgety_install_library(FidgetyHeaders fidgety_headers_config.cmake)
 
+#~~~~ FIDGETY HEADERS ~~~~#
+
 add_subdirectory(src)
 
-set(FIDGETY_BUILD_TESTING ON CACHE BOOL "whether to build fidgety's tests")
-set(
-    FIDGETY_GTEST_FROM_SOURCE ON
-    CACHE BOOL "whether to download googletest and build it from source (recommended for windows)"
-)
+##### TESTING #####
+
 if(FIDGETY_MASTER_PROJECT)
     include(CTest)
 endif()
@@ -106,3 +203,5 @@ if((FIDGETY_MASTER_PROJECT OR FIDGETY_BUILD_TESTING) AND BUILD_TESTING)
     message(STATUS "adding 'tests' subdirectory")
     add_subdirectory(tests)
 endif()
+
+#~~~~ TESTING ~~~~#
