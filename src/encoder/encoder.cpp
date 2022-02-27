@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2022
  */
 
-#include <sstream>
+#include <fmt/core.h>
 #include "spdlog/spdlog.h"
 #include <fidgety/encoder.hpp>
 
@@ -64,9 +64,10 @@ void Encoder::openConf(const std::string &outPath) {
     } else {
         mConfFile.open(outPath, std::ofstream::trunc);
         if (mConfFile.fail()) {
-            std::ostringstream oss;
-            oss << "could not open Encoder::mConfFile with filepath: " << outPath;
-            const std::string error_msg = oss.str();
+            const std::string error_msg = fmt::format(
+                "could not open Encoder::mConfFile with filepath: {0}",
+                outPath
+            );
             spdlog::error(error_msg);
             throw EncoderException((int32_t) EncoderStatus::CannotReadFile, error_msg);
         } else {
@@ -117,9 +118,10 @@ void Encoder::openIntermediate(const std::string &inPath) {
     } else {
         mIntermediateFile.open(inPath, std::ifstream::in);
         if (mIntermediateFile.fail()) {
-            std::ostringstream oss;
-            oss << "could not open Encoder::mIntermediateFile with filepath: " << inPath;
-            const std::string error_msg = oss.str();
+            const std::string error_msg = fmt::format(
+                "could not open Encoder::mIntermediateFile with filepath: {0}",
+                inPath
+            );
             spdlog::error(error_msg);
             throw EncoderException((int32_t) EncoderStatus::CannotReadFile, error_msg);
         } else {

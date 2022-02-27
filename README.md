@@ -32,11 +32,15 @@ You also need a working copy of git to download
 [googletest](https://github.com/google/googletest)
 from [Github](https://github.com).
 
-You will also need to install Qt6, spdlog and nlohmann_json with
+You will also need to install Qt5/6, spdlog and nlohmann_json with
 the corresponding *.cmake files in your system directories. This allows CMake
 to search and load these packages through the `find_package` function.
 Your distribution's package manager should be able to handle the installation
 of these libraries for you without much trouble.
+
+[fmt](https://github.com/fmtlib/fmt) is a critical component of Fidgety.
+However, spdlog already includes fmt as a dependency, so there should
+hopefully be no need to explicitly install fmt.
 
 Preferably, you should have a recent version of Make installed so that you can
 run the various common tasks (targets) in /Makefile.

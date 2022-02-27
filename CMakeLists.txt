@@ -33,6 +33,7 @@ set(
     "https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"
     CACHE STRING "The URL of the release of googletest to use"
 )
+set(FIDGETY_FMTLIB_HEADER_ONLY ON CACHE BOOL "Whether to use the header-only version of fmt")
 set(FIDGETY_QT_MAJOR 6 CACHE STRING "The major version number of Qt being used to build Fidgety")
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

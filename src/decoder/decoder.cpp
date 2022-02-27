@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2022
  */
 
-#include <sstream>
+#include <fmt/core.h>
 #include "spdlog/spdlog.h"
 #include <fidgety/decoder.hpp>
 
@@ -115,9 +115,10 @@ void Decoder::openIntermediate(const std::string &outPath) {
     } else {
         mIntermediateFile.open(outPath, std::ofstream::trunc);
         if (mIntermediateFile.fail()) {
-            std::ostringstream oss;
-            oss << "could not open Decoder::mIntermediateFile with filepath: " << outPath;
-            const std::string error_msg = oss.str();
+            const std::string error_msg = fmt::format(
+                "could not open Decoder::mIntermediateFile with filepath: {0}",
+                outPath
+            );
             spdlog::error(error_msg);
             throw DecoderException((int32_t) DecoderStatus::CannotReadFile, error_msg);
         } else {

@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2022
  */
 
-#include <sstream>
+#include <fmt/core.h>
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
 #include <fidgety/decoder/normal_conf_decoder.hpp>
@@ -20,12 +20,10 @@ using namespace Fidgety;
 void NormalConfDecoder::dumpToIntermediate(void) {
     spdlog::trace("dumping NormalConfDecoder::mConfFile to NormalConfDecoder::mIntermediateFile");
     if (!isConfOpened() || !isIntermediateOpened()) {
-        std::ostringstream oss;
-        oss
-            << "NormalConfDecoder::mConfFile and NormalConfDecoder::mIntermediateFile not open ("
-            << ((((uint8_t) isConfOpened()) << 1) | ((uint8_t) isIntermediateOpened()))
-            << ")";
-        const std::string error_msg = oss.str();
+        const std::string error_msg = fmt::format(
+            "NormalConfDecoder::mConfFile and NormalConfDecoder::mIntermediateFile not open ({0})",
+            (((uint8_t)isConfOpened()) << 1) | ((uint8_t)isIntermediateOpened())
+        );
         spdlog::error(error_msg);
         throw DecoderException((int32_t) DecoderStatus::FilesNotOpen, error_msg);
     }
@@ -53,9 +51,7 @@ void NormalConfDecoder::dumpToIntermediate(void) {
 
         size_t equalsIndex = noComment.find('=');
         if (equalsIndex == std::string::npos) {
-            std::ostringstream oss;
-            oss << "could not find '=' at line " << lineNo;
-            const std::string error_msg = oss.str();
+            const std::string error_msg = fmt::format("could not find '=' at line {0}", lineNo);
             spdlog::error(error_msg);
             DecoderException exception((int32_t) DecoderStatus::SyntaxError, error_msg);
             throw exception;
@@ -65,9 +61,7 @@ void NormalConfDecoder::dumpToIntermediate(void) {
         trim(key); trim(value);
         
         if (key == "") {
-            std::ostringstream oss;
-            oss << "no key before '=' at line " << lineNo;
-            const std::string error_msg = oss.str();
+            const std::string error_msg = fmt::format("no key before '=' at line {0}", lineNo);
             spdlog::error(error_msg);
             throw DecoderException((int32_t) DecoderStatus::SyntaxError, error_msg);
         }

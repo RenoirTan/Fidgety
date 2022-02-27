@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2022
  */
 
-#include <sstream>
+#include <fmt/core.h>
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
 #include <fidgety/encoder/normal_conf_encoder.hpp>
@@ -21,12 +21,10 @@ using json_value_t = nlohmann::detail::value_t;
 void NormalConfEncoder::dumpToConf(void) {
     spdlog::trace("dumping NormalConfEncoder::mIntermediateFile to NormalConfEncoder::mConfFile");
     if (!isConfOpened() || !isIntermediateOpened()) {
-        std::ostringstream oss;
-        oss
-            << "NormalConfEncoder::mConfFile and NormalConfEncoder::mIntermediateFile not open ("
-            << ((((uint8_t) isConfOpened()) << 1) | ((uint8_t) isIntermediateOpened()))
-            << ")";
-        const std::string error_msg = oss.str();
+        const std::string error_msg = fmt::format(
+            "NormalConfEncoder::mConfFile and NormalConfEncoder::mIntermediateFile not open ({0})",
+            (((uint8_t)isConfOpened()) << 1) | ((uint8_t)isIntermediateOpened())
+        );
         spdlog::error(error_msg);
         throw EncoderException((int32_t) EncoderStatus::FilesNotOpen, error_msg);
     }
@@ -52,17 +50,17 @@ void NormalConfEncoder::dumpToConf(void) {
         auto value = item.value();
         json_value_t valueType = value.type();
         std::string valueTypeName = value.type_name();
-        std::ostringstream ss;
+        std::string line;
         switch (valueType) {
             case json_value_t::boolean: {
                 bool bvalue = (bool) value;
-                ss << key << "=" << (bvalue ? "y" : "n");
+                line = fmt::format("{0}={1}", key, bvalue ? "y" : "n");
                 break;
             }
-#define VALUE_TO_LINE(datatype) {             \
-    datatype forced_value = (datatype) value; \
-    ss << key << "=" << forced_value;         \
-    break;                                    \
+#define VALUE_TO_LINE(datatype) {                     \
+    datatype forced_value = (datatype) value;         \
+    line = fmt::format("{0}={1}", key, forced_value); \
+    break;                                            \
 }
             case json_value_t::string: VALUE_TO_LINE(std::string)
             case json_value_t::number_float: VALUE_TO_LINE(std::double_t)
@@ -70,19 +68,17 @@ void NormalConfEncoder::dumpToConf(void) {
             case json_value_t::number_unsigned: VALUE_TO_LINE(std::uint64_t)
 #undef VALUE_TO_LINE
             default: {
-                std::ostringstream oss;
-                oss
-                    << "NormalConfEncoder does not accept data types of type "
-                    << valueTypeName
-                    << " encountered at key '"
-                    << originalKey
-                    << "'";
-                const std::string error_msg = oss.str();
+                const std::string error_msg = fmt::format(
+                    "NormalConfEncoder does not accept data types of type {0} "
+                    "encountered at key '{1}'",
+                    valueTypeName,
+                    originalKey
+                );
                 spdlog::error(error_msg);
                 throw EncoderException((int32_t) EncoderStatus::InvalidDataType, error_msg);
             }
         }
-        mConfFile << ss.str() << std::endl;
+        mConfFile << line << std::endl;
         ++linesWritten;
     }
 

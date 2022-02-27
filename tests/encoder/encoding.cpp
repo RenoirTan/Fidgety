@@ -1,19 +1,19 @@
 #include <iostream>
 #include <string>
 #include <fidgety/encoder/normal_conf_encoder.hpp>
+#include <fmt/core.h>
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 #include "spdlog/spdlog.h"
 
 using namespace Fidgety;
 
-#define CREATE_ENCODER(testNo)                                           \
-    NormalConfEncoder encoder;                                           \
-    std::ostringstream cs, is;                                           \
-    cs << "../../../tmp/tests/encoder/test_" << testNo << ".conf";       \
-    is << "../../../resources/tests/encoder/test_" << testNo << ".json"; \
-    encoder.openConf(cs.str());                                          \
-    encoder.openIntermediate(is.str());
+#define CREATE_ENCODER(testNo)                                                                    \
+    NormalConfEncoder encoder;                                                                    \
+    const std::string cs = fmt::format("../../../tmp/tests/encoder/test_{0}.conf", testNo);       \
+    const std::string is = fmt::format("../../../resources/tests/encoder/test_{0}.json", testNo); \
+    encoder.openConf(cs);                                                                         \
+    encoder.openIntermediate(is);
 
 bool filesEqual(const std::string &pathA, const std::string &pathB) {
     std::ifstream fileA(pathA), fileB(pathB);

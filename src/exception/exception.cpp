@@ -10,7 +10,6 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <sstream>
 #include "spdlog/spdlog.h"
 #include <fidgety/exception.hpp>
 #include <fidgety/_utils.hpp>
@@ -103,21 +102,14 @@ const std::string &Exception::getSupportingInformation(void) const {
 }
 
 std::string Exception::getShortDescription(void) const {
-    std::ostringstream oss;
-    oss << codeAsErrorType();
-    return oss.str();
+    return codeAsErrorType();
 }
 
 std::string Exception::getGenericDescription(void) const {
-    std::ostringstream oss;
-    oss << codeAsErrorType() << ": " << getInformation();
-    return oss.str();
+    return fmt::format("{0}: {1}", codeAsErrorType(), getInformation());
 }
 
 std::string Exception::getLongDescription(void) const {
-    std::ostringstream oss;
-    oss << codeAsErrorType() << ": " << getInformation() << std::endl;
-
     /*
     const std::string &supportingInfo = getSupportingInformation();
     if (!supportingInfo.empty()) {
@@ -130,12 +122,10 @@ std::string Exception::getLongDescription(void) const {
     */
     std::string supportingInfo = tabIndentSed(getSupportingInformation());
     if (supportingInfo.empty()) {
-        oss << "No extra details provided";
+        return fmt::format("{0}\nNo extra details provided", getGenericDescription());
     } else {
-        oss << "Details:" << std::endl << supportingInfo;
+        return fmt::format("{0}\nDetails:\n{1}", getGenericDescription(), supportingInfo);
     }
-
-    return oss.str();
 }
 
 void Exception::exit(bool printToStdErr, bool outputToLog) {
