@@ -32,7 +32,7 @@ You also need a working copy of git to download
 [googletest](https://github.com/google/googletest)
 from [Github](https://github.com).
 
-You will also need to install Qt5/6, spdlog and nlohmann_json with
+You will also need to install Qt5/6, spdlog, fmt and nlohmann_json with
 the corresponding *.cmake files in your system directories. This allows CMake
 to search and load these packages through the `find_package` function.
 Your distribution's package manager should be able to handle the installation
@@ -151,6 +151,30 @@ computer but not the swap you have allocated from your storage disk(s). For
 example, if your computer has a 6C/12T CPU (like the AMD Ryzen 5 5600X) with
 16 GiB of RAM, `N` should be `8` and not `12` as the amount of RAM is the
 limiting factor here.
+
+### Building dependencies from source
+
+By default, most of Fidgety's dependencies have been installed into the system
+directories by your distro's package manager. Nonetheless, some users may want
+to build the dependencies from source instead of using CMake's find_package
+to look for them. There is only experimental support for this feature though.
+
+You can change set which dependencies to build from source by setting the
+following variables to `ON`:
+
+1. FIDGETY_GTEST_FROM_SOURCE
+2. FIDGETY_FMTLIB_FROM_SOURCE
+3. FIDGETY_SPDLOG_FROM_SOURCE
+4. FIDGETY_NLOHMANNJSON_FROM_SOURCE
+5. FIDGETY_QT_FROM_SOURCE
+
+Do note that if you intend to build `spdlog` from source, you should set
+`SPDLOG_FMT_EXTERNAL` or `SPDLOG_FMT_EXTERNAL_HO` to `ON`, because the `fmt`
+bundled in `spdlog` does not build successfully and hence cannot be used to
+build `spdlog`.
+
+I haven't managed to build `Qt` from source yet with my current CMakeLists.txt.
+Any help would be appreciated.
 
 ### Opting out of building tests
 
