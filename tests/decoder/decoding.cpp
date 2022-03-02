@@ -34,49 +34,38 @@ TEST(DecoderDecoding, DumpConf) {
     spdlog::set_level(spdlog::level::trace);
     spdlog::debug("present working directory: {0}", pwd);
     NormalConfDecoder decoder;
-    decoder.openConf("../../../resources/tests/decoder/test_0.conf");
-    decoder.openIntermediate("../../../tmp/tests/decoder/test_0.json");
-    EXPECT_TRUE(decoder.isConfOpened());
-    EXPECT_TRUE(decoder.isIntermediateOpened());
-    decoder.dumpToIntermediate();
-    decoder.closeConf();
-    decoder.closeIntermediate();
+    ASSERT_EQ(decoder.openConf("../../../resources/tests/decoder/test_0.conf"), DecoderStatus::Ok);
+    ASSERT_EQ(decoder.openIntermediate("../../../tmp/tests/decoder/test_0.json"), DecoderStatus::Ok);
+    ASSERT_TRUE(decoder.isConfOpened());
+    ASSERT_TRUE(decoder.isIntermediateOpened());
+    ASSERT_EQ(decoder.dumpToIntermediate(), DecoderStatus::Ok);
+    ASSERT_EQ(decoder.closeConf(), DecoderStatus::Ok);
+    ASSERT_EQ(decoder.closeIntermediate(), DecoderStatus::Ok);
     spdlog::debug("opening answerKey");
     nlohmann::json answerKey = loadJsonFromFile(
         "../../../resources/tests/decoder/test_0_answer.json"
     );
     spdlog::debug("opening myAnswer");
     nlohmann::json myAnswer = loadJsonFromFile("../../../tmp/tests/decoder/test_0.json");
-    EXPECT_EQ(myAnswer, answerKey);
+    ASSERT_EQ(myAnswer, answerKey);
 }
 
 TEST(DecoderDecoding, NoEqualsError) {
     NormalConfDecoder decoder;
     spdlog::set_level(spdlog::level::trace);
-    decoder.openConf("../../../resources/tests/decoder/test_1.conf");
-    decoder.openIntermediate("../../../tmp/tests/decoder/test_1.json");
-    EXPECT_TRUE(decoder.isConfOpened());
-    EXPECT_TRUE(decoder.isIntermediateOpened());
-    try {
-        decoder.dumpToIntermediate();
-    } catch (const DecoderException &e) {
-        // ASSERT_EQ(e.getCode(), (int32_t) DecoderStatus::SyntaxError);
-        spdlog::info("code: {0}", e.getCode());
-        spdlog::info("information: {0}", e.getInformation());
-        spdlog::info("supporting: {0}", e.getSupportingInformation());
-    }
+    ASSERT_EQ(decoder.openConf("../../../resources/tests/decoder/test_1.conf"), DecoderStatus::Ok);
+    ASSERT_EQ(decoder.openIntermediate("../../../tmp/tests/decoder/test_1.json"), DecoderStatus::Ok);
+    ASSERT_TRUE(decoder.isConfOpened());
+    ASSERT_TRUE(decoder.isIntermediateOpened());
+    ASSERT_EQ(decoder.dumpToIntermediate(), DecoderStatus::SyntaxError);
 }
 
 TEST(DecoderDecoding, NoKeyError) {
     NormalConfDecoder decoder;
     spdlog::set_level(spdlog::level::trace);
-    decoder.openConf("../../../resources/tests/decoder/test_2.conf");
-    decoder.openIntermediate("../../../tmp/tests/decoder/test_2.json");
-    EXPECT_TRUE(decoder.isConfOpened());
-    EXPECT_TRUE(decoder.isIntermediateOpened());
-    try {
-        decoder.dumpToIntermediate();
-    } catch (const DecoderException &e) {
-        ASSERT_EQ(e.getCode(), (int32_t) DecoderStatus::SyntaxError);
-    }
+    ASSERT_EQ(decoder.openConf("../../../resources/tests/decoder/test_2.conf"), DecoderStatus::Ok);
+    ASSERT_EQ(decoder.openIntermediate("../../../tmp/tests/decoder/test_2.json"), DecoderStatus::Ok);
+    ASSERT_TRUE(decoder.isConfOpened());
+    ASSERT_TRUE(decoder.isIntermediateOpened());
+    ASSERT_EQ(decoder.dumpToIntermediate(), DecoderStatus::SyntaxError);
 }

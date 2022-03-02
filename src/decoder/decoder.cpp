@@ -12,6 +12,7 @@
 #include <fmt/core.h>
 #include "spdlog/spdlog.h"
 #include <fidgety/decoder.hpp>
+#include <fidgety/_utils.hpp>
 
 using namespace Fidgety;
 
@@ -54,51 +55,62 @@ bool Decoder::isConfOpened(void) noexcept {
     return mConfFile.is_open();
 }
 
-void Decoder::openConf(const std::string &inPath) {
+DecoderStatus Decoder::openConf(const std::string &inPath) {
     spdlog::trace("opening Decoder::mConfFile with filepath: {0}", inPath);
     if (isConfOpened()) {
-        const std::string error_msg = "Decoder::mConfFile already open";
-        spdlog::error(error_msg);
-        DecoderException exception((int32_t) DecoderStatus::CannotOpenMultipleFiles, error_msg);
-        throw exception;
+        FIDGETY_ERROR(
+            DecoderException,
+            DecoderStatus::CannotOpenMultipleFiles,
+            "Decoder::mConfFile already open"
+        );
     } else {
         mConfFile.open(inPath, std::ifstream::in);
         if (mConfFile.fail()) {
-            spdlog::error("could not open Decoder::mConfFile with filepath: {0}", inPath);
-            DecoderException exception((int32_t) DecoderStatus::CannotReadFile);
-            throw exception;
+            FIDGETY_ERROR(
+                DecoderException,
+                DecoderStatus::CannotReadFile,
+                "could not open Decoder::mConfFile with filepath: {0}",
+                inPath
+            );
         } else {
             spdlog::debug("Decoder::mConfFile opened with filepath: {0}", inPath);
         }
     }
+    return DecoderStatus::Ok;
 }
 
-void Decoder::closeConf(void) {
+DecoderStatus Decoder::closeConf(void) {
     spdlog::trace("closing Decoder::mConfFile");
     if (isConfOpened()) {
         mConfFile.close();
         if (mConfFile.fail()) {
-            const std::string error_msg = "could not close Decoder::mConfFile";
-            spdlog::error(error_msg);
-            throw DecoderException((int32_t) DecoderStatus::CannotCloseFile, error_msg);
+            FIDGETY_CRITICAL(
+                DecoderException,
+                DecoderStatus::CannotCloseFile,
+                "could not close Decoder::mConfFile"
+            );
         } else {
             spdlog::debug("closed Decoder::mConfFile");
         }
     } else {
-        spdlog::debug("Decoder::mConfFile already closed");
+        spdlog::warn("Decoder::mConfFile already closed");
     }
+    return DecoderStatus::Ok;
 }
 
-void Decoder::useNewConf(std::ifstream &&newConf) {
+DecoderStatus Decoder::useNewConf(std::ifstream &&newConf) {
     spdlog::trace("switching out Decoder::mConfFile using std::ifstream");
     if (isConfOpened()) {
-        const std::string error_msg = "Decoder::mConfFile already open";
-        spdlog::error(error_msg);
-        throw DecoderException((int32_t) DecoderStatus::CannotOpenMultipleFiles, error_msg);
+        FIDGETY_ERROR(
+            DecoderException,
+            DecoderStatus::CannotOpenMultipleFiles,
+            "Decoder::mConfFile already open"
+        );
     } else {
         mConfFile = std::move(newConf);
         spdlog::debug("Decoder::mConfFile switched out for std::ifstream");
     }
+    return DecoderStatus::Ok;
 }
 
 bool Decoder::isIntermediateOpened(void) noexcept {
@@ -106,53 +118,62 @@ bool Decoder::isIntermediateOpened(void) noexcept {
     return mIntermediateFile.is_open();
 }
 
-void Decoder::openIntermediate(const std::string &outPath) {
+DecoderStatus Decoder::openIntermediate(const std::string &outPath) {
     spdlog::trace("opening Decoder::mIntermediateFile with filepath: {0}", outPath);
     if (isIntermediateOpened()) {
-        const std::string error_msg = "Decoder::mIntermediateFile already open";
-        spdlog::error(error_msg);
-        throw DecoderException((int32_t) DecoderStatus::CannotOpenMultipleFiles, error_msg);
+        FIDGETY_ERROR(
+            DecoderException,
+            DecoderStatus::CannotOpenMultipleFiles,
+            "Decoder::mIntermediateFile already open"
+        );
     } else {
         mIntermediateFile.open(outPath, std::ofstream::trunc);
         if (mIntermediateFile.fail()) {
-            const std::string error_msg = fmt::format(
+            FIDGETY_ERROR(
+                DecoderException,
+                DecoderStatus::CannotReadFile,
                 "could not open Decoder::mIntermediateFile with filepath: {0}",
                 outPath
             );
-            spdlog::error(error_msg);
-            throw DecoderException((int32_t) DecoderStatus::CannotReadFile, error_msg);
         } else {
             spdlog::debug("Decoder::mIntermediateFile opened with filepath: {0}", outPath);
         }
     }
+    return DecoderStatus::Ok;
 }
 
-void Decoder::closeIntermediate(void) {
+DecoderStatus Decoder::closeIntermediate(void) {
     spdlog::trace("closing Decoder::mIntermediateFile");
     if (isIntermediateOpened()) {
         mIntermediateFile.close();
         if (mIntermediateFile.fail()) {
-            const std::string error_msg = "could not close Decoder::mIntermediateFile";
-            spdlog::error(error_msg);
-            throw DecoderException((int32_t) DecoderStatus::CannotCloseFile, error_msg);
+            FIDGETY_CRITICAL(
+                DecoderException,
+                DecoderStatus::CannotCloseFile,
+                "could not close Decoder::mIntermediateFile"
+            );
         } else {
             spdlog::debug("close Decoder::mIntermediateFile");
         }
     } else {
-        spdlog::debug("Decoder::mIntermediateFile already closed");
+        spdlog::warn("Decoder::mIntermediateFile already closed");
     }
+    return DecoderStatus::Ok;
 }
 
-void Decoder::useNewIntermediate(std::ofstream &&newIntermediate) {
+DecoderStatus Decoder::useNewIntermediate(std::ofstream &&newIntermediate) {
     spdlog::trace("switching out Decoder::mIntermediateFile using std::ofstream");
     if (isIntermediateOpened()) {
-        const std::string error_msg = "Decoder::mIntermediateFile already opened";
-        spdlog::error(error_msg);
-        throw DecoderException((int32_t) DecoderStatus::CannotOpenMultipleFiles, error_msg);
+        FIDGETY_ERROR(
+            DecoderException,
+            DecoderStatus::CannotOpenMultipleFiles,
+            "Decoder::mIntermediateFile already opened"
+        );
     } else {
         spdlog::trace("Decoder::mIntermediate switched out for std::ofstream");
         mIntermediateFile = std::move(newIntermediate);
     }
+    return DecoderStatus::Ok;
 }
 
-void Decoder::dumpToIntermediate(void) { }
+DecoderStatus Decoder::dumpToIntermediate(void) { return DecoderStatus::Ok; }

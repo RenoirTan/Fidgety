@@ -47,4 +47,14 @@ namespace Fidgety {
     std::string spaceIndentSed(const std::string &s, uint32_t spaces=4);
 }
 
+#   define FIDGETY_CRITICAL(exc_class, exc_code, ...)         \
+    const std::string __error_msg = fmt::format(__VA_ARGS__); \
+    spdlog::critical(__error_msg);                            \
+    throw exc_class((int32_t) (exc_code), __error_msg);
+
+#   define FIDGETY_ERROR(exc_class, exc_code, ...)            \
+    const std::string __error_msg = fmt::format(__VA_ARGS__); \
+    spdlog::error(__error_msg);                               \
+    return exc_code;
+
 #endif

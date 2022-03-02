@@ -44,15 +44,15 @@ namespace Fidgety {
             Decoder(void) noexcept;
             ~Decoder(void);
             bool isConfOpened(void) noexcept;
-            void openConf(const std::string &inPath);
-            void closeConf(void);
-            void useNewConf(std::ifstream &&newConf);
+            DecoderStatus openConf(const std::string &inPath);
+            DecoderStatus closeConf(void);
+            DecoderStatus useNewConf(std::ifstream &&newConf);
             bool isIntermediateOpened(void) noexcept;
-            void openIntermediate(const std::string &outPath);
-            void closeIntermediate(void);
-            void useNewIntermediate(std::ofstream &&newIntermediate);
-            virtual void dumpToIntermediate(void);
-        
+            DecoderStatus openIntermediate(const std::string &outPath);
+            DecoderStatus closeIntermediate(void);
+            DecoderStatus useNewIntermediate(std::ofstream &&newIntermediate);
+            virtual DecoderStatus dumpToIntermediate(void);
+
         protected:
             std::ifstream mConfFile;
             std::ofstream mIntermediateFile;

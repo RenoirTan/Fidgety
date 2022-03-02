@@ -17,15 +17,15 @@
 
 using namespace Fidgety;
 
-void NormalConfDecoder::dumpToIntermediate(void) {
+DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
     spdlog::trace("dumping NormalConfDecoder::mConfFile to NormalConfDecoder::mIntermediateFile");
     if (!isConfOpened() || !isIntermediateOpened()) {
-        const std::string error_msg = fmt::format(
+        FIDGETY_ERROR(
+            DecoderException,
+            DecoderStatus::FilesNotOpen,
             "NormalConfDecoder::mConfFile and NormalConfDecoder::mIntermediateFile not open ({0})",
-            (((uint8_t)isConfOpened()) << 1) | ((uint8_t)isIntermediateOpened())
+            ((((uint8_t)isConfOpened()) << 1) | ((uint8_t)isIntermediateOpened()))
         );
-        spdlog::error(error_msg);
-        throw DecoderException((int32_t) DecoderStatus::FilesNotOpen, error_msg);
     }
     spdlog::trace("NormalConfDecoder::mConfFile and NormalConfDecoder::mIntermediateFile opened");
 
@@ -51,19 +51,23 @@ void NormalConfDecoder::dumpToIntermediate(void) {
 
         size_t equalsIndex = noComment.find('=');
         if (equalsIndex == std::string::npos) {
-            const std::string error_msg = fmt::format("could not find '=' at line {0}", lineNo);
-            spdlog::error(error_msg);
-            DecoderException exception((int32_t) DecoderStatus::SyntaxError, error_msg);
-            throw exception;
+            FIDGETY_ERROR(
+                DecoderException,
+                DecoderStatus::SyntaxError,
+                "could not find '=' at line {0}",
+                lineNo
+            );
         }
         std::string key = noComment.substr(0, equalsIndex);
         std::string value = noComment.substr(equalsIndex + 1);
         trim(key); trim(value);
         
         if (key == "") {
-            const std::string error_msg = fmt::format("no key before '=' at line {0}", lineNo);
-            spdlog::error(error_msg);
-            throw DecoderException((int32_t) DecoderStatus::SyntaxError, error_msg);
+            FIDGETY_ERROR(
+                DecoderException,
+                DecoderStatus::SyntaxError,
+                "no key before '=' at line {0}", lineNo
+            );
         }
         if (intermediate.contains(key)) {
             spdlog::warn(
@@ -81,4 +85,5 @@ void NormalConfDecoder::dumpToIntermediate(void) {
         "successfully dumped NormalConfDecoder::mConfFile "
         "to NormalConfDecoder::mIntermediateFile"
     );
+    return DecoderStatus::Ok;
 }

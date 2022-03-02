@@ -11,6 +11,7 @@
 #include <fmt/core.h>
 #include "spdlog/spdlog.h"
 #include <fidgety/encoder.hpp>
+#include <fidgety/_utils.hpp>
 
 using namespace Fidgety;
 
@@ -55,53 +56,62 @@ bool Encoder::isConfOpened(void) noexcept {
     return mConfFile.is_open();
 }
 
-void Encoder::openConf(const std::string &outPath) {
+EncoderStatus Encoder::openConf(const std::string &outPath) {
     spdlog::trace("opening Encoder::mConfFile with filepath: {0}", outPath);
     if (isConfOpened()) {
-        const std::string error_msg = "Encoder::mConfFile already open";
-        spdlog::error(error_msg);
-        throw EncoderException((int32_t) EncoderStatus::CannotOpenMultipleFiles, error_msg);
+        FIDGETY_ERROR(
+            EncoderException,
+            EncoderStatus::CannotOpenMultipleFiles,
+            "Encoder::mConfFile already open"
+        );
     } else {
         mConfFile.open(outPath, std::ofstream::trunc);
         if (mConfFile.fail()) {
-            const std::string error_msg = fmt::format(
+            FIDGETY_ERROR(
+                EncoderException,
+                EncoderStatus::CannotReadFile,
                 "could not open Encoder::mConfFile with filepath: {0}",
                 outPath
             );
-            spdlog::error(error_msg);
-            throw EncoderException((int32_t) EncoderStatus::CannotReadFile, error_msg);
         } else {
             spdlog::debug("Encoder::mConfFile opened with filepath: {0}", outPath);
         }
     }
+    return EncoderStatus::Ok;
 }
 
-void Encoder::closeConf(void) {
+EncoderStatus Encoder::closeConf(void) {
     spdlog::trace("closing Encoder::mConfFile");
     if (isConfOpened()) {
         mConfFile.close();
         if (mConfFile.fail()) {
-            const std::string error_msg = "could not close Encoder::mConfFile";
-            spdlog::error(error_msg);
-            throw EncoderException((int32_t) EncoderStatus::CannotCloseFile, error_msg);
+            FIDGETY_CRITICAL(
+                EncoderException,
+                EncoderStatus::CannotCloseFile,
+                "could not close Encoder::mConfFile"
+            );
         } else {
             spdlog::debug("closed Encoder::mConfFile");
         }
     } else {
-        spdlog::debug("Encoder::mConfFile already closed");
+        spdlog::warn("Encoder::mConfFile already closed");
     }
+    return EncoderStatus::Ok;
 }
 
-void Encoder::useNewConf(std::ofstream &&newConf) {
+EncoderStatus Encoder::useNewConf(std::ofstream &&newConf) {
     spdlog::trace("switching out Encoder::mConfFile using std::ifstream");
     if (isConfOpened()) {
-        const std::string error_msg = "Encoder::mConfFile already open";
-        spdlog::error(error_msg);
-        throw EncoderException((int32_t) EncoderStatus::CannotOpenMultipleFiles, error_msg);
+        FIDGETY_ERROR(
+            EncoderException,
+            EncoderStatus::CannotOpenMultipleFiles,
+            "Encoder::mConfFile already open"
+        );
     } else {
         mConfFile = std::move(newConf);
         spdlog::debug("Encoder::mConfFile switched out for std::ifstream");
     }
+    return EncoderStatus::Ok;
 }
 
 bool Encoder::isIntermediateOpened(void) noexcept {
@@ -109,53 +119,62 @@ bool Encoder::isIntermediateOpened(void) noexcept {
     return mIntermediateFile.is_open();
 }
 
-void Encoder::openIntermediate(const std::string &inPath) {
+EncoderStatus Encoder::openIntermediate(const std::string &inPath) {
     spdlog::trace("opening Encoder::mIntermediateFile with filepath: {0}", inPath);
     if (isIntermediateOpened()) {
-        const std::string error_msg = "Encoder::mIntermediateFile already open";
-        spdlog::error(error_msg);
-        throw EncoderException((int32_t) EncoderStatus::CannotOpenMultipleFiles, error_msg);
+        FIDGETY_ERROR(
+            EncoderException,
+            EncoderStatus::CannotOpenMultipleFiles,
+            "Encoder::mIntermediateFile already open"
+        );
     } else {
         mIntermediateFile.open(inPath, std::ifstream::in);
         if (mIntermediateFile.fail()) {
-            const std::string error_msg = fmt::format(
+            FIDGETY_ERROR(
+                EncoderException,
+                EncoderStatus::CannotReadFile,
                 "could not open Encoder::mIntermediateFile with filepath: {0}",
                 inPath
             );
-            spdlog::error(error_msg);
-            throw EncoderException((int32_t) EncoderStatus::CannotReadFile, error_msg);
         } else {
             spdlog::debug("Encoder::mIntermediateFile opened with filepath: {0}", inPath);
         }
     }
+    return EncoderStatus::Ok;
 }
 
-void Encoder::closeIntermediate(void) {
+EncoderStatus Encoder::closeIntermediate(void) {
     spdlog::trace("closing Encoder::mIntermediateFile");
     if (isIntermediateOpened()) {
         mIntermediateFile.close();
         if (mIntermediateFile.fail()) {
-            const std::string error_msg = "could not close Encoder::mIntermediateFile";
-            spdlog::error(error_msg);
-            throw EncoderException((int32_t) EncoderStatus::CannotCloseFile, error_msg);
+            FIDGETY_CRITICAL(
+                EncoderException,
+                EncoderStatus::CannotCloseFile,
+                "could not close Encoder::mIntermediateFile"
+            );
         } else {
             spdlog::debug("close Encoder::mIntermediateFile");
         }
     } else {
-        spdlog::debug("Encoder::mIntermediateFile already closed");
+        spdlog::warn("Encoder::mIntermediateFile already closed");
     }
+    return EncoderStatus::Ok;
 }
 
-void Encoder::useNewIntermediate(std::ifstream &&newIntermediate) {
+EncoderStatus Encoder::useNewIntermediate(std::ifstream &&newIntermediate) {
     spdlog::trace("switching out Encoder::mINtermediateFile using std::ofstream");
     if (isIntermediateOpened()) {
-        const std::string error_msg = "Encoder::mIntermediateFile already opened";
-        spdlog::error(error_msg);
-        throw EncoderException((int32_t) EncoderStatus::CannotOpenMultipleFiles, error_msg);
+        FIDGETY_ERROR(
+            EncoderException,
+            EncoderStatus::CannotOpenMultipleFiles,
+            "Encoder::mIntermediateFile already opened"
+        );
     } else {
         spdlog::trace("Encoder::mIntermediate switched out for std::ofstream");
         mIntermediateFile = std::move(newIntermediate);
     }
+    return EncoderStatus::Ok;
 }
 
-void Encoder::dumpToConf(void) { }
+EncoderStatus Encoder::dumpToConf(void) { return EncoderStatus::Ok; }

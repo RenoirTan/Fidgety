@@ -12,8 +12,8 @@ using namespace Fidgety;
     NormalConfEncoder encoder;                                                                    \
     const std::string cs = fmt::format("../../../tmp/tests/encoder/test_{0}.conf", testNo);       \
     const std::string is = fmt::format("../../../resources/tests/encoder/test_{0}.json", testNo); \
-    encoder.openConf(cs);                                                                         \
-    encoder.openIntermediate(is);
+    EXPECT_EQ(encoder.openConf(cs), EncoderStatus::Ok);                                           \
+    EXPECT_EQ(encoder.openIntermediate(is), EncoderStatus::Ok);
 
 bool filesEqual(const std::string &pathA, const std::string &pathB) {
     std::ifstream fileA(pathA), fileB(pathB);
@@ -26,7 +26,7 @@ bool filesEqual(const std::string &pathA, const std::string &pathB) {
         }
     }
     // If either file is longer than the other, this expression will be false
-    // It will never be the case where fileA and fileB will be bad good at the same time
+    // It will never be the case where fileA and fileB will be good at the same time
     return fileA.good() == fileB.good();
 }
 
@@ -38,7 +38,7 @@ TEST(EncoderEncoding, EmptyJson) {
     CREATE_ENCODER(0);
     ASSERT_TRUE(encoder.isConfOpened());
     ASSERT_TRUE(encoder.isIntermediateOpened());
-    encoder.dumpToConf();
+    ASSERT_EQ(encoder.dumpToConf(), EncoderStatus::Ok);
 }
 
 TEST(EncoderEncoding, WellFormedJson) {
@@ -46,9 +46,9 @@ TEST(EncoderEncoding, WellFormedJson) {
     CREATE_ENCODER(1);
     ASSERT_TRUE(encoder.isConfOpened());
     ASSERT_TRUE(encoder.isIntermediateOpened());
-    encoder.dumpToConf();
-    encoder.closeConf();
-    encoder.closeIntermediate();
+    ASSERT_EQ(encoder.dumpToConf(), EncoderStatus::Ok);
+    ASSERT_EQ(encoder.closeConf(), EncoderStatus::Ok);
+    ASSERT_EQ(encoder.closeIntermediate(), EncoderStatus::Ok);
     ASSERT_TRUE(filesEqual(
         "../../../tmp/tests/encoder/test_1.conf",
         "../../../resources/tests/encoder/test_1_answer.conf"

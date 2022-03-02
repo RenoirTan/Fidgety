@@ -48,14 +48,14 @@ namespace Fidgety {
             Encoder(void) noexcept;
             ~Encoder(void);
             bool isConfOpened(void) noexcept;
-            void openConf(const std::string &inPath);
-            void closeConf(void);
-            void useNewConf(std::ofstream &&newConf);
+            EncoderStatus openConf(const std::string &inPath);
+            EncoderStatus closeConf(void);
+            EncoderStatus useNewConf(std::ofstream &&newConf);
             bool isIntermediateOpened(void) noexcept;
-            void openIntermediate(const std::string &inPath);
-            void closeIntermediate(void);
-            void useNewIntermediate(std::ifstream &&newIntermediate);
-            virtual void dumpToConf(void);
+            EncoderStatus openIntermediate(const std::string &inPath);
+            EncoderStatus closeIntermediate(void);
+            EncoderStatus useNewIntermediate(std::ifstream &&newIntermediate);
+            virtual EncoderStatus dumpToConf(void);
 
         protected:
             std::ofstream mConfFile;
