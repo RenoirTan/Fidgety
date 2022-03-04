@@ -19,6 +19,28 @@
 #   include <fidgety/exception.hpp>
 
 namespace Fidgety {
+    /*
+     * Start Forward Declarations
+     */
+
+    enum class ValidatorMessageType;
+    class ValidatorMessage;
+    class ValidatorContext;
+    enum class OptionStatus;
+    class OptionException;
+    class OptionValue;
+    enum class OptionEditorType;
+    class OptionEditor;
+    class Option;
+
+    /*
+     * End Forward Declarations
+     */
+
+    typedef std::string OptionIdentifier;
+    typedef std::map<OptionIdentifier, std::unique_ptr<Option>> ValidatorContextInner;
+    typedef ValidatorMessage (*Validator)(const Option &, const ValidatorContext &context);
+
     enum class ValidatorMessageType : int32_t {
         Valid = 0,
         Problematic = 1,
@@ -42,8 +64,6 @@ namespace Fidgety {
             ValidatorMessageType mType;
     };
 
-    typedef std::map<OptionIdentifier, std::unique_ptr<Option>> ValidatorContextInner;
-
     class ValidatorContext {
         public:
             ValidatorContext(void);
@@ -57,9 +77,6 @@ namespace Fidgety {
         protected:
             ValidatorContextInner mMap;
     };
-
-    typedef ValidatorMessage (*Validator)(const Option &, const ValidatorContext &context);
-    typedef std::string OptionIdentifier;
 
     enum class OptionStatus : int32_t {
         Ok = 0,
@@ -75,6 +92,26 @@ namespace Fidgety {
         protected:
             const char *getSimpleWhat(void) const noexcept;
     };
+
+    union _OptionValueInner {
+        std::vector<Option> nestedList;
+        std::string rawValue;
+    };
+
+    struct OptionValueInner {
+        int32_t valueType;
+        _OptionValueInner value;
+
+        OptionValueInner(void);
+        OptionValueInner(const char *rawValue);
+        OptionValueInner(std::string &&rawValue);
+        OptionValueInner(std::vector<Option> &&nestedList);
+    };
+
+    namespace OptionValueType {
+        const int32_t NESTED_LIST = 1;
+        const int32_t RAW_VALUE = 2;
+    }
 
     class OptionValue {
         public:
@@ -99,26 +136,6 @@ namespace Fidgety {
             int32_t mAcceptedValueTypes;
             OptionValueInner mValue;
             OptionValueInner mDefault;
-    };
-
-    struct OptionValueInner {
-        int32_t valueType;
-        _OptionValueInner value;
-
-        OptionValueInner(void);
-        OptionValueInner(const char *rawValue);
-        OptionValueInner(std::string &&rawValue);
-        OptionValueInner(std::vector<Option> &&nestedList);
-    };
-
-    namespace OptionValueType {
-        const int32_t NESTED_LIST = 1;
-        const int32_t RAW_VALUE = 2;
-    }
-
-    union _OptionValueInner {
-        std::vector<Option> nestedList;
-        std::string rawValue;
     };
 
     enum class OptionEditorType : int32_t {
