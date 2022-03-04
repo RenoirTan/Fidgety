@@ -1,0 +1,5 @@
+fidgety_add_my_library(FidgetyOptions STATIC options.cpp validator.cpp)
+set_target_properties(FidgetyOptions PROPERTIES OUTPUT_NAME fidgety_options)
+fidgety_link_common_libraries(FidgetyOptions)
+fidgety_link_exception(FidgetyOptions)
+fidgety_install_library(FidgetyOptions fidgety_options_config.cmake)

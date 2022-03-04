@@ -72,7 +72,7 @@ namespace Fidgety {
             bool optionExists(const OptionIdentifier &identifier) const noexcept;
             const Option &getOption(const OptionIdentifier &identifier) const;
 
-            const ValidatorContextInner &getInnerMap(void) const;
+            const ValidatorContextInner &getInnerMap(void) const noexcept;
         
         protected:
             ValidatorContextInner mMap;
@@ -81,7 +81,8 @@ namespace Fidgety {
     enum class OptionStatus : int32_t {
         Ok = 0,
         InvalidValueType = 1,
-        IncompatibleOptionEditor = 2
+        IncompatibleOptionEditor = 2,
+        NotFound = 3
     };
 
     class OptionException : public Exception {
