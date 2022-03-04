@@ -58,7 +58,7 @@ namespace Fidgety {
             ValidatorContextInner mMap;
     };
 
-    typedef ValidatorMessage (*Validator)(const OptionValue &, const ValidatorContext &context);
+    typedef ValidatorMessage (*Validator)(const Option &, const ValidatorContext &context);
     typedef std::string OptionIdentifier;
 
     enum class OptionStatus : int32_t {
@@ -166,14 +166,10 @@ namespace Fidgety {
             const std::vector<Option> &getDefaultNestedList(void) const;
             const std::string &getDefaultRawValue(void) const;
 
-            OptionException setValue(const std::string &value);
             OptionException setValue(std::string &&value);
-            OptionException setValue(const std::vector<Option> &value);
             OptionException setValue(std::vector<Option> &&value);
 
-            OptionException setDefaultValue(const std::string &defaultValue);
             OptionException setDefaultValue(std::string &&defaultValue);
-            OptionException setDefaultValue(const std::vector<Option> &defaultValue);
             OptionException setDefaultValue(std::vector<Option> &&defaultValue);
 
             OptionException resetValue(void);
@@ -182,6 +178,9 @@ namespace Fidgety {
             void setValidator(Validator validator = nullptr) noexcept;
             ValidatorMessage validate(const ValidatorContext &context);
             const ValidatorMessage &getLastValidatorMessage(void) const noexcept;
+
+            const OptionEditor &getOptionEditor(void) const noexcept;
+            OptionException setOptionEditor(OptionEditor &&optionEditor);
 
         protected:
             OptionIdentifier mIdentifier;
