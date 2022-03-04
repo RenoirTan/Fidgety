@@ -63,7 +63,8 @@ namespace Fidgety {
 
     enum class OptionStatus : int32_t {
         Ok = 0,
-        InvalidValueType = 1
+        InvalidValueType = 1,
+        IncompatibleOptionEditor = 2
     };
 
     class OptionException : public Exception {
@@ -121,12 +122,13 @@ namespace Fidgety {
     };
 
     enum class OptionEditorType : int32_t {
-        TextEntry = 0,
-        Toggle = 1,
-        Slider = 2,
-        Dropdown = 3,
-        Options = 4,
-        Checkboxes = 5
+        Blanked = 0,
+        TextEntry = 1,
+        Toggle = 2,
+        Slider = 3,
+        Dropdown = 4,
+        Options = 5,
+        Checkboxes = 6
     };
 
     class OptionEditor {
