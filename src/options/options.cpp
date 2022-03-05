@@ -45,7 +45,7 @@ OptionValueInner::OptionValueInner(std::string &&rawValue) :
     value { rawValue: std::string(rawValue) }
 { }
 
-OptionValueInner::OptionValueInner(std::vector<Option> &&nestedList) :
+OptionValueInner::OptionValueInner(NestedOptionList &&nestedList) :
     valueType(OptionValueType::NESTED_LIST),
     value { nestedList: nestedList }
 { }
@@ -56,7 +56,7 @@ OptionValueInner::~OptionValueInner(void) {
             this->value.rawValue.std::string::~string();
         }
         case OptionValueType::NESTED_LIST: {
-            this->value.nestedList.std::vector<Option>::~vector();
+            this->value.nestedList.NestedOptionList::~vector();
         }
         default: {
             // Destructors must be noexcept >:(
@@ -169,7 +169,7 @@ OptionValueInner &OptionValueInner::operator=(OptionValueInner &&other) {
     return *this;
 }
 
-const std::vector<Option> &OptionValueInner::getNestedList(void) const {
+const NestedOptionList &OptionValueInner::getNestedList(void) const {
     if (this->valueType == OptionValueType::NESTED_LIST) {
         return this->value.nestedList;
     } else {
@@ -350,7 +350,7 @@ int32_t Option::getValueType(void) const {
     return getValue().valueType;
 }
 
-const std::vector<Option> &Option::getNestedList(void) const {
+const NestedOptionList &Option::getNestedList(void) const {
     return getValue().getNestedList();
 }
 const std::string &Option::getRawValue(void) const {
@@ -361,7 +361,7 @@ int32_t Option::getDefaultValueType(void) const {
     return getDefaultValue().valueType;
 }
 
-const std::vector<Option> &Option::getDefaultNestedList(void) const {
+const NestedOptionList &Option::getDefaultNestedList(void) const {
     return getDefaultValue().getNestedList();
 }
 const std::string &Option::getDefaultRawValue(void) const {
@@ -372,7 +372,7 @@ OptionStatus Option::setValue(std::string &&value) {
     OptionValueInner v(std::move(value));
     return mValue.setValue(std::move(v));
 }
-OptionStatus Option::setValue(std::vector<Option> &&value) {
+OptionStatus Option::setValue(NestedOptionList &&value) {
     OptionValueInner v(std::move(value));
     return mValue.setValue(std::move(v));
 }
@@ -381,7 +381,7 @@ OptionStatus Option::setDefaultValue(std::string &&defaultValue) {
     OptionValueInner dv(std::move(defaultValue));
     return mValue.setDefaultValue(std::move(dv));
 }
-OptionStatus Option::setDefaultValue(std::vector<Option> &&defaultValue) {
+OptionStatus Option::setDefaultValue(NestedOptionList &&defaultValue) {
     OptionValueInner dv(std::move(defaultValue));
     return mValue.setDefaultValue(std::move(dv));
 }

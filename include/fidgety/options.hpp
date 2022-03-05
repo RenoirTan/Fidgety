@@ -38,8 +38,9 @@ namespace Fidgety {
      */
 
     typedef std::string OptionIdentifier;
-    typedef std::map<OptionIdentifier, std::unique_ptr<Option>> ValidatorContextInner;
+    typedef std::map<OptionIdentifier, std::shared_ptr<Option>> ValidatorContextInner;
     typedef ValidatorMessage (*Validator)(const Option &, const ValidatorContext &context);
+    typedef std::vector<std::shared_ptr<Option>> NestedOptionList;
 
     enum class ValidatorMessageType : int32_t {
         Valid = 0,
@@ -95,7 +96,7 @@ namespace Fidgety {
     };
 
     union _OptionValueInner {
-        std::vector<Option> nestedList;
+        NestedOptionList nestedList;
         std::string rawValue;
 
         ~_OptionValueInner(void);
@@ -108,7 +109,7 @@ namespace Fidgety {
         OptionValueInner(void);
         OptionValueInner(const char *rawValue);
         OptionValueInner(std::string &&rawValue);
-        OptionValueInner(std::vector<Option> &&nestedList);
+        OptionValueInner(NestedOptionList &&nestedList);
         ~OptionValueInner(void);
 
         OptionValueInner(const OptionValueInner &other);
@@ -116,7 +117,7 @@ namespace Fidgety {
         OptionValueInner &operator=(const OptionValueInner &other);
         OptionValueInner &operator=(OptionValueInner &&other);
 
-        const std::vector<Option> &getNestedList(void) const;
+        const NestedOptionList &getNestedList(void) const;
         const std::string &getRawValue(void) const;
     };
 
@@ -194,18 +195,18 @@ namespace Fidgety {
             const OptionValueInner &getDefaultValue(void) const noexcept;
 
             int32_t getValueType(void) const;
-            const std::vector<Option> &getNestedList(void) const;
+            const NestedOptionList &getNestedList(void) const;
             const std::string &getRawValue(void) const;
 
             int32_t getDefaultValueType(void) const;
-            const std::vector<Option> &getDefaultNestedList(void) const;
+            const NestedOptionList &getDefaultNestedList(void) const;
             const std::string &getDefaultRawValue(void) const;
 
             OptionStatus setValue(std::string &&value);
-            OptionStatus setValue(std::vector<Option> &&value);
+            OptionStatus setValue(NestedOptionList &&value);
 
             OptionStatus setDefaultValue(std::string &&defaultValue);
-            OptionStatus setDefaultValue(std::vector<Option> &&defaultValue);
+            OptionStatus setDefaultValue(NestedOptionList &&defaultValue);
 
             OptionStatus resetValue(void);
             OptionStatus setAcceptedValueTypes(int32_t acceptedValueTypes);
