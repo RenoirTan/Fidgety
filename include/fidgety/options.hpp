@@ -97,6 +97,8 @@ namespace Fidgety {
     union _OptionValueInner {
         std::vector<Option> nestedList;
         std::string rawValue;
+
+        ~_OptionValueInner(void);
     };
 
     struct OptionValueInner {
@@ -107,6 +109,15 @@ namespace Fidgety {
         OptionValueInner(const char *rawValue);
         OptionValueInner(std::string &&rawValue);
         OptionValueInner(std::vector<Option> &&nestedList);
+        ~OptionValueInner(void);
+
+        OptionValueInner(const OptionValueInner &other);
+        OptionValueInner(OptionValueInner &&other);
+        OptionValueInner &operator=(const OptionValueInner &other);
+        OptionValueInner &operator=(OptionValueInner &&other);
+
+        const std::vector<Option> &getNestedList(void) const;
+        const std::string &getRawValue(void) const;
     };
 
     namespace OptionValueType {
@@ -124,14 +135,14 @@ namespace Fidgety {
 
             int32_t getValueType(void) const noexcept;
             const OptionValueInner &getValue(void) const noexcept;
-            OptionException setValue(const OptionValueInner &value);
+            OptionStatus setValue(OptionValueInner &&value);
 
-            int32_t getDefaultValueType(void) const;
-            const OptionValueInner &getValueDefault(void) const noexcept;
-            OptionException setDefaultValue(const OptionValueInner &defaultValue);
+            int32_t getDefaultValueType(void) const noexcept;
+            const OptionValueInner &getDefaultValue(void) const noexcept;
+            OptionStatus setDefaultValue(OptionValueInner &&defaultValue);
 
             void resetValue(void);
-            void setAcceptedValueType(int32_t acceptedValueType);
+            void setAcceptedValueTypes(int32_t acceptedValueTypes);
 
         protected:
             int32_t mAcceptedValueTypes;
@@ -163,6 +174,7 @@ namespace Fidgety {
             Option(
                 OptionIdentifier identifier,
                 OptionEditor &&optionEditor,
+                int32_t acceptedValueTypes = OptionValueType::RAW_VALUE,
                 Validator validator = nullptr
             ) noexcept;
             Option(
@@ -172,6 +184,9 @@ namespace Fidgety {
                 Validator validator = nullptr
             );
             ~Option(void);
+
+            // Option(const Option &option) = delete;
+            // Option(Option &&option) = default;
 
             const OptionIdentifier &getIdentifier(void) const noexcept;
             const OptionValue &getOptionValue(void) const noexcept;
@@ -186,21 +201,21 @@ namespace Fidgety {
             const std::vector<Option> &getDefaultNestedList(void) const;
             const std::string &getDefaultRawValue(void) const;
 
-            OptionException setValue(std::string &&value);
-            OptionException setValue(std::vector<Option> &&value);
+            OptionStatus setValue(std::string &&value);
+            OptionStatus setValue(std::vector<Option> &&value);
 
-            OptionException setDefaultValue(std::string &&defaultValue);
-            OptionException setDefaultValue(std::vector<Option> &&defaultValue);
+            OptionStatus setDefaultValue(std::string &&defaultValue);
+            OptionStatus setDefaultValue(std::vector<Option> &&defaultValue);
 
-            OptionException resetValue(void);
-            OptionException setAcceptedValueType(int32_t acceptedValueType);
+            OptionStatus resetValue(void);
+            OptionStatus setAcceptedValueTypes(int32_t acceptedValueTypes);
 
             void setValidator(Validator validator = nullptr) noexcept;
             ValidatorMessage validate(const ValidatorContext &context);
             const ValidatorMessage &getLastValidatorMessage(void) const noexcept;
 
             const OptionEditor &getOptionEditor(void) const noexcept;
-            OptionException setOptionEditor(OptionEditor &&optionEditor);
+            OptionStatus setOptionEditor(OptionEditor &&optionEditor);
 
         protected:
             OptionIdentifier mIdentifier;
