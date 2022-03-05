@@ -42,3 +42,6 @@ include/fidgety/config.h
 
 # Testing
 tmp/
+
+# Others
+*.backup
