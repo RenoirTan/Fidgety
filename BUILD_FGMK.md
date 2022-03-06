@@ -111,6 +111,15 @@ config value part, instead only passing these arguments to the terminal:
 ./fgmk set dist_dir
 ```
 
+Due to the current implementation of argparse, you cannot pass an argument
+with a hyphen at the front (like in `-DBUILD_TESTING=OFF`) to \<CONFIG_VALUE\>
+as is. To circumvent this limitation, you can add a backslash in front of the
+argument:
+
+```shell
+./fgmk set cmake_generate_suppflags "\-DBUILD_TESTING=OFF"
+```
+
 This sets `dist_dir` back to "dist/".
 
 ### `generate`

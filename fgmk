@@ -188,9 +188,11 @@ def main():
     namespace.func(namespace)
 
 
-def prepare_suppflags(suppflag_name: str) -> t.List[str]:
+def prepare_suppflags(suppflag_name: str, config: t.Dict[str, t.Any]) -> t.List[str]:
     suppflags = os.environ.get(suppflag_name)
-    return [] if suppflags is None else [suppflags]
+    suppflags = [] if suppflags is None else [suppflags]
+    suppflags.extend(config[suppflag_name.lower()])
+    return suppflags
 
 
 def add_flag_to_suppflags(
@@ -226,7 +228,7 @@ def add_cmake_variable_to_suppflags(
 
 
 def get_generate_suppflags(config: t.Dict[str, t.Any]) -> str:
-    suppflags = prepare_suppflags("CMAKE_GENERATE_SUPPFLAGS")
+    suppflags = prepare_suppflags("CMAKE_GENERATE_SUPPFLAGS", config)
     add_cmake_variable_to_suppflags(
         suppflags,
         config,
@@ -257,18 +259,18 @@ def get_generate_suppflags(config: t.Dict[str, t.Any]) -> str:
 
 
 def get_build_suppflags(config: t.Dict[str, t.Any]) -> str:
-    suppflags = prepare_suppflags("CMAKE_BUILD_SUPPFLAGS")
+    suppflags = prepare_suppflags("CMAKE_BUILD_SUPPFLAGS", config)
     add_flag_to_suppflags(suppflags, config, ["parallel"])
     return " ".join(suppflags) if len(suppflags) >= 1 else None
 
 
 def get_install_suppflags(config: t.Dict[str, t.Any]) -> str:
-    suppflags = prepare_suppflags("CMAKE_INSTALL_SUPPFLAGS")
+    suppflags = prepare_suppflags("CMAKE_INSTALL_SUPPFLAGS", config)
     return " ".join(suppflags) if len(suppflags) >= 1 else None
 
 
 def get_test_suppflags(config: t.Dict[str, t.Any]) -> str:
-    suppflags = prepare_suppflags("CMAKE_TEST_SUPPFLAGS")
+    suppflags = prepare_suppflags("CMAKE_TEST_SUPPFLAGS", config)
     return " ".join(suppflags) if len(suppflags) >= 1 else None
 
 
