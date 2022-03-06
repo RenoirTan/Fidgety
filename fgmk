@@ -99,9 +99,11 @@ def make_argparser() -> argparse.ArgumentParser:
         description=
 """
 Helper python script to simplify the build process for Fidgety.
-This is pretty much a wrapper over the Makefile I wrote at ./Makefile which is a wrapper over \
+
+This is pretty much a wrapper over the Makefile I wrote at ./Makefile which is a wrapper over
 CMake which is a wrapper of make which is a wrapper over GCC which is a wrapper over assembly.
-"""
+""",
+        epilog="Read ./BUILD_FGMK.md for more info."
     )
     
     subparsers = parser.add_subparsers()
@@ -183,7 +185,6 @@ CMake which is a wrapper of make which is a wrapper over GCC which is a wrapper 
 def main():
     parser = make_argparser()
     namespace = parser.parse_args()
-    print(namespace)
     namespace.func(namespace)
 
 
@@ -374,7 +375,6 @@ def sc_set(args: argparse.Namespace) -> None:
 def sc_generate(args: argparse.Namespace) -> None:
     config = read_config()
     envvars = get_envvars(config)
-    #print(envvars)
     subprocess.run(["make", "generate"], env=envvars)
 
 
