@@ -1,0 +1,405 @@
+#!/usr/bin/env python
+from __future__ import annotations
+import argparse
+import json
+import os
+from pathlib import Path
+import subprocess
+import typing as t
+
+
+DEFAULT_CONFIG_FILE = Path(__file__).parent / ".fgmk.json"
+KEY_TO_INTEGRAL = {
+    "cmake": "str",
+    "ctest": "str",
+    "cmake_generate_suppflags": "list",
+    "cmake_build_suppflags": "list",
+    "cmake_install_suppflags": "list",
+    "cmake_test_suppflags": "list",
+    "dist_dir": "str",
+    "build_dir": "str",
+    "src_dir": "str",
+    "build_testing": "bool",
+    "fidgety_build_testing": "bool",
+    "parallel": "int",
+    "fidgety_gtest_from_source": "bool",
+    "fidgety_googletest_release_url": "str",
+    "fidgety_fmtlib_from_source": "bool",
+    "fidgety_fmtlib_release_url": "str",
+    "fidgety_fmtlib_header_only": "bool",
+    "fidgety_spdlog_from_source": "bool",
+    "fidgety_spdlog_release_url": "str",
+    "fidgety_nlohmannjson_from_source": "bool",
+    "fidgety_nlohmannjson_release_url": "str",
+    "fidgety_major_qt": "int",
+    "fidgety_qt_from_source": "bool",
+    "fidgety_qt_repo_url": "str",
+    "fidgety_qt_repo_tag": "str",
+    "fidgety_build_extensions": "bool",
+    "fidgety_export_cmake_dir": "str",
+    "fidgety_export_lib_dir": "str",
+    "fidgety_export_extlib_dir": "str",
+    "fidgety_exception_what_use_description": "bool",
+}
+
+def create_default_config() -> t.Dict[str, t.Any]:
+    return {
+        "cmake": None,
+        "ctest": None,
+        "cmake_generate_suppflags": [],
+        "cmake_build_suppflags": [],
+        "cmake_install_suppflags": [],
+        "cmake_test_suppflags": [],
+        "dist_dir": None,
+        "build_dir": None,
+        "src_dir": None,
+        "build_testing": None,
+        "fidgety_build_testing": None,
+        "parallel": None,
+        "fidgety_gtest_from_source": None,
+        "fidgety_googletest_release_url": None,
+        "fidgety_fmtlib_from_source": None,
+        "fidgety_fmtlib_release_url": None,
+        "fidgety_fmtlib_header_only": None,
+        "fidgety_spdlog_from_source": None,
+        "fidgety_spdlog_release_url": None,
+        "fidgety_nlohmannjson_from_source": None,
+        "fidgety_nlohmannjson_release_url": None,
+        "fidgety_major_qt": None,
+        "fidgety_qt_from_source": None,
+        "fidgety_qt_repo_url": None,
+        "fidgety_qt_repo_tag": None,
+        "fidgety_build_extensions": None,
+        "fidgety_export_cmake_dir": None,
+        "fidgety_export_lib_dir": None,
+        "fidgety_export_extlib_dir": None,
+        "fidgety_exception_what_use_description": None,
+    }
+
+
+def read_config(path: Path = DEFAULT_CONFIG_FILE) -> t.Dict[str, t.Any]:
+    if not path.exists():
+        with path.open("w") as f:
+            f.write("{}")
+    payload = json.load(path.open("r"))
+    config = {**create_default_config(), **payload}
+    return config
+
+
+def write_config(
+    config: t.Dict[str, t.Any],
+    path: Path = DEFAULT_CONFIG_FILE
+) -> None:
+    with path.open("w") as f:
+        json.dump(config, f)
+
+
+def make_argparser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=
+"""
+Helper python script to simplify the build process for Fidgety.
+This is pretty much a wrapper over the Makefile I wrote at ./Makefile which is a wrapper over \
+CMake which is a wrapper of make which is a wrapper over GCC which is a wrapper over assembly.
+"""
+    )
+    
+    subparsers = parser.add_subparsers()
+    sp_report = subparsers.add_parser(
+        "report",
+        help="get a report of fgmk's inner workings",
+        aliases=["rpt", "r"]
+    )
+    sp_report.set_defaults(func=sc_report)
+    sp_get = subparsers.add_parser("get", help="get the value of an fgmk config key", aliases=["g"])
+    sp_get.set_defaults(func=sc_get)
+    sp_set = subparsers.add_parser("set", help="set the value of an fgmk config key", aliases=["s"])
+    sp_set.set_defaults(func=sc_set)
+    sp_generate = subparsers.add_parser(
+        "generate",
+        help="generate the CMake build folder",
+        aliases=["gen"]
+    )
+    sp_generate.set_defaults(func=sc_generate)
+    sp_build = subparsers.add_parser("build", help="compile fidgety", aliases=["b"])
+    sp_build.set_defaults(func=sc_build)
+    sp_install = subparsers.add_parser(
+        "install",
+        help="install fidgety to an install prefix",
+        aliases=["i"]
+    )
+    sp_install.set_defaults(func=sc_install)
+    sp_test = subparsers.add_parser("test", help="run fidgety's unit tests", aliases=["t"])
+    sp_test.set_defaults(func=sc_test)
+    sp_clean = subparsers.add_parser("clean", help="clean the build directories", aliases=["c"])
+    sp_clean.set_defaults(func=sc_clean)
+    
+    sp_report.add_argument(
+        "report__item",
+        metavar="REPORT_ITEM",
+        type=str,
+        help="the item to report on"
+    )
+    sp_report.add_argument(
+        "-c",
+        "--clean",
+        action="store_true",
+        dest="report__clean",
+        help="how clean the output should be"
+    )
+    sp_report.add_argument(
+        "-l",
+        "--long",
+        action="store_true",
+        dest="report__long",
+        help="whether to use a longer format for outputting data"
+    )
+    
+    sp_get.add_argument(
+        "get__config_key",
+        metavar="GET_CONFIG_KEY",
+        type=str,
+        default="",
+        help="the config key to query, use './fgmk r fc' to see available config keys"
+    )
+    
+    sp_set.add_argument(
+        "set__config_key",
+        metavar="SET_CONFIG_KEY",
+        type=str,
+        help="the config key to modify, use './fgmk r fc' to see available config keys"
+    )
+    sp_set.add_argument(
+        "set__config_value",
+        metavar="SET_CONFIG_VALUE",
+        action="append",
+        nargs="*",
+        help="the new value of the config key, use './fgmk r kti' to see the allowed datatypes"
+    )
+    
+    return parser
+
+
+def main():
+    parser = make_argparser()
+    namespace = parser.parse_args()
+    print(namespace)
+    namespace.func(namespace)
+
+
+def prepare_suppflags(suppflag_name: str) -> t.List[str]:
+    suppflags = os.environ.get(suppflag_name)
+    return [] if suppflags is None else [suppflags]
+
+
+def add_flag_to_suppflags(
+    suppflags: t.List[str],
+    config: t.Dict[str, t.Any],
+    subset: t.List[str]
+) -> None:
+    for key in subset:
+        value = config[key]
+        if value is None:
+            continue
+        if isinstance(value, bool):
+            variable = f"--{key}"
+        else:
+            variable = f"--{key} {repr(value)}"
+        suppflags.append(variable)
+
+
+def add_cmake_variable_to_suppflags(
+    suppflags: t.List[str],
+    config: t.Dict[str, t.Any],
+    subset: t.List[str]
+) -> None:
+    for key in subset:
+        value = config[key]
+        if value is None:
+            continue
+        if isinstance(value, bool):
+            variable = f"-D{key.upper()}={'ON' if value else 'OFF'}"
+        else:
+            variable = f"-D{key.upper()}={value}"
+        suppflags.append(variable)
+
+
+def get_generate_suppflags(config: t.Dict[str, t.Any]) -> str:
+    suppflags = prepare_suppflags("CMAKE_GENERATE_SUPPFLAGS")
+    add_cmake_variable_to_suppflags(
+        suppflags,
+        config,
+        [
+            "build_testing",
+            "fidgety_build_testing",
+            "fidgety_gtest_from_source",
+            "fidgety_googletest_release_url",
+            "fidgety_fmtlib_from_source",
+            "fidgety_fmtlib_release_url",
+            "fidgety_fmtlib_header_only",
+            "fidgety_spdlog_from_source",
+            "fidgety_spdlog_release_url",
+            "fidgety_nlohmannjson_from_source",
+            "fidgety_nlohmannjson_release_url",
+            "fidgety_major_qt",
+            "fidgety_qt_from_source",
+            "fidgety_qt_repo_url",
+            "fidgety_qt_repo_tag",
+            "fidgety_build_extensions",
+            "fidgety_export_cmake_dir",
+            "fidgety_export_lib_dir",
+            "fidgety_export_extlib_dir",
+            "fidgety_exception_what_use_description"
+        ]
+    )
+    return " ".join(suppflags) if len(suppflags) >= 1 else None
+
+
+def get_build_suppflags(config: t.Dict[str, t.Any]) -> str:
+    suppflags = prepare_suppflags("CMAKE_BUILD_SUPPFLAGS")
+    add_flag_to_suppflags(suppflags, config, ["parallel"])
+    return " ".join(suppflags) if len(suppflags) >= 1 else None
+
+
+def get_install_suppflags(config: t.Dict[str, t.Any]) -> str:
+    suppflags = prepare_suppflags("CMAKE_INSTALL_SUPPFLAGS")
+    return " ".join(suppflags) if len(suppflags) >= 1 else None
+
+
+def get_test_suppflags(config: t.Dict[str, t.Any]) -> str:
+    suppflags = prepare_suppflags("CMAKE_TEST_SUPPFLAGS")
+    return " ".join(suppflags) if len(suppflags) >= 1 else None
+
+
+def get_suppflags(config: t.Dict[str, t.Any]) -> t.Dict[str, str]:
+    return {
+        "CMAKE_GENERATE_SUPPFLAGS": get_generate_suppflags(config),
+        "CMAKE_BUILD_SUPPFLAGS": get_build_suppflags(config),
+        "CMAKE_INSTALL_SUPPFLAGS": get_install_suppflags(config),
+        "CMAKE_TEST_SUPPFLAGS": get_test_suppflags(config)
+    }
+
+def get_other_envvars(config: t.Dict[str, t.Any]) -> t.Dict[str, str]:
+    envvars = {}
+    for envvar in ["DIST_DIR", "BUILD_DIR", "SRC_DIR", "CMAKE", "CTEST"]:
+        value = config[envvar.lower()]
+        outside_value = os.environ.get(envvar)
+        if outside_value is not None:
+            value = outside_value
+        envvars[envvar] = value
+    return envvars
+
+
+def get_envvars(config: t.Dict[str, t.Any]) -> t.Dict[str, str]:
+    envvars = os.environ.copy()
+    my_envvars = {
+        k: v
+        for k,v in get_suppflags(config).items() | get_other_envvars(config).items()
+        if v is not None
+    }
+    return {**envvars, **my_envvars}
+
+
+def sc_report(args: argparse.Namespace) -> None:
+    def _print_dict(mapping: t.Dict[str, t.Any], long_form: bool) -> None:
+        if long_form:
+            for k, v in mapping.items():
+                print(f"{k}={repr(v)}")
+        else:
+            print(mapping)
+    
+    item = args.report__item.lower().strip()
+    if item in {"key_to_integral", "kti"}:
+        _print_dict(KEY_TO_INTEGRAL, args.report__long)
+    elif item in {"default_config", "dc"}:
+        dc = create_default_config()
+        if args.report__clean:
+            dc = {k: v for k, v in dc.items() if v is not None}
+        _print_dict(dc, args.report__long)
+    elif item in {"final_config", "fc"}:
+        fc = read_config()
+        if args.report__clean:
+            fc = {k: v for k, v in fc.items() if v is not None}
+        _print_dict(fc, args.report__long)
+    else:
+        print(f"Unknown item to report on: {item}")
+
+
+def sc_get(args: argparse.Namespace) -> None:
+    config = read_config()
+    print(config.get(args.get__config_key))
+
+
+def sc_set(args: argparse.Namespace) -> None:
+    config = read_config()
+    key = args.set__config_key
+    values = args.set__config_value[0]
+    if key not in KEY_TO_INTEGRAL:
+        print(f"Unrecognised config key: {key}")
+        exit(1)
+    integral = KEY_TO_INTEGRAL[key]
+    if integral == "list":
+        config[key] = values
+    elif integral == "bool":
+        if len(values) == 0:
+            config[key] = None
+        elif len(values) == 1:
+            if values[0].lower().strip() in {"y", "yes", "t", "true", "on"}:
+                config[key] = True
+            elif values[0].lower().strip() in {"n", "no", "f", "false", "off"}:
+                config[key] = False
+            else:
+                print(f"Unrecognised value for boolean: {values[0]}")
+        else:
+            print(f"Too many values for boolean")
+    elif integral == "str":
+        if len(values) == 0:
+            config[key] = None
+        else:
+            value = " ".join(values)
+            config[key] = value
+    elif integral == "int":
+        if len(values) == 0:
+            config[key] = None
+        elif len(values) == 1:
+            config[key] = int(values[0])
+        else:
+            print(f"Too many values for integer")
+    else:
+        print(f"Bad KEY_TO_INTEGRAL: {key}={integral}")
+    print(f"{key}: {repr(config[key])}")
+    write_config(config)
+
+
+def sc_generate(args: argparse.Namespace) -> None:
+    config = read_config()
+    envvars = get_envvars(config)
+    #print(envvars)
+    subprocess.run(["make", "generate"], env=envvars)
+
+
+def sc_build(args: argparse.Namespace) -> None:
+    config = read_config()
+    envvars = get_envvars(config)
+    subprocess.run(["make", "build"], env=envvars)
+
+
+def sc_install(args: argparse.Namespace) -> None:
+    config = read_config()
+    envvars = get_envvars(config)
+    subprocess.run(["make", "install"], env=envvars)
+
+
+def sc_test(args: argparse.Namespace) -> None:
+    config = read_config()
+    envvars = get_envvars(config)
+    subprocess.run(["make", "install"], env=envvars)
+
+
+def sc_clean(args: argparse.Namespace) -> None:
+    config = read_config()
+    envvars = get_envvars(config)
+    subprocess.run(["make", "clean"], env=envvars)
+
+
+main()
