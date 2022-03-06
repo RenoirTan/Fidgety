@@ -35,7 +35,4 @@ clean_build:
 	rm -rf $(BUILD_DIR)
 	rm -f include/fidgety/config.h
 
-clean_dist:
-	rm -rf $(DIST_DIR)
-
-clean: clean_build clean_dist
+clean: clean_build
