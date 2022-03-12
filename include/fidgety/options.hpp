@@ -53,8 +53,8 @@ namespace Fidgety {
     class ValidatorMessage {
         public:
             ValidatorMessage(
-                std::string &&message = "",
-                ValidatorMessageType messageType = ValidatorMessageType::Valid
+                ValidatorMessageType messageType = ValidatorMessageType::Valid,
+                std::string &&message = ""
             );
             ~ValidatorMessage(void);
 

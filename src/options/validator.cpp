@@ -14,7 +14,7 @@
 
 using namespace Fidgety;
 
-ValidatorMessage::ValidatorMessage(std::string &&message, ValidatorMessageType messageType) :
+ValidatorMessage::ValidatorMessage(ValidatorMessageType messageType, std::string &&message) :
     mMessage(message),
     mType(messageType)
 { }
@@ -36,7 +36,7 @@ namespace Fidgety {
             case ValidatorMessageType::Problematic: return "Problematic";
             case ValidatorMessageType::Invalid: return "Invalid";
             case ValidatorMessageType::Unexpected: return "Unexpected";
-            default: throw fmt::format("Invalid ValidatorMessageType: {0}", mt);
+            default: throw fmt::format("Invalid ValidatorMessageType: {0}", (int32_t) mt);
         }
     }
 };
@@ -81,9 +81,9 @@ const ValidatorContextInner &ValidatorContext::getInnerMap(void) const noexcept 
 
 Validator::Validator(void) { }
 
-ValidatorMessage validate(
+ValidatorMessage Validator::validate(
     const Option &option,
     const ValidatorContext &context
 ) {
-    return ValidatorMessage("Ok", ValidatorMessageType::Valid);
+    return ValidatorMessage(ValidatorMessageType::Valid, "Ok");
 }
