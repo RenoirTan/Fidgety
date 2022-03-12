@@ -1,0 +1,2 @@
+fidgety_create_test(options_validator_message validator_message.cpp)
+target_link_libraries(options_validator_message PRIVATE Fidgety::FidgetyOptions)
