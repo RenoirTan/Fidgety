@@ -29,6 +29,27 @@ ValidatorMessageType ValidatorMessage::getMessageType(void) const noexcept {
     return mType;
 }
 
+namespace Fidgety {
+    inline const char *_validator_message_type_to_str(const ValidatorMessageType mt) {
+        switch (mt) {
+            case ValidatorMessageType::Valid: return "Valid";
+            case ValidatorMessageType::Problematic: return "Problematic";
+            case ValidatorMessageType::Invalid: return "Invalid";
+            case ValidatorMessageType::Unexpected: return "Unexpected";
+            default: throw fmt::format("Invalid ValidatorMessageType: {0}", mt);
+        }
+    }
+};
+
+std::ostream &operator<<(std::ostream &stream, const ValidatorMessage &message) {
+    const std::string output = fmt::format(
+        "{0}: {1}",
+        _validator_message_type_to_str(message.getMessageType()),
+        message.getMessage()
+    );
+    return stream << output;
+}
+
 ValidatorContext::ValidatorContext(void) : mMap() { }
 
 ValidatorContext::ValidatorContext(ValidatorContextInner &&map) : mMap(map) {}

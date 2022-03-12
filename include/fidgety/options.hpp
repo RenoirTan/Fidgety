@@ -12,6 +12,7 @@
 #ifndef FIDGETY_OPTIONS_HPP
 #   define FIDGETY_OPTIONS_HPP
 
+#   include <iostream>
 #   include <map>
 #   include <memory>
 #   include <string>
@@ -59,6 +60,8 @@ namespace Fidgety {
 
             const std::string &getMessage(void) const noexcept;
             ValidatorMessageType getMessageType(void) const noexcept;
+
+            friend std::ostream &operator<<(std::ostream &stream, const ValidatorMessage &message);
         
         protected:
             std::string mMessage;
