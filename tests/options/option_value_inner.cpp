@@ -10,23 +10,30 @@ using namespace Fidgety;
 TEST(OptionsOptionValueInner, FromString) {
     spdlog::set_level(spdlog::level::trace);
 
-    spdlog::debug("creating fromCharArray");
-    OptionValueInner fromCharArray("thing");
-    spdlog::debug("fromCharArray created");
-    spdlog::debug("checking fromCharArray's valueType");
-    ASSERT_EQ(fromCharArray.valueType, OptionValueType::RAW_VALUE);
-    spdlog::debug("checking fromCharArray's raw value");
-    EXPECT_EQ(fromCharArray.getRawValue(), "thing");
-    spdlog::debug("fromCharArray successful");
+    {
+        spdlog::debug("creating fromCharArray");
+        OptionValueInner fromCharArray("thing");
+        spdlog::debug("fromCharArray created");
+        spdlog::debug("checking fromCharArray's valueType");
+        ASSERT_EQ(fromCharArray.valueType, OptionValueType::RAW_VALUE);
+        spdlog::debug("checking fromCharArray's raw value");
+        EXPECT_EQ(fromCharArray.getRawValue(), "thing");
+        spdlog::debug("fromCharArray successful");
+        spdlog::debug("deleting fromCharArray");
+        fromCharArray.~OptionValueInner();
+    }
 
-    spdlog::debug("creating fromString");
-    OptionValueInner fromString(std::string("input"));
-    spdlog::debug("fromString created");
-    spdlog::debug("checking fromString's valueType");
-    ASSERT_EQ(fromString.valueType, OptionValueType::RAW_VALUE);
-    spdlog::debug("checking fromString's raw value");
-    EXPECT_EQ(fromString.getRawValue(), "input");
-    spdlog::debug("fromString successful");
+    {
+        spdlog::debug("creating fromString");
+        OptionValueInner fromString(std::string("input"));
+        spdlog::debug("fromString created");
+        spdlog::debug("checking fromString's valueType");
+        ASSERT_EQ(fromString.valueType, OptionValueType::RAW_VALUE);
+        spdlog::debug("checking fromString's raw value");
+        EXPECT_EQ(fromString.getRawValue(), "input");
+        spdlog::debug("fromString successful");
+        spdlog::debug("deleting fromString");
+    }
 }
 
 TEST(OptionsOptionValueInner, FromArrayLike) {

@@ -22,7 +22,7 @@ Fidgety::NestedOptionList makeNestedOptionList(size_t number) {
     Fidgety::NestedOptionList nol;
     for (size_t i = 0; i < number; ++i) {
         Fidgety::Option *option = new Fidgety::Option(
-            std::move(makeDummyOption(fmt::format("Option {0}", number)))
+            std::move(makeDummyOption(fmt::format("Option {0}", i)))
         );
         nol.emplace_back(option);
     }

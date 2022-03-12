@@ -66,10 +66,12 @@ OptionValueInner::~OptionValueInner(void) {
         case OptionValueType::RAW_VALUE: {
             spdlog::trace("raw value detected when deleting Fidgety::OptionValueInner");
             this->value.rawValue.std::string::~string();
+            break;
         }
         case OptionValueType::NESTED_LIST: {
             spdlog::trace("nested option list detected when deleting Fidgety::OptionValueInner");
             this->value.nestedList.NestedOptionList::~vector();
+            break;
         }
         default: {
             // Destructors must be noexcept >:(
@@ -99,6 +101,7 @@ OptionValueInner::OptionValueInner(const OptionValueInner &other) :
             );
             this->value.rawValue = other.value.rawValue;
             this->valueType = other.valueType;
+            break;
         }
         case OptionValueType::NESTED_LIST: {
             spdlog::trace(
@@ -107,6 +110,7 @@ OptionValueInner::OptionValueInner(const OptionValueInner &other) :
             );
             this->value.nestedList = other.value.nestedList;
             this->valueType = other.valueType;
+            break;
         }
         default: {
             FIDGETY_CRITICAL(
@@ -133,6 +137,7 @@ OptionValueInner::OptionValueInner(OptionValueInner &&other) :
             );
             this->value.rawValue = std::move(other.value.rawValue);
             this->valueType = other.valueType;
+            break;
         }
         case OptionValueType::NESTED_LIST: {
             spdlog::trace(
@@ -141,6 +146,7 @@ OptionValueInner::OptionValueInner(OptionValueInner &&other) :
             );
             this->value.nestedList = std::move(other.value.nestedList);
             this->valueType = other.valueType;
+            break;
         }
         default: {
             FIDGETY_CRITICAL(
@@ -164,6 +170,7 @@ OptionValueInner &OptionValueInner::operator=(const OptionValueInner &other) {
             );
             this->value.rawValue = other.value.rawValue;
             this->valueType = other.valueType;
+            break;
         }
         case OptionValueType::NESTED_LIST: {
             spdlog::trace(
@@ -171,6 +178,7 @@ OptionValueInner &OptionValueInner::operator=(const OptionValueInner &other) {
             );
             this->value.nestedList = other.value.nestedList;
             this->valueType = other.valueType;
+            break;
         }
         default: {
             FIDGETY_CRITICAL(
@@ -195,6 +203,7 @@ OptionValueInner &OptionValueInner::operator=(OptionValueInner &&other) {
             );
             this->value.rawValue = std::move(other.value.rawValue);
             this->valueType = other.valueType;
+            break;
         }
         case OptionValueType::NESTED_LIST: {
             spdlog::trace(
@@ -202,6 +211,7 @@ OptionValueInner &OptionValueInner::operator=(OptionValueInner &&other) {
             );
             this->value.nestedList = std::move(other.value.nestedList);
             this->valueType = other.valueType;
+            break;
         }
         default: {
             FIDGETY_CRITICAL(
