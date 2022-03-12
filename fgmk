@@ -401,7 +401,7 @@ def sc_install(args: argparse.Namespace) -> None:
 def sc_test(args: argparse.Namespace) -> None:
     config = read_config()
     envvars = get_envvars(config)
-    subprocess.run(["make", "install"], env=envvars)
+    subprocess.run(["make", "test"], env=envvars)
 
 
 def sc_clean(args: argparse.Namespace) -> None:
