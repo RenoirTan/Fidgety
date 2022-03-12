@@ -60,6 +60,7 @@ namespace Fidgety {
 
             const std::string &getMessage(void) const noexcept;
             ValidatorMessageType getMessageType(void) const noexcept;
+            std::string fullMessage(void) const;
 
             friend std::ostream &operator<<(std::ostream &stream, const ValidatorMessage &message);
         

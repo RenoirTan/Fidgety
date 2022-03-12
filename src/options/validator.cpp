@@ -41,13 +41,16 @@ namespace Fidgety {
     }
 };
 
-std::ostream &operator<<(std::ostream &stream, const ValidatorMessage &message) {
-    const std::string output = fmt::format(
+std::string ValidatorMessage::fullMessage(void) const {
+    return fmt::format(
         "{0}: {1}",
-        _validator_message_type_to_str(message.getMessageType()),
-        message.getMessage()
+        _validator_message_type_to_str(getMessageType()),
+        getMessage()
     );
-    return stream << output;
+}
+
+std::ostream &operator<<(std::ostream &stream, const ValidatorMessage &message) {
+    return stream << message.fullMessage();
 }
 
 ValidatorContext::ValidatorContext(void) : mMap() { }
