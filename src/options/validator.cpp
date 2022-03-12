@@ -54,3 +54,12 @@ const Option &ValidatorContext::getOption(const OptionIdentifier &identifier) co
 const ValidatorContextInner &ValidatorContext::getInnerMap(void) const noexcept {
     return mMap;
 }
+
+Validator::Validator(void) { }
+
+ValidatorMessage validate(
+    const Option &option,
+    const ValidatorContext &context
+) {
+    return ValidatorMessage("Ok", ValidatorMessageType::Valid);
+}

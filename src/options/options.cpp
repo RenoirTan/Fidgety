@@ -307,8 +307,8 @@ OptionEditor::OptionEditor(OptionEditorType oet, std::map<std::string, std::stri
 Option::Option(
     OptionIdentifier identifier,
     OptionEditor &&optionEditor,
-    int32_t acceptedValueTypes,
-    Validator validator
+    Validator &&validator,
+    int32_t acceptedValueTypes
 ) noexcept :
     mIdentifier(identifier),
     mValue(acceptedValueTypes),
@@ -319,8 +319,8 @@ Option::Option(
 Option::Option(
     OptionIdentifier identifier,
     OptionEditor &&optionEditor,
-    OptionValue &&value,
-    Validator validator
+    Validator &&validator,
+    OptionValue &&value
 ) :
     mIdentifier(identifier),
     mValue(value),
@@ -400,7 +400,7 @@ void Option::setValidator(Validator validator) noexcept {
 }
 
 ValidatorMessage Option::validate(const ValidatorContext &context) {
-    ValidatorMessage message = mValidator(*this, context);
+    ValidatorMessage message = mValidator.validate(*this, context);
     mLastValidatorMessage = message;
     return message;
 }

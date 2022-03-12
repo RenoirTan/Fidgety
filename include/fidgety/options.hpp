@@ -26,6 +26,7 @@ namespace Fidgety {
     enum class ValidatorMessageType;
     class ValidatorMessage;
     class ValidatorContext;
+    class Validator;
     enum class OptionStatus;
     class OptionException;
     class OptionValue;
@@ -39,7 +40,6 @@ namespace Fidgety {
 
     typedef std::string OptionIdentifier;
     typedef std::map<OptionIdentifier, std::shared_ptr<Option>> ValidatorContextInner;
-    typedef ValidatorMessage (*Validator)(const Option &, const ValidatorContext &context);
     typedef std::vector<std::shared_ptr<Option>> NestedOptionList;
 
     enum class ValidatorMessageType : int32_t {
@@ -77,6 +77,18 @@ namespace Fidgety {
         
         protected:
             ValidatorContextInner mMap;
+    };
+
+    class Validator {
+        public:
+            Validator(void);
+            
+            virtual ValidatorMessage validate(
+                const Option &option,
+                const ValidatorContext &context
+            );
+
+        protected:
     };
 
     enum class OptionStatus : int32_t {
@@ -175,14 +187,14 @@ namespace Fidgety {
             Option(
                 OptionIdentifier identifier,
                 OptionEditor &&optionEditor,
-                int32_t acceptedValueTypes = OptionValueType::RAW_VALUE,
-                Validator validator = nullptr
+                Validator &&validator,
+                int32_t acceptedValueTypes = OptionValueType::RAW_VALUE
             ) noexcept;
             Option(
                 OptionIdentifier identifier,
                 OptionEditor &&optionEditor,
-                OptionValue &&value,
-                Validator validator = nullptr
+                Validator &&validator,
+                OptionValue &&value
             );
             ~Option(void);
 
@@ -211,7 +223,7 @@ namespace Fidgety {
             OptionStatus resetValue(void);
             OptionStatus setAcceptedValueTypes(int32_t acceptedValueTypes);
 
-            void setValidator(Validator validator = nullptr) noexcept;
+            void setValidator(Validator validator) noexcept;
             ValidatorMessage validate(const ValidatorContext &context);
             const ValidatorMessage &getLastValidatorMessage(void) const noexcept;
 
