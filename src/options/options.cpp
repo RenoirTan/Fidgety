@@ -28,34 +28,47 @@ const char *OptionException::getSimpleWhat(void) const noexcept {
     return "A Fidgety::OptionException occurred.";
 }
 
-_OptionValueInner::~_OptionValueInner(void) { }
+_OptionValueInner::~_OptionValueInner(void) {
+    spdlog::debug("deleted Fidgety::_OptionValueInner ((PRIVATE))");
+}
 
 OptionValueInner::OptionValueInner(void) :
     valueType(OptionValueType::RAW_VALUE),
     value { rawValue: std::string() }
-{ }
+{
+    spdlog::debug("created Fidgety::OptionValueInner using defaults");
+}
 
 OptionValueInner::OptionValueInner(const char *rawValue) :
     valueType(OptionValueType::RAW_VALUE),
     value { rawValue: std::string(rawValue) }
-{ }
+{
+    spdlog::debug("created Fidgety::OptionValueInner with a char array");
+}
 
 OptionValueInner::OptionValueInner(std::string &&rawValue) :
     valueType(OptionValueType::RAW_VALUE),
     value { rawValue: std::string(rawValue) }
-{ }
+{
+    spdlog::debug("created Fidgety::OptionValueInner with std::string");
+}
 
 OptionValueInner::OptionValueInner(NestedOptionList &&nestedList) :
     valueType(OptionValueType::NESTED_LIST),
     value { nestedList: nestedList }
-{ }
+{
+    spdlog::debug("created Fidgety::OptionValueInner with a NestedOptionList");
+}
 
 OptionValueInner::~OptionValueInner(void) {
+    spdlog::trace("deleting Fidgety::OptionValueInner");
     switch (this->valueType) {
         case OptionValueType::RAW_VALUE: {
+            spdlog::trace("raw value detected when deleting Fidgety::OptionValueInner");
             this->value.rawValue.std::string::~string();
         }
         case OptionValueType::NESTED_LIST: {
+            spdlog::trace("nested option list detected when deleting Fidgety::OptionValueInner");
             this->value.nestedList.NestedOptionList::~vector();
         }
         default: {
@@ -70,6 +83,7 @@ OptionValueInner::~OptionValueInner(void) {
             );
             */
         }
+        spdlog::debug("deleted Fidgety::OptionValueInner");
     }
 }
 
@@ -77,12 +91,20 @@ OptionValueInner::OptionValueInner(const OptionValueInner &other) :
     valueType(OptionValueType::RAW_VALUE),
     value { rawValue: std::string() }
 {
+    spdlog::trace("creating Fidgety::OptionValueInner using copy constructor");
     switch (other.valueType) {
         case OptionValueType::RAW_VALUE: {
+            spdlog::trace(
+                "detected raw value when creating Fidgety::OptionValueInner using copy constructor"
+            );
             this->value.rawValue = other.value.rawValue;
             this->valueType = other.valueType;
         }
         case OptionValueType::NESTED_LIST: {
+            spdlog::trace(
+                "detected nested option list "
+                "when creating Fidgety::OptionValueInner using copy constructor"
+            );
             this->value.nestedList = other.value.nestedList;
             this->valueType = other.valueType;
         }
@@ -91,23 +113,32 @@ OptionValueInner::OptionValueInner(const OptionValueInner &other) :
                 OptionException,
                 OptionStatus::InvalidValueType,
                 "invalid value type code ({0}) detected when trying to copy "
-                "Fidgety::OptionValueInner",
+                "Fidgety::OptionValueInner using copy constructor",
                 other.valueType
             );
         }
     }
+    spdlog::debug("created Fidgety::OptionValueInner using copy constructor");
 }
 
 OptionValueInner::OptionValueInner(OptionValueInner &&other) :
     valueType(OptionValueType::RAW_VALUE),
     value { rawValue: std::string() }
 {
+    spdlog::trace("creating Fidgety::OptionValueInner using move constructor");
     switch (other.valueType) {
         case OptionValueType::RAW_VALUE: {
+            spdlog::trace(
+                "detected raw value when creating Fidgety::OptionValueInner using move constructor"
+            );
             this->value.rawValue = std::move(other.value.rawValue);
             this->valueType = other.valueType;
         }
         case OptionValueType::NESTED_LIST: {
+            spdlog::trace(
+                "detected nested option list "
+                "when creating Fidgety::OptionValueInner using move constructor"
+            );
             this->value.nestedList = std::move(other.value.nestedList);
             this->valueType = other.valueType;
         }
@@ -116,20 +147,28 @@ OptionValueInner::OptionValueInner(OptionValueInner &&other) :
                 OptionException,
                 OptionStatus::InvalidValueType,
                 "invalid value type code ({0}) detected when trying to move "
-                "Fidgety::OptionValueInner",
+                "Fidgety::OptionValueInner using move constructor",
                 other.valueType
             );
         }
     }
+    spdlog::debug("created Fidgety::OptionValueInner using move constructor");
 }
 
 OptionValueInner &OptionValueInner::operator=(const OptionValueInner &other) {
+    spdlog::trace("assigning Fidgety::OptionValueInner by copying");
     switch (other.valueType) {
         case OptionValueType::RAW_VALUE: {
+            spdlog::trace(
+                "detected raw value when assigning Fidgety::OptionValueInner by copying"
+            );
             this->value.rawValue = other.value.rawValue;
             this->valueType = other.valueType;
         }
         case OptionValueType::NESTED_LIST: {
+            spdlog::trace(
+                "detected nested option list when assigning Fidgety::OptionValueInner by copying"
+            );
             this->value.nestedList = other.value.nestedList;
             this->valueType = other.valueType;
         }
@@ -138,21 +177,29 @@ OptionValueInner &OptionValueInner::operator=(const OptionValueInner &other) {
                 OptionException,
                 OptionStatus::InvalidValueType,
                 "invalid value type code ({0}) detected when trying to copy "
-                "Fidgety::OptionValueInner",
+                "Fidgety::OptionValueInner when using copy assignment",
                 other.valueType
             );
         }
     }
+    spdlog::debug("assigned Fidgety::OptionValueInner by copying");
     return *this;
 }
 
 OptionValueInner &OptionValueInner::operator=(OptionValueInner &&other) {
+    spdlog::trace("assigning Fidgety::OptionValueInner by moving");
     switch (other.valueType) {
         case OptionValueType::RAW_VALUE: {
+            spdlog::trace(
+                "detected raw value when assigning Fidgety::OptionValueInner by moving"
+            );
             this->value.rawValue = std::move(other.value.rawValue);
             this->valueType = other.valueType;
         }
         case OptionValueType::NESTED_LIST: {
+            spdlog::trace(
+                "detected nested option list when assigning Fidgety::OptionValueInner by moving"
+            );
             this->value.nestedList = std::move(other.value.nestedList);
             this->valueType = other.valueType;
         }
@@ -161,16 +208,19 @@ OptionValueInner &OptionValueInner::operator=(OptionValueInner &&other) {
                 OptionException,
                 OptionStatus::InvalidValueType,
                 "invalid value type code ({0}) detected when trying to move "
-                "Fidgety::OptionValueInner",
+                "Fidgety::OptionValueInner when using move assignment",
                 other.valueType
             );
         }
     }
+    spdlog::debug("assigned Fidgety::OptionValueInner by moving");
     return *this;
 }
 
 const NestedOptionList &OptionValueInner::getNestedList(void) const {
+    spdlog::trace("getting nested option list from Fidgety::OptionValueInner");
     if (this->valueType == OptionValueType::NESTED_LIST) {
+        spdlog::trace("returning nested option list");
         return this->value.nestedList;
     } else {
         FIDGETY_CRITICAL(
@@ -182,7 +232,9 @@ const NestedOptionList &OptionValueInner::getNestedList(void) const {
 }
 
 const std::string &OptionValueInner::getRawValue(void) const {
+    spdlog::trace("getting raw value from Fidgety::OptionValueInner");
     if (this->valueType == OptionValueType::RAW_VALUE) {
+        spdlog::trace("returning raw value");
         return this->value.rawValue;
     } else {
         FIDGETY_CRITICAL(
@@ -193,9 +245,10 @@ const std::string &OptionValueInner::getRawValue(void) const {
     }
 }
 
-OptionValue::OptionValue(int32_t acceptedValueType) :
-    mAcceptedValueTypes(acceptedValueType)
+OptionValue::OptionValue(int32_t acceptedValueTypes) :
+    mAcceptedValueTypes(acceptedValueTypes)
 {
+    spdlog::trace("creating Fidgety::OptionValue using only acceptedValueTypes");
     if (!(mAcceptedValueTypes & mDefault.valueType)) {
         FIDGETY_CRITICAL(
             OptionException,
@@ -207,6 +260,7 @@ OptionValue::OptionValue(int32_t acceptedValueType) :
         );
     }
     mValue = mDefault;
+    spdlog::debug("created Fidgety::OptionValue using only acceptedValueTypes");
 }
 
 OptionValue::OptionValue(
@@ -216,6 +270,7 @@ OptionValue::OptionValue(
     mAcceptedValueTypes(acceptedValueTypes),
     mDefault(defaultValue)
 {
+    spdlog::trace("creating Fidgety::OptionValue with defaultValue and acceptedValueTypes");
     if (!(mAcceptedValueTypes & mDefault.valueType)) {
         FIDGETY_CRITICAL(
             OptionException,
@@ -227,6 +282,7 @@ OptionValue::OptionValue(
         );
     }
     mValue = mDefault;
+    spdlog::trace("created Fidgety::OptionValue with defaultValue and acceptedValueTypes");
 }
 
 int32_t OptionValue::getValueType(void) const noexcept {
@@ -238,6 +294,7 @@ const OptionValueInner &OptionValue::getValue(void) const noexcept {
 }
 
 OptionStatus OptionValue::setValue(OptionValueInner &&value) {
+    spdlog::trace("setting mValue of Fidgety::OptionValue");
     if (!(mAcceptedValueTypes & value.valueType)) {
         FIDGETY_CRITICAL(
             OptionException,
@@ -260,6 +317,7 @@ const OptionValueInner &OptionValue::getDefaultValue(void) const noexcept {
 }
 
 OptionStatus OptionValue::setDefaultValue(OptionValueInner &&defaultValue) {
+    spdlog::trace("setting mDefault of Fidgety::OptionValue");
     if (!(mAcceptedValueTypes & defaultValue.valueType)) {
         FIDGETY_CRITICAL(
             OptionException,
@@ -274,10 +332,13 @@ OptionStatus OptionValue::setDefaultValue(OptionValueInner &&defaultValue) {
 }
 
 void OptionValue::resetValue(void) {
+    spdlog::trace("resetting mValue of Fidgety::OptionValue using mDefault");
     mValue = mDefault;
+    spdlog::debug("reset mValue of Fidgety::OptionValue using mDefault");
 }
 
 void OptionValue::setAcceptedValueTypes(int32_t acceptedValueTypes) {
+    spdlog::trace("setting mAcceptedValueTypes of Fidgety::OptionValue");
     if (!(acceptedValueTypes & mDefault.valueType)) {
         FIDGETY_CRITICAL(
             OptionException,
@@ -297,12 +358,16 @@ void OptionValue::setAcceptedValueTypes(int32_t acceptedValueTypes) {
             acceptedValueTypes
         );
     }
+    mAcceptedValueTypes = acceptedValueTypes;
+    spdlog::debug("set mAcceptedValueTypes of Fidgety::OptionValue");
 }
 
 OptionEditor::OptionEditor(OptionEditorType oet, std::map<std::string, std::string> &&constraints) :
     mEditorType(oet),
     mConstraints(constraints)
-{ }
+{
+    spdlog::debug("created Fidgety::OptionEditor");
+}
 
 Option::Option(
     OptionIdentifier identifier,
@@ -314,7 +379,9 @@ Option::Option(
     mValue(acceptedValueTypes),
     mValidator(validator),
     mOptionEditor(optionEditor)
-{ }
+{
+    spdlog::debug("created Fidgety::Option ({0}) using acceptedValueTypes", mIdentifier);
+}
 
 Option::Option(
     OptionIdentifier identifier,
@@ -326,9 +393,13 @@ Option::Option(
     mValue(value),
     mValidator(validator),
     mOptionEditor(optionEditor)
-{ }
+{
+    spdlog::debug("created Fidgety::Option ({0}) using Fidgety::OptionValue", mIdentifier);
+}
 
-Option::~Option(void) { }
+Option::~Option(void) {
+    spdlog::debug("deleted Fidgety::Option");
+}
 
 const OptionIdentifier &Option::getIdentifier(void) const noexcept {
     return mIdentifier;
@@ -353,6 +424,7 @@ int32_t Option::getValueType(void) const {
 const NestedOptionList &Option::getNestedList(void) const {
     return getValue().getNestedList();
 }
+
 const std::string &Option::getRawValue(void) const {
     return getValue().getRawValue();
 }
@@ -364,42 +436,57 @@ int32_t Option::getDefaultValueType(void) const {
 const NestedOptionList &Option::getDefaultNestedList(void) const {
     return getDefaultValue().getNestedList();
 }
+
 const std::string &Option::getDefaultRawValue(void) const {
     return getDefaultValue().getRawValue();
 }
 
 OptionStatus Option::setValue(std::string &&value) {
+    spdlog::trace("setting value of Fidgety::Option ({0}) using std::string", mIdentifier);
     OptionValueInner v(std::move(value));
     return mValue.setValue(std::move(v));
 }
+
 OptionStatus Option::setValue(NestedOptionList &&value) {
+    spdlog::trace("setting value of Fidgety::Option ({0}) using Fidgety::NestedOptionList", mIdentifier);
     OptionValueInner v(std::move(value));
     return mValue.setValue(std::move(v));
 }
 
 OptionStatus Option::setDefaultValue(std::string &&defaultValue) {
+    spdlog::trace("setting default value of Fidgety::Option ({0}) using std::string", mIdentifier);
     OptionValueInner dv(std::move(defaultValue));
     return mValue.setDefaultValue(std::move(dv));
 }
+
 OptionStatus Option::setDefaultValue(NestedOptionList &&defaultValue) {
+    spdlog::trace(
+        "setting default value of Fidgety::Option ({0}) using Fidgety::NestedOptionList",
+        mIdentifier
+    );
     OptionValueInner dv(std::move(defaultValue));
     return mValue.setDefaultValue(std::move(dv));
 }
 
 OptionStatus Option::resetValue(void) {
+    spdlog::trace("resetting value using default value in Fidgety::Option ({0})", mIdentifier);
     mValue.resetValue();
     return OptionStatus::Ok;
 }
+
 OptionStatus Option::setAcceptedValueTypes(int32_t acceptedValueTypes) {
+    spdlog::trace("setting accepted value types in Fidgety::Option ({0})", mIdentifier);
     mValue.setAcceptedValueTypes(acceptedValueTypes);
     return OptionStatus::Ok;
 }
 
 void Option::setValidator(Validator validator) noexcept {
+    spdlog::trace("setting validator in Fidgety::Option ({0})", mIdentifier);
     mValidator = validator;
 }
 
 ValidatorMessage Option::validate(const ValidatorContext &context) {
+    spdlog::trace("validating value in Fidgety::Option ({0})", mIdentifier);
     ValidatorMessage message = mValidator.validate(*this, context);
     mLastValidatorMessage = message;
     return message;
@@ -414,6 +501,7 @@ const OptionEditor &Option::getOptionEditor(void) const noexcept {
 }
 
 OptionStatus Option::setOptionEditor(OptionEditor &&optionEditor) {
+    spdlog::trace("setting option editor of Fidgety::Option ({0})", mIdentifier);
     mOptionEditor = optionEditor;
     return OptionStatus::Ok;
 }
