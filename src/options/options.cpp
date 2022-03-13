@@ -276,6 +276,8 @@ OptionStatus OptionValue::setValue(OptionValueInner &&value) {
             value.valueType,
             mAcceptedValueTypes
         );
+    } else {
+        mValue = std::move(value);
     }
     return OptionStatus::Ok;
 }
@@ -299,6 +301,8 @@ OptionStatus OptionValue::setDefaultValue(OptionValueInner &&defaultValue) {
             defaultValue.valueType,
             mAcceptedValueTypes
         );
+    } else {
+        mDefault = std::move(defaultValue);
     }
     return OptionStatus::Ok;
 }

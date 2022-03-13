@@ -15,10 +15,10 @@ TEST(OptionsOptionValue, FromString) {
 TEST(OptionsOptionValue, FromArrayLike) {
     spdlog::set_level(spdlog::level::trace);
 
-    OptionValue value(OptionValueInner(makeNestedOptionList(10)));
+    OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
     ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
     const NestedOptionList &nol = value.getValue().getNestedList();
-    ASSERT_EQ(nol.size(), 10);
+    ASSERT_EQ(nol.size(), 3);
 }
 
 TEST(OptionsOptionValue, ChangeValueString) {
@@ -31,18 +31,18 @@ TEST(OptionsOptionValue, ChangeValueString) {
 }
 
 TEST(OptionsOptionValue, ChangeValueList) {
-    OptionValue value(makeNestedOptionList(10));
+    OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
         const NestedOptionList &nol = value.getValue().getNestedList();
-        ASSERT_EQ(nol.size(), 10);
+        ASSERT_EQ(nol.size(), 3);
     }
 
-    value.setValue(makeNestedOptionList(5));
+    value.setValue(makeNestedOptionList(2));
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
         const NestedOptionList &nol = value.getValue().getNestedList();
-        ASSERT_EQ(nol.size(), 5);
+        ASSERT_EQ(nol.size(), 2);
     }
 }
 
@@ -79,19 +79,19 @@ TEST(OptionsOptionValue, ResetString) {
 }
 
 TEST(OptionsOptionValue, ResetList) {
-    OptionValue value(makeNestedOptionList(10));
+    OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
         const NestedOptionList &nol = value.getValue().getNestedList();
-        ASSERT_EQ(nol.size(), 10);
+        ASSERT_EQ(nol.size(), 3);
     }
 
-    value.setValue(makeNestedOptionList(5));
+    value.setValue(makeNestedOptionList(2));
     value.resetValue();
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
         const NestedOptionList &nol = value.getValue().getNestedList();
-        ASSERT_EQ(nol.size(), 10);
+        ASSERT_EQ(nol.size(), 3);
     }
 }
 
@@ -101,11 +101,11 @@ TEST(OptionsOptionValue, SetAcceptedValueTypes) {
     ASSERT_EQ(value.getValue().getRawValue(), "stuff");
 
     value.setAcceptedValueTypes(OptionValueType::RAW_VALUE | OptionValueType::NESTED_LIST);
-    value.setValue(makeNestedOptionList(10));
+    value.setValue(makeNestedOptionList(3));
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
         const NestedOptionList &nol = value.getValue().getNestedList();
-        ASSERT_EQ(nol.size(), 10);
+        ASSERT_EQ(nol.size(), 3);
     }
 }
 
