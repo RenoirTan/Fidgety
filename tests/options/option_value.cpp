@@ -7,7 +7,7 @@
 using namespace Fidgety;
 
 TEST(OptionsOptionValue, FromString) {
-    OptionValue value("something");
+    OptionValue value("something", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValue().getRawValue(), "something");
 }
@@ -22,7 +22,7 @@ TEST(OptionsOptionValue, FromArrayLike) {
 }
 
 TEST(OptionsOptionValue, ChangeValueString) {
-    OptionValue value("original");
+    OptionValue value("original", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValue().getRawValue(), "original");
 
@@ -69,7 +69,7 @@ TEST(OptionsOptionValue, ChangeValueAmbiguous) {
 }
 
 TEST(OptionsOptionValue, ResetString) {
-    OptionValue value("original");
+    OptionValue value("original", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValue().getRawValue(), "original");
 
@@ -96,7 +96,7 @@ TEST(OptionsOptionValue, ResetList) {
 }
 
 TEST(OptionsOptionValue, SetAcceptedValueTypes) {
-    OptionValue value("stuff");
+    OptionValue value("stuff", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValue().getRawValue(), "stuff");
 
@@ -110,7 +110,7 @@ TEST(OptionsOptionValue, SetAcceptedValueTypes) {
 }
 
 TEST(OptionsOptionValue, SetInvalidAcceptedValueTypes) {
-    OptionValue value("stuff");
+    OptionValue value("stuff", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValue().getRawValue(), "stuff");
 

@@ -148,10 +148,10 @@ namespace Fidgety {
 
     class OptionValue {
         public:
-            OptionValue(int32_t acceptedValueType = OptionValueType::RAW_VALUE);
+            OptionValue(int32_t acceptedValueType);
             OptionValue(
                 OptionValueInner &&defaultValue,
-                int32_t acceptedValueTypes = OptionValueType::RAW_VALUE
+                int32_t acceptedValueTypes
             );
 
             int32_t getValueType(void) const noexcept;
@@ -196,7 +196,7 @@ namespace Fidgety {
                 OptionIdentifier identifier,
                 OptionEditor &&optionEditor,
                 Validator &&validator,
-                int32_t acceptedValueTypes = OptionValueType::RAW_VALUE
+                int32_t acceptedValueTypes
             ) noexcept;
             Option(
                 OptionIdentifier identifier,
