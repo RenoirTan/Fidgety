@@ -1,3 +1,6 @@
+fidgety_create_test(options_option option.cpp)
+target_link_libraries(options_option PRIVATE Fidgety::FidgetyOptions)
+
 fidgety_create_test(options_validator validator.cpp)
 target_link_libraries(options_validator PRIVATE Fidgety::FidgetyOptions)
 
