@@ -1,0 +1,6 @@
+fidgety_add_my_library(FidgetyVerifier STATIC verifier.cpp)
+set_target_properties(FidgetyVerifier PROPERTIES OUTPUT_NAME fidgety_verifier)
+target_link_libraries(FidgetyVerifier PUBLIC FidgetyOptions)
+fidgety_link_common_libraries(FidgetyVerifier)
+fidgety_link_exception(FidgetyVerifier)
+fidgety_install_library(FidgetyVerifier fidgety_verifier_config.cmake)
