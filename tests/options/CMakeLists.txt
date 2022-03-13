@@ -9,3 +9,6 @@ target_link_libraries(options_validator_context PRIVATE Fidgety::FidgetyOptions)
 
 fidgety_create_test(options_option_value_inner option_value_inner.cpp)
 target_link_libraries(options_option_value_inner PRIVATE Fidgety::FidgetyOptions)
+
+fidgety_create_test(options_option_value option_value.cpp)
+target_link_libraries(options_option_value PRIVATE Fidgety::FidgetyOptions)
