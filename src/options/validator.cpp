@@ -30,7 +30,7 @@ ValidatorMessageType ValidatorMessage::getMessageType(void) const noexcept {
 }
 
 namespace Fidgety {
-    inline const char *_validator_message_type_to_str(const ValidatorMessageType mt) {
+    inline const char *_ValidatorMessageTypeToStr(const ValidatorMessageType mt) {
         switch (mt) {
             case ValidatorMessageType::Valid: return "Valid";
             case ValidatorMessageType::Problematic: return "Problematic";
@@ -44,7 +44,7 @@ namespace Fidgety {
 std::string ValidatorMessage::fullMessage(void) const {
     return fmt::format(
         "{0}: {1}",
-        _validator_message_type_to_str(getMessageType()),
+        _ValidatorMessageTypeToStr(getMessageType()),
         getMessage()
     );
 }

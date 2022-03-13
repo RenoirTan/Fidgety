@@ -62,31 +62,8 @@ OptionValueInner::OptionValueInner(NestedOptionList &&nestedList) :
 
 OptionValueInner::~OptionValueInner(void) {
     spdlog::trace("deleting Fidgety::OptionValueInner");
-    switch (this->valueType) {
-        case OptionValueType::RAW_VALUE: {
-            spdlog::trace("raw value detected when deleting Fidgety::OptionValueInner");
-            this->value.rawValue.std::string::~string();
-            break;
-        }
-        case OptionValueType::NESTED_LIST: {
-            spdlog::trace("nested option list detected when deleting Fidgety::OptionValueInner");
-            this->value.nestedList.NestedOptionList::~vector();
-            break;
-        }
-        default: {
-            // Destructors must be noexcept >:(
-            /*
-            FIDGETY_CRITICAL(
-                OptionException,
-                OptionStatus::InvalidValueType,
-                "invalid value type code ({0}) detected when trying to delete "
-                "Fidgety::OptionValueInner",
-                this->valueType
-            );
-            */
-        }
-        spdlog::debug("deleted Fidgety::OptionValueInner");
-    }
+    this->_deleteCurrentValue();
+    spdlog::debug("deleted Fidgety::OptionValueInner");
 }
 
 OptionValueInner::OptionValueInner(const OptionValueInner &other) :
@@ -94,34 +71,7 @@ OptionValueInner::OptionValueInner(const OptionValueInner &other) :
     value { rawValue: std::string() }
 {
     spdlog::trace("creating Fidgety::OptionValueInner using copy constructor");
-    switch (other.valueType) {
-        case OptionValueType::RAW_VALUE: {
-            spdlog::trace(
-                "detected raw value when creating Fidgety::OptionValueInner using copy constructor"
-            );
-            this->value.rawValue = other.value.rawValue;
-            this->valueType = other.valueType;
-            break;
-        }
-        case OptionValueType::NESTED_LIST: {
-            spdlog::trace(
-                "detected nested option list "
-                "when creating Fidgety::OptionValueInner using copy constructor"
-            );
-            this->value.nestedList = other.value.nestedList;
-            this->valueType = other.valueType;
-            break;
-        }
-        default: {
-            FIDGETY_CRITICAL(
-                OptionException,
-                OptionStatus::InvalidValueType,
-                "invalid value type code ({0}) detected when trying to copy "
-                "Fidgety::OptionValueInner using copy constructor",
-                other.valueType
-            );
-        }
-    }
+    *this = other;
     spdlog::debug("created Fidgety::OptionValueInner using copy constructor");
 }
 
@@ -130,45 +80,29 @@ OptionValueInner::OptionValueInner(OptionValueInner &&other) :
     value { rawValue: std::string() }
 {
     spdlog::trace("creating Fidgety::OptionValueInner using move constructor");
-    switch (other.valueType) {
-        case OptionValueType::RAW_VALUE: {
-            spdlog::trace(
-                "detected raw value when creating Fidgety::OptionValueInner using move constructor"
-            );
-            this->value.rawValue = std::move(other.value.rawValue);
-            this->valueType = other.valueType;
-            break;
-        }
-        case OptionValueType::NESTED_LIST: {
-            spdlog::trace(
-                "detected nested option list "
-                "when creating Fidgety::OptionValueInner using move constructor"
-            );
-            this->value.nestedList = std::move(other.value.nestedList);
-            this->valueType = other.valueType;
-            break;
-        }
-        default: {
-            FIDGETY_CRITICAL(
-                OptionException,
-                OptionStatus::InvalidValueType,
-                "invalid value type code ({0}) detected when trying to move "
-                "Fidgety::OptionValueInner using move constructor",
-                other.valueType
-            );
-        }
-    }
+    *this = std::move(other);
     spdlog::debug("created Fidgety::OptionValueInner using move constructor");
 }
 
 OptionValueInner &OptionValueInner::operator=(const OptionValueInner &other) {
     spdlog::trace("assigning Fidgety::OptionValueInner by copying");
+    if (OptionValueType::isValid(other.valueType)) {
+        this->_deleteCurrentValue();
+    } else {
+        FIDGETY_CRITICAL(
+            OptionException,
+            OptionStatus::InvalidValueType,
+            "invalid value type code ({0}) detected when trying to copy "
+            "Fidgety::OptionValueInner when using copy assignment",
+            other.valueType
+        );
+    }
     switch (other.valueType) {
         case OptionValueType::RAW_VALUE: {
             spdlog::trace(
                 "detected raw value when assigning Fidgety::OptionValueInner by copying"
             );
-            this->value.rawValue = other.value.rawValue;
+            new (&this->value.rawValue) std::string(other.value.rawValue);
             this->valueType = other.valueType;
             break;
         }
@@ -176,18 +110,9 @@ OptionValueInner &OptionValueInner::operator=(const OptionValueInner &other) {
             spdlog::trace(
                 "detected nested option list when assigning Fidgety::OptionValueInner by copying"
             );
-            this->value.nestedList = other.value.nestedList;
+            new (&this->value.nestedList) NestedOptionList(other.value.nestedList);
             this->valueType = other.valueType;
             break;
-        }
-        default: {
-            FIDGETY_CRITICAL(
-                OptionException,
-                OptionStatus::InvalidValueType,
-                "invalid value type code ({0}) detected when trying to copy "
-                "Fidgety::OptionValueInner when using copy assignment",
-                other.valueType
-            );
         }
     }
     spdlog::debug("assigned Fidgety::OptionValueInner by copying");
@@ -196,12 +121,23 @@ OptionValueInner &OptionValueInner::operator=(const OptionValueInner &other) {
 
 OptionValueInner &OptionValueInner::operator=(OptionValueInner &&other) {
     spdlog::trace("assigning Fidgety::OptionValueInner by moving");
+    if (OptionValueType::isValid(other.valueType)) {
+        this->_deleteCurrentValue();
+    } else {
+        FIDGETY_CRITICAL(
+            OptionException,
+            OptionStatus::InvalidValueType,
+            "invalid value type code ({0}) detected when trying to move "
+            "Fidgety::OptionValueInner when using move assignment",
+            other.valueType
+        );
+    }
     switch (other.valueType) {
         case OptionValueType::RAW_VALUE: {
             spdlog::trace(
                 "detected raw value when assigning Fidgety::OptionValueInner by moving"
             );
-            this->value.rawValue = std::move(other.value.rawValue);
+            new (&this->value.rawValue) std::string(std::move(other.value.rawValue));
             this->valueType = other.valueType;
             break;
         }
@@ -209,22 +145,38 @@ OptionValueInner &OptionValueInner::operator=(OptionValueInner &&other) {
             spdlog::trace(
                 "detected nested option list when assigning Fidgety::OptionValueInner by moving"
             );
-            this->value.nestedList = std::move(other.value.nestedList);
+            new (&this->value.nestedList) NestedOptionList(std::move(other.value.nestedList));
             this->valueType = other.valueType;
+            break;
+        }
+    }
+    spdlog::debug("assigned Fidgety::OptionValueInner by moving");
+    return *this;
+}
+
+void OptionValueInner::_deleteCurrentValue(void) {
+    spdlog::trace("deleting current value in Fidgety::OptionValueInner");
+    switch (this->valueType) {
+        case OptionValueType::RAW_VALUE: {
+            spdlog::trace("RAW_VALUE detected when deleting value in Fidgety::OptionValueInner");
+            this->value.rawValue.std::string::~string();
+            break;
+        }
+        case OptionValueType::NESTED_LIST: {
+            spdlog::trace("NESTED_LIST detected when deleting value in Fidgety::OptionValueInner");
+            this->value.nestedList.NestedOptionList::~vector();
             break;
         }
         default: {
             FIDGETY_CRITICAL(
                 OptionException,
                 OptionStatus::InvalidValueType,
-                "invalid value type code ({0}) detected when trying to move "
-                "Fidgety::OptionValueInner when using move assignment",
-                other.valueType
+                "invalid value type code ({0}) detected when trying to delete "
+                "the internal value of Fidgety::OptionValueInner in _deleteCurrentValue",
+                this->valueType
             );
         }
     }
-    spdlog::debug("assigned Fidgety::OptionValueInner by moving");
-    return *this;
 }
 
 const NestedOptionList &OptionValueInner::getNestedList(void) const {
@@ -252,6 +204,16 @@ const std::string &OptionValueInner::getRawValue(void) const {
             OptionStatus::InvalidValueType,
             "requested a rawValue from OptionValueInner::getRawValue but failed"
         );
+    }
+}
+
+bool OptionValueType::isValid(const int32_t valueType) {
+    switch (valueType) {
+        case OptionValueType::RAW_VALUE:
+        case OptionValueType::NESTED_LIST:
+            return true;
+        default:
+            return false;
     }
 }
 

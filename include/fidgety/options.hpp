@@ -133,6 +133,8 @@ namespace Fidgety {
         OptionValueInner &operator=(const OptionValueInner &other);
         OptionValueInner &operator=(OptionValueInner &&other);
 
+        void _deleteCurrentValue(void);
+
         const NestedOptionList &getNestedList(void) const;
         const std::string &getRawValue(void) const;
     };
@@ -140,6 +142,8 @@ namespace Fidgety {
     namespace OptionValueType {
         const int32_t NESTED_LIST = 1;
         const int32_t RAW_VALUE = 2;
+
+        bool isValid(const int32_t valueType);
     }
 
     class OptionValue {
