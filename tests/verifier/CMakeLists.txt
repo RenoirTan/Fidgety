@@ -1,0 +1,2 @@
+fidgety_create_test(verifier_verifier verifier.cpp)
+target_link_libraries(verifier_verifier PRIVATE Fidgety::FidgetyVerifier)
