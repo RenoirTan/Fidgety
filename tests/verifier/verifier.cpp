@@ -53,7 +53,7 @@ class SimpleValidator : public Validator {
             }
             int64_t left = values["A"] + values["B"], right = values["C"] + values["D"];
             if (left == right) {
-                return ValidatorMessage(ValidatorMessageType::Valid, "Ok");
+                return ValidatorMessage(ValidatorMessageType::Valid, "Values match!");
             } else {
                 return ValidatorMessage(
                     ValidatorMessageType::Invalid,
@@ -89,15 +89,17 @@ TEST(VerifierVerifier, CreateVerifier) {
 
 TEST(VerifierVerifier, ValidateOriginal) {
     Verifier verifier(createOptions(), SimpleValidatorContextCreator());
-    {
-        verifier.getLock("A");
-    }
+    VerifierOptionLock lock = verifier.getLock("A");
+    ValidatorMessage message = lock.release();
+    EXPECT_EQ(message.fullMessage(), "Valid: Values Match!");
+    ASSERT_TRUE(lock.isReleased());
 }
 
 TEST(VerifierVerifier, ValidateChanged) {
     Verifier verifier(createOptions(), SimpleValidatorContextCreator());
-    EXPECT_THROW({
-        VerifierOptionLock lock = verifier.getLock("A");
-        lock.getMutOption().setValue("25");
-    }, VerifierException);
+    VerifierOptionLock lock = verifier.getLock("A");
+    lock.getMutOption().setValue("25");
+    ValidatorMessage message = lock.release();
+    EXPECT_EQ(message.fullMessage(), "Invalid: A+B does not match C+D! A+B = 29 but C+D = 5");
+    ASSERT_TRUE(lock.isReleased());
 }

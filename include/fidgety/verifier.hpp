@@ -78,6 +78,9 @@ namespace Fidgety {
             VerifierOptionLock &operator=(const VerifierOptionLock &lock) = delete;
             VerifierOptionLock &operator=(VerifierOptionLock &&lock) = default;
 
+            bool isReleased(void) const noexcept;
+            ValidatorMessage release(void);
+
             bool optionExists(void) const;
             Option &getMutOption(void);
             const Option &getOption(void) const;

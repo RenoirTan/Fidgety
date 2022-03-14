@@ -164,9 +164,31 @@ namespace Fidgety {
     ) : mVerifier(verifier), mOption(option) { }
 
     VerifierOptionLock::~VerifierOptionLock(void) {
-        if (!mVerifier.expired()) {
+        if (!isReleased()) {
             std::shared_ptr<VerifierInner> verifier = mVerifier.lock();
-            verifier->releaseLock(std::move(*this));
+            /* ValidatorMessage message = */verifier->releaseLock(std::move(*this));
+            mVerifier.reset();
+            mOption.reset();
+        }
+    }
+
+    bool VerifierOptionLock::isReleased(void) const noexcept {
+        return (mVerifier.expired() || mOption.expired());
+    }
+
+    ValidatorMessage VerifierOptionLock::release(void) {
+        if (!isReleased()) {
+            std::shared_ptr<VerifierInner> verifier = mVerifier.lock();
+            ValidatorMessage message = verifier->releaseLock(std::move(*this));
+            mVerifier.reset();
+            mOption.reset();
+            return message;
+        } else {
+            FIDGETY_CRITICAL(
+                VerifierException,
+                VerifierStatus::WeakPointerExpired,
+                "Tried to release a lock when it has already been released."
+            );
         }
     }
 
