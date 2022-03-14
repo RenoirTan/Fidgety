@@ -65,35 +65,39 @@ class SimpleValidator : public Validator {
 
 VerifierManagedOptionList createOptions(void) {
 #define CONS std::map<std::string, std::string>
+#define ASSIGN_OPT(vmol, id, val) \
+    vmol[id] = std::make_shared<Option>( \
+        id, \
+        OptionEditor(OptionEditorType::TextEntry, CONS()), \
+        Validator(), \
+        OptionValue(val, OptionValueType::RAW_VALUE) \
+    ) \
+
     VerifierManagedOptionList vmol;
-    vmol["A"] = std::make_shared<Option>(
-        "A",
-        OptionEditor(OptionEditorType::TextEntry, CONS()),
-        Validator(),
-        OptionValue("1", OptionValueType::RAW_VALUE)
-    );
-    vmol["B"] = std::make_shared<Option>(
-        "B",
-        OptionEditor(OptionEditorType::TextEntry, CONS()),
-        Validator(),
-        OptionValue("4", OptionValueType::RAW_VALUE)
-    );
-    vmol["C"] = std::make_shared<Option>(
-        "C",
-        OptionEditor(OptionEditorType::TextEntry, CONS()),
-        Validator(),
-        OptionValue("2", OptionValueType::RAW_VALUE)
-    );
-    vmol["D"] = std::make_shared<Option>(
-        "D",
-        OptionEditor(OptionEditorType::TextEntry, CONS()),
-        Validator(),
-        OptionValue("3", OptionValueType::RAW_VALUE)
-    );
+    ASSIGN_OPT(vmol, "A", "1");
+    ASSIGN_OPT(vmol, "B", "4");
+    ASSIGN_OPT(vmol, "C", "2");
+    ASSIGN_OPT(vmol, "D", "3");
+#undef ASSIGN_OPT
 #undef CONS
     return vmol;
 }
 
 TEST(VerifierVerifier, CreateVerifier) {
     Verifier verifier(createOptions(), SimpleValidatorContextCreator());
+}
+
+TEST(VerifierVerifier, ValidateOriginal) {
+    Verifier verifier(createOptions(), SimpleValidatorContextCreator());
+    {
+        verifier.getLock("A");
+    }
+}
+
+TEST(VerifierVerifier, ValidateChanged) {
+    Verifier verifier(createOptions(), SimpleValidatorContextCreator());
+    EXPECT_THROW({
+        VerifierOptionLock lock = verifier.getLock("A");
+        lock.getMutOption().setValue("25");
+    }, VerifierException);
 }

@@ -65,7 +65,7 @@ namespace Fidgety {
             }
 
             bool isOptionLocked(const OptionIdentifier &identifier) const {
-                return mLocks.find(identifier) == mLocks.end();
+                return mLocks.find(identifier) != mLocks.end();
             }
 
             std::weak_ptr<Option> lockOption(const OptionIdentifier &identifier) {
@@ -86,6 +86,7 @@ namespace Fidgety {
                         identifier
                     );
                 }
+                mLocks.insert(identifier);
                 return std::weak_ptr<Option>(option->second);
             }
 
