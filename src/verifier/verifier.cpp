@@ -40,8 +40,8 @@ namespace Fidgety {
 
     class VerifierInner {
         public:
-            VerifierInner(ValidatorContextCreator &&contextCreator) :
-                mContextCreator(contextCreator),
+            VerifierInner(std::unique_ptr<ValidatorContextCreator> &&contextCreator) :
+                mContextCreator(std::move(contextCreator)),
                 mIdentifier(createIdentifier())
             {
                 spdlog::trace("Created Fidgety::VerifierInner with contextCreator.");
@@ -49,9 +49,9 @@ namespace Fidgety {
 
             VerifierInner(
                 VerifierManagedOptionList &&options,
-                ValidatorContextCreator &&contextCreator
+                std::unique_ptr<ValidatorContextCreator> &&contextCreator
             ) :
-                mContextCreator(contextCreator),
+                mContextCreator(std::move(contextCreator)),
                 mIdentifier(createIdentifier()),
                 mOptions(options)
             {
@@ -126,18 +126,18 @@ namespace Fidgety {
                         identifier
                     );
                 }
-                ValidatorContext context = mContextCreator.createContext(mOptions, identifier);
+                ValidatorContext context = mContextCreator->createContext(mOptions, identifier);
                 ValidatorMessage message = option.validate(context);
                 spdlog::debug("Lock released in Fidgety::VerifierInner");
                 return message;
             }
 
             const ValidatorContextCreator &getContextCreator(void) const {
-                return mContextCreator;
+                return *mContextCreator;
             }
 
             ValidatorContextCreator &getMutContextCreator(void) {
-                return mContextCreator;
+                return *mContextCreator;
             }
 
             const VerifierIdentifier &getIdentifier(void) const {
@@ -165,7 +165,7 @@ namespace Fidgety {
             }
 
         protected:
-            ValidatorContextCreator mContextCreator;
+            std::unique_ptr<ValidatorContextCreator> mContextCreator;
             VerifierIdentifier mIdentifier;
             VerifierManagedOptionList mOptions;
             std::set<OptionIdentifier> mLocks;
@@ -248,7 +248,7 @@ namespace Fidgety {
         }
     }
 
-    Verifier::Verifier(ValidatorContextCreator &&contextCreator) :
+    Verifier::Verifier(std::unique_ptr<ValidatorContextCreator> &&contextCreator) :
         mInner(new VerifierInner(std::move(contextCreator)))
     {
         spdlog::trace("Creating Fidgety::Verifier with contextCreator.");
@@ -256,7 +256,7 @@ namespace Fidgety {
 
     Verifier::Verifier(
         VerifierManagedOptionList &&options,
-        ValidatorContextCreator &&contextCreator
+        std::unique_ptr<ValidatorContextCreator> &&contextCreator
     ) : mInner(new VerifierInner(std::move(options), std::move(contextCreator))) {
         spdlog::trace("Creating Fidgety::Verifier with options, contextCreator.");
     }

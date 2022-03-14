@@ -92,8 +92,11 @@ namespace Fidgety {
 
     class Verifier {
         public:
-            Verifier(ValidatorContextCreator &&contextCreator);
-            Verifier(VerifierManagedOptionList &&options, ValidatorContextCreator &&contextCreator);
+            Verifier(std::unique_ptr<ValidatorContextCreator> &&contextCreator);
+            Verifier(
+                VerifierManagedOptionList &&options,
+                std::unique_ptr<ValidatorContextCreator> &&contextCreator
+            );
             ~Verifier(void) = default;
 
             Verifier(const std::shared_ptr<VerifierInner> &inner);

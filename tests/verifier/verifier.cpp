@@ -36,10 +36,11 @@ class SimpleValidatorContextCreator : public virtual ValidatorContextCreator {
             );
             ValidatorContextInner vci;
             for (auto option = verifier.cbegin(); option != verifier.cend(); ++option) {
-                if (option->first == identifier)
+                if (option->first == identifier) {
                     continue;
-                else
-                    vci[identifier] = option->second;
+                } else {
+                    vci[option->first] = option->second;
+                }
             }
             return ValidatorContext(std::move(vci));
         }
@@ -53,10 +54,11 @@ class SimpleValidator : public virtual Validator {
 
         ValidatorMessage validate(const Option &option, const ValidatorContext &context) {
             const OptionIdentifier &optionIdentifier = option.getIdentifier();
-            spdlog::trace("Validating '{0}' in SimpleValidator.");
+            spdlog::trace("Validating '{0}' in SimpleValidator.", optionIdentifier);
             const int64_t optionValue = std::atol(option.getRawValue().c_str());
             std::map<OptionIdentifier, int64_t> values;
             values[optionIdentifier] = optionValue;
+            spdlog::trace("Size of context: {0}", context.getInnerMap().size());
             for (
                 auto other = context.getInnerMap().cbegin();
                 other != context.getInnerMap().cend();
@@ -64,7 +66,8 @@ class SimpleValidator : public virtual Validator {
             ) {
                 values[other->first] = std::atol(other->second->getRawValue().c_str());
             }
-            int64_t left = values["A"] + values["B"], right = values["C"] + values["D"];
+            int64_t left = values["A"] + values["B"];
+            int64_t right = values["C"] + values["D"];
             if (left == right) {
                 return ValidatorMessage(ValidatorMessageType::Valid, "Values match!");
             } else {
@@ -98,21 +101,24 @@ VerifierManagedOptionList createOptions(void) {
 
 TEST(VerifierVerifier, CreateVerifier) {
     spdlog::set_level(spdlog::level::trace);
-    Verifier verifier(createOptions(), SimpleValidatorContextCreator());
+    std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
+    Verifier verifier(createOptions(), std::move(vcc));
 }
 
 TEST(VerifierVerifier, ValidateOriginal) {
     spdlog::set_level(spdlog::level::trace);
-    Verifier verifier(createOptions(), SimpleValidatorContextCreator());
+    std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
+    Verifier verifier(createOptions(), std::move(vcc));
     VerifierOptionLock lock = verifier.getLock("A");
     ValidatorMessage message = lock.release();
-    EXPECT_EQ(message.fullMessage(), "Valid: Values Match!");
+    EXPECT_EQ(message.fullMessage(), "Valid: Values match!");
     ASSERT_TRUE(lock.isReleased());
 }
 
 TEST(VerifierVerifier, ValidateChanged) {
     spdlog::set_level(spdlog::level::trace);
-    Verifier verifier(createOptions(), SimpleValidatorContextCreator());
+    std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
+    Verifier verifier(createOptions(), std::move(vcc));
     VerifierOptionLock lock = verifier.getLock("A");
     lock.getMutOption().setValue("25");
     ValidatorMessage message = lock.release();
