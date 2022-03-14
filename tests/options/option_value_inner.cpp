@@ -1,3 +1,15 @@
+/**
+ * @file tests/options/option_value_inner.cpp
+ * @author RenoirTan
+ * @brief Test suite to ensure Fidgety::OptionValueInner manages the raw union
+ * data properly.
+ * @version 0.1
+ * @date 2022-03-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include <string>
 #include <fidgety/options.hpp>
 #include <gtest/gtest.h>

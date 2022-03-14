@@ -1,3 +1,16 @@
+/**
+ * @file tests/options/dummies.hpp
+ * @author RenoirTan
+ * @brief Header file for helper function for the `options` test group.
+ * This file contains functions which create dummy Fidgety::Options so that
+ * I don't have to constantly write boilerplate code.
+ * @version 0.1
+ * @date 2022-03-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #ifndef _DUMMIES_HPP
 #   define _DUMMIES_HPP
 

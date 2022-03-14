@@ -1,3 +1,15 @@
+/**
+ * @file tests/exception/exceptions.cpp
+ * @author RenoirTan
+ * @brief Test suite for making sure that Fidgety::Exception outputs the
+ * correct message.
+ * @version 0.1
+ * @date 2022-03-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include <cstring>
 #include <fidgety/exception.hpp>
 #include "spdlog/spdlog.h"

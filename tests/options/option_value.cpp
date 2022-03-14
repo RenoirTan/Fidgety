@@ -1,3 +1,15 @@
+/**
+ * @file tests/options/option_value.cpp
+ * @author RenoirTan
+ * @brief Test suite to make sure that Fidgety::OptionValue can properly handle
+ * values and default values.
+ * @version 0.1
+ * @date 2022-03-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include <string>
 #include <fidgety/options.hpp>
 #include <gtest/gtest.h>

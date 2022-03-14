@@ -1,7 +1,7 @@
 /**
  * @file tests/verifier/verifier.cpp
  * @author RenoirTan
- * @brief Test for the verifier in Fidgety. This test suites simulates an app
+ * @brief Test for the verifier in Fidgety. This test suite simulates an app
  * with 4 inputs A, B, C, D which are related by this equation:
  * A+B=C+D
  * The verifier classes in this suite have to ensure that this equation is

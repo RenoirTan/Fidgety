@@ -1,3 +1,14 @@
+/**
+ * @file tests/decoder/decoding.cpp
+ * @author RenoirTan
+ * @brief Test suite for making sure Fidgety::NormalConfDecoder (and therefore
+ * Fidgety::Decoder) works.
+ * @version 0.1
+ * @date 2022-03-14
+ * 
+ * @copyright Copyright (c) 2022
+ */
+
 #ifdef _WIN32
 #   include <direct.h>
 #   define getcwd _getcwd

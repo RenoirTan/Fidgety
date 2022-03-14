@@ -1,3 +1,14 @@
+/**
+ * @file tests/options/validator_message.cpp
+ * @author RenoirTan
+ * @brief Test suite for Fidgety::ValidatorMessage.
+ * @version 0.1
+ * @date 2022-03-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include <iostream>
 #include <string>
 #include <fidgety/options.hpp>

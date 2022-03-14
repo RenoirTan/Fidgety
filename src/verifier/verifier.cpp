@@ -1,3 +1,14 @@
+/**
+ * @file src/verifier/verifier.cpp
+ * @author RenoirTan
+ * @brief Implementation for the Fidgety::Verifier class along with its helper
+ * classes/functions.
+ * @version 0.1
+ * @date 2022-03-14
+ * 
+ * @copyright Copyright (c) 2022
+ */
+
 #include <random>
 #include <set>
 #include "spdlog/spdlog.h"

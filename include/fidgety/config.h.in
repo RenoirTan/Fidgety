@@ -1,3 +1,15 @@
+/**
+ * @file include/fidgety/config.h.in
+ * @author RenoirTan
+ * @brief This is the config header file template CMake uses to change certain
+ * compile-time options.
+ * @version 0.1
+ * @date 2022-03-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #ifndef FIDGETY_CONFIG_H
 #   define FIDGETY_CONFIG_H
 
