@@ -150,6 +150,13 @@ namespace Fidgety {
             std::set<OptionIdentifier> mLocks;
     };
 
+    ValidatorContext ValidatorContextCreator::createContext(
+        const VerifierManagedOptionList &verifier,
+        const OptionIdentifier &identifier
+    ) {
+        return ValidatorContext();
+    }
+
     VerifierOptionLock::VerifierOptionLock(
         const std::weak_ptr<VerifierInner> &verifier,
         const std::weak_ptr<Option> &option
