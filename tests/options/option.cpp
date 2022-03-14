@@ -7,7 +7,8 @@
 using namespace Fidgety;
 
 TEST(OptionsOption, SanityCheck) {
-    Validator validator;
+    spdlog::set_level(spdlog::level::trace);
+    std::unique_ptr<Validator> validator(new Validator());
     OptionEditor editor(OptionEditorType::TextEntry, std::map<std::string, std::string>());
     OptionValue value("value", OptionValueType::RAW_VALUE);
     Option option("option", std::move(editor), std::move(validator), std::move(value));
@@ -37,7 +38,7 @@ TEST(OptionsOption, SanityCheck) {
 }
 
 TEST(OptionsOption, SetValues) {
-    Validator validator;
+    std::unique_ptr<Validator> validator(new Validator());
     OptionEditor editor(OptionEditorType::TextEntry, std::map<std::string, std::string>());
     OptionValue value("original", OptionValueType::RAW_VALUE);
     Option option("option", std::move(editor), std::move(validator), std::move(value));

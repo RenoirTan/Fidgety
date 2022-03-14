@@ -195,19 +195,20 @@ namespace Fidgety {
             Option(
                 OptionIdentifier identifier,
                 OptionEditor &&optionEditor,
-                Validator &&validator,
+                std::unique_ptr<Validator> &&validator,
                 int32_t acceptedValueTypes
             ) noexcept;
             Option(
                 OptionIdentifier identifier,
                 OptionEditor &&optionEditor,
-                Validator &&validator,
+                std::unique_ptr<Validator> &&validator,
                 OptionValue &&value
             );
             ~Option(void);
 
             // Option(const Option &option) = delete;
-            // Option(Option &&option) = default;
+            Option(Option &&option);
+            Option &operator=(Option &&option);
 
             const OptionIdentifier &getIdentifier(void) const noexcept;
             const OptionValue &getOptionValue(void) const noexcept;
@@ -231,7 +232,7 @@ namespace Fidgety {
             OptionStatus resetValue(void);
             OptionStatus setAcceptedValueTypes(int32_t acceptedValueTypes);
 
-            void setValidator(Validator validator) noexcept;
+            void setValidator(std::unique_ptr<Validator> &&validator) noexcept;
             ValidatorMessage validate(const ValidatorContext &context);
             const ValidatorMessage &getLastValidatorMessage(void) const noexcept;
 
@@ -241,7 +242,7 @@ namespace Fidgety {
         protected:
             OptionIdentifier mIdentifier;
             OptionValue mValue;
-            Validator mValidator;
+            std::unique_ptr<Validator> mValidator;
             ValidatorMessage mLastValidatorMessage;
             OptionEditor mOptionEditor;
     };

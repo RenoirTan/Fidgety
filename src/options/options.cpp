@@ -181,6 +181,7 @@ void OptionValueInner::_deleteCurrentValue(void) {
 
 const NestedOptionList &OptionValueInner::getNestedList(void) const {
     spdlog::trace("getting nested option list from Fidgety::OptionValueInner");
+    spdlog::trace("OptionValueInner::valueType == {0}", this->valueType);
     if (this->valueType == OptionValueType::NESTED_LIST) {
         spdlog::trace("returning nested option list");
         return this->value.nestedList;
@@ -195,6 +196,7 @@ const NestedOptionList &OptionValueInner::getNestedList(void) const {
 
 const std::string &OptionValueInner::getRawValue(void) const {
     spdlog::trace("getting raw value from Fidgety::OptionValueInner");
+    spdlog::trace("OptionValueInner::valueType == {0}", this->valueType);
     if (this->valueType == OptionValueType::RAW_VALUE) {
         spdlog::trace("returning raw value");
         return this->value.rawValue;
@@ -348,12 +350,12 @@ OptionEditor::OptionEditor(OptionEditorType oet, std::map<std::string, std::stri
 Option::Option(
     OptionIdentifier identifier,
     OptionEditor &&optionEditor,
-    Validator &&validator,
+    std::unique_ptr<Validator> &&validator,
     int32_t acceptedValueTypes
 ) noexcept :
     mIdentifier(identifier),
     mValue(acceptedValueTypes),
-    mValidator(validator),
+    mValidator(std::move(validator)),
     mOptionEditor(optionEditor)
 {
     spdlog::debug("created Fidgety::Option ({0}) using acceptedValueTypes", mIdentifier);
@@ -362,12 +364,12 @@ Option::Option(
 Option::Option(
     OptionIdentifier identifier,
     OptionEditor &&optionEditor,
-    Validator &&validator,
+    std::unique_ptr<Validator> &&validator,
     OptionValue &&value
 ) :
     mIdentifier(identifier),
     mValue(value),
-    mValidator(validator),
+    mValidator(std::move(validator)),
     mOptionEditor(optionEditor)
 {
     spdlog::debug("created Fidgety::Option ({0}) using Fidgety::OptionValue", mIdentifier);
@@ -375,6 +377,24 @@ Option::Option(
 
 Option::~Option(void) {
     spdlog::debug("deleted Fidgety::Option");
+}
+
+Option::Option(Option &&option) :
+    mIdentifier(std::move(option.mIdentifier)),
+    mValue(std::move(option.mValue)),
+    mValidator(std::move(option.mValidator)),
+    mOptionEditor(std::move(option.mOptionEditor))
+{
+    spdlog::trace("creating Fidgety::Option using move constructor");
+}
+
+Option &Option::operator=(Option &&option) {
+    spdlog::trace("reassigning Fidgety::Option using move assignment");
+    mIdentifier = std::move(option.mIdentifier);
+    mValue = std::move(option.mValue);
+    mValidator = std::move(option.mValidator);
+    mOptionEditor = std::move(option.mOptionEditor);
+    return *this;
 }
 
 const OptionIdentifier &Option::getIdentifier(void) const noexcept {
@@ -456,14 +476,15 @@ OptionStatus Option::setAcceptedValueTypes(int32_t acceptedValueTypes) {
     return OptionStatus::Ok;
 }
 
-void Option::setValidator(Validator validator) noexcept {
+void Option::setValidator(std::unique_ptr<Validator> &&validator) noexcept {
     spdlog::trace("setting validator in Fidgety::Option ({0})", mIdentifier);
-    mValidator = validator;
+    mValidator = std::move(validator);
 }
 
 ValidatorMessage Option::validate(const ValidatorContext &context) {
     spdlog::trace("validating value in Fidgety::Option ({0})", mIdentifier);
-    ValidatorMessage message = mValidator.validate(*this, context);
+    ValidatorMessage message = mValidator->validate(*this, context);
+    spdlog::trace("validation complete, saving message in Fidgety::mLastValidatorMessage");
     mLastValidatorMessage = message;
     return message;
 }

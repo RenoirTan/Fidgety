@@ -82,7 +82,7 @@ VerifierManagedOptionList createOptions(void) {
     vmol[id] = std::make_shared<Option>( \
         id, \
         OptionEditor(OptionEditorType::TextEntry, CONS()), \
-        SimpleValidator(), \
+        std::unique_ptr<SimpleValidator>(new SimpleValidator()), \
         OptionValue(val, OptionValueType::RAW_VALUE) \
     ) \
 
