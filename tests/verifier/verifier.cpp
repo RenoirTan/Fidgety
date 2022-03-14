@@ -14,6 +14,7 @@
 
 #include <cstdlib>
 #include <fidgety/verifier.hpp>
+#include <fidgety/_tests.hpp>
 #include <fmt/core.h>
 #include <gtest/gtest.h>
 #include "spdlog/spdlog.h"
@@ -100,13 +101,13 @@ VerifierManagedOptionList createOptions(void) {
 }
 
 TEST(VerifierVerifier, CreateVerifier) {
-    spdlog::set_level(spdlog::level::trace);
+    _FIDGETY_TEST_SETLOGLEVEL();
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
 }
 
 TEST(VerifierVerifier, ValidateOriginal) {
-    spdlog::set_level(spdlog::level::trace);
+    _FIDGETY_TEST_SETLOGLEVEL();
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
     VerifierOptionLock lock = verifier.getLock("A");
@@ -116,7 +117,7 @@ TEST(VerifierVerifier, ValidateOriginal) {
 }
 
 TEST(VerifierVerifier, ValidateChanged) {
-    spdlog::set_level(spdlog::level::trace);
+    _FIDGETY_TEST_SETLOGLEVEL();
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
     VerifierOptionLock lock = verifier.getLock("A");

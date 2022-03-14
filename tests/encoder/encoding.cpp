@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <string>
+#include <fidgety/_tests.hpp>
 #include <fidgety/encoder/normal_conf_encoder.hpp>
 #include <fmt/core.h>
 #include <gtest/gtest.h>
@@ -42,7 +43,7 @@ bool filesEqual(const std::string &pathA, const std::string &pathB) {
 }
 
 TEST(EncoderEncoding, EmptyJson) {
-    spdlog::set_level(spdlog::level::trace);
+    _FIDGETY_TEST_SETLOGLEVEL();
     //NormalConfEncoder encoder;
     //encoder.openConf("../../../tmp/tests/encoder/test_0.conf");
     //encoder.openIntermediate("../../../resources/tests/encoder/test_0.json");
@@ -53,7 +54,7 @@ TEST(EncoderEncoding, EmptyJson) {
 }
 
 TEST(EncoderEncoding, WellFormedJson) {
-    spdlog::set_level(spdlog::level::trace);
+    _FIDGETY_TEST_SETLOGLEVEL();
     CREATE_ENCODER(1);
     ASSERT_TRUE(encoder.isConfOpened());
     ASSERT_TRUE(encoder.isIntermediateOpened());

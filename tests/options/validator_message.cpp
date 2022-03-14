@@ -14,10 +14,12 @@
 #include <fidgety/options.hpp>
 #include <gtest/gtest.h>
 #include "spdlog/spdlog.h"
+#include "dummies.hpp"
 
 using namespace Fidgety;
 
 TEST(OptionsValidatorMessage, ValidatorMessageType) {
+    _FIDGETY_TEST_SETLOGLEVEL();
     ValidatorMessage valid(ValidatorMessageType::Valid);
     ValidatorMessage problematic(ValidatorMessageType::Problematic);
     ValidatorMessage invalid(ValidatorMessageType::Invalid);

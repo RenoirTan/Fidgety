@@ -18,7 +18,7 @@
 using namespace Fidgety;
 
 TEST(OptionsValidator, Validator) {
-    spdlog::set_level(spdlog::level::trace);
+    _FIDGETY_TEST_SETLOGLEVEL();
     std::unique_ptr<Validator> validator(new Validator());
     OptionEditor editor(OptionEditorType::Blanked, std::map<std::string, std::string>());
     OptionValue value("value", OptionValueType::RAW_VALUE);

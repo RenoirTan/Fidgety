@@ -15,6 +15,7 @@
 #   define _DUMMIES_HPP
 
 #   include <fidgety/options.hpp>
+#   include <fidgety/_tests.hpp>
 #   include <fidgety/_utils.hpp>
 #   include <fmt/core.h>
 #   include "spdlog/spdlog.h"

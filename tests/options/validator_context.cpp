@@ -18,6 +18,7 @@
 using namespace Fidgety;
 
 TEST(OptionsValidatorContext, FromEmpty) {
+    _FIDGETY_TEST_SETLOGLEVEL();
     ValidatorContext context;
     EXPECT_FALSE(context.optionExists("thing"));
     try {
@@ -28,6 +29,7 @@ TEST(OptionsValidatorContext, FromEmpty) {
 }
 
 TEST(OptionsValidatorContext, FromDummies) {
+    _FIDGETY_TEST_SETLOGLEVEL();
     ValidatorContextInner vci = makeValidatorContextInner(10);
     ValidatorContext context(std::move(vci));
     ASSERT_TRUE(context.optionExists("Option 5"));

@@ -11,6 +11,7 @@
  */
 
 #include <cstring>
+#include <fidgety/_tests.hpp>
 #include <fidgety/exception.hpp>
 #include "spdlog/spdlog.h"
 #include <gtest/gtest.h>
@@ -18,6 +19,7 @@
 using namespace Fidgety;
 
 TEST(ExceptionExceptions, GetterFunctions) {
+    _FIDGETY_TEST_SETLOGLEVEL();
     Exception exception(1, "information", "supporting info");
     EXPECT_EQ(exception.getCode(), 1);
     EXPECT_EQ(exception.getInformation(), "information");
@@ -25,6 +27,7 @@ TEST(ExceptionExceptions, GetterFunctions) {
 }
 
 TEST(ExceptionExceptions, StringFormat) {
+    _FIDGETY_TEST_SETLOGLEVEL();
 #define EXPECTED_ANSWER ": information\nDetails:\n\tdetail 1\n\tdetail 2\n\tdetail 3"
     Exception exception(1, "information", "detail 1\ndetail 2\ndetail 3");
     EXPECT_EQ(exception.getShortDescription(), "");
@@ -39,6 +42,7 @@ TEST(ExceptionExceptions, StringFormat) {
 }
 
 TEST(ExceptionExceptions, Exit) {
+    _FIDGETY_TEST_SETLOGLEVEL();
     Exception exception(1, "information", "supporting info");
     EXPECT_EXIT(exception.exit(true, true), testing::ExitedWithCode(1), "");
 }

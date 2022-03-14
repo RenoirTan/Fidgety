@@ -10,12 +10,14 @@
  * 
  */
 
+#include <fidgety/_tests.hpp>
 #include <fidgety/decoder/normal_conf_decoder.hpp>
 #include <gtest/gtest.h>
 
 using namespace Fidgety;
 
 TEST(DecoderSanityCheck, ClosedFiles) {
+    _FIDGETY_TEST_SETLOGLEVEL();
     NormalConfDecoder decoder;
     EXPECT_FALSE(decoder.isConfOpened());
     EXPECT_FALSE(decoder.isIntermediateOpened());

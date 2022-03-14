@@ -110,6 +110,7 @@ will used a constant char[] expression instead."
 )
 set(FIDGETY_FMTLIB_HEADER_ONLY ON CACHE BOOL "Whether to use the header-only version of fmt")
 set(FIDGETY_BUILD_TESTING ON CACHE BOOL "whether to build fidgety's tests")
+set(FIDGETY_TEST_LOGLEVEL "info" CACHE STRING "Spdlog level to use when running tests")
 
 #~~~~ PROJECT BUILD OPTIONS ~~~~#
 
