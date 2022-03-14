@@ -20,12 +20,20 @@
 
 using namespace Fidgety;
 
-class SimpleValidatorContextCreator : public ValidatorContextCreator {
+class SimpleValidatorContextCreator : public virtual ValidatorContextCreator {
     public:
+        SimpleValidatorContextCreator(void) {
+            spdlog::trace("Creating a SimpleValidatorContextCreator.");
+        }
+
         ValidatorContext createContext(
             const VerifierManagedOptionList &verifier,
             const OptionIdentifier &identifier
         ) {
+            spdlog::trace(
+                "Creating Fidgety::ValidatorContext from SimpleValidatorContextCreator for '{0}'",
+                identifier
+            );
             ValidatorContextInner vci;
             for (auto option = verifier.cbegin(); option != verifier.cend(); ++option) {
                 if (option->first == identifier)
@@ -37,10 +45,15 @@ class SimpleValidatorContextCreator : public ValidatorContextCreator {
         }
 };
 
-class SimpleValidator : public Validator {
+class SimpleValidator : public virtual Validator {
     public:
+        SimpleValidator(void) {
+            spdlog::trace("Creating a SimpleValidator.");
+        }
+
         ValidatorMessage validate(const Option &option, const ValidatorContext &context) {
             const OptionIdentifier &optionIdentifier = option.getIdentifier();
+            spdlog::trace("Validating '{0}' in SimpleValidator.");
             const int64_t optionValue = std::atol(option.getRawValue().c_str());
             std::map<OptionIdentifier, int64_t> values;
             values[optionIdentifier] = optionValue;
@@ -69,7 +82,7 @@ VerifierManagedOptionList createOptions(void) {
     vmol[id] = std::make_shared<Option>( \
         id, \
         OptionEditor(OptionEditorType::TextEntry, CONS()), \
-        Validator(), \
+        SimpleValidator(), \
         OptionValue(val, OptionValueType::RAW_VALUE) \
     ) \
 
@@ -84,10 +97,12 @@ VerifierManagedOptionList createOptions(void) {
 }
 
 TEST(VerifierVerifier, CreateVerifier) {
+    spdlog::set_level(spdlog::level::trace);
     Verifier verifier(createOptions(), SimpleValidatorContextCreator());
 }
 
 TEST(VerifierVerifier, ValidateOriginal) {
+    spdlog::set_level(spdlog::level::trace);
     Verifier verifier(createOptions(), SimpleValidatorContextCreator());
     VerifierOptionLock lock = verifier.getLock("A");
     ValidatorMessage message = lock.release();
@@ -96,6 +111,7 @@ TEST(VerifierVerifier, ValidateOriginal) {
 }
 
 TEST(VerifierVerifier, ValidateChanged) {
+    spdlog::set_level(spdlog::level::trace);
     Verifier verifier(createOptions(), SimpleValidatorContextCreator());
     VerifierOptionLock lock = verifier.getLock("A");
     lock.getMutOption().setValue("25");

@@ -17,9 +17,13 @@ using namespace Fidgety;
 ValidatorMessage::ValidatorMessage(ValidatorMessageType messageType, std::string &&message) :
     mMessage(message),
     mType(messageType)
-{ }
+{
+    spdlog::trace("Creating Fidgety::ValidatorMessage.");
+}
 
-ValidatorMessage::~ValidatorMessage(void) { }
+ValidatorMessage::~ValidatorMessage(void) {
+    spdlog::trace("Deleting Fidgety::ValidatorMessage.");
+}
 
 const std::string &ValidatorMessage::getMessage(void) const noexcept {
     return mMessage;
@@ -42,6 +46,7 @@ namespace Fidgety {
 };
 
 std::string ValidatorMessage::fullMessage(void) const {
+    spdlog::trace("Creating full message from ValidatorMessage.");
     return fmt::format(
         "{0}: {1}",
         _ValidatorMessageTypeToStr(getMessageType()),
@@ -53,17 +58,26 @@ std::ostream &operator<<(std::ostream &stream, const ValidatorMessage &message) 
     return stream << message.fullMessage();
 }
 
-ValidatorContext::ValidatorContext(void) : mMap() { }
+ValidatorContext::ValidatorContext(void) : mMap() {
+    spdlog::trace("Creating Fidgety::ValidatorContext using default constructor.");
+}
 
-ValidatorContext::ValidatorContext(ValidatorContextInner &&map) : mMap(map) {}
+ValidatorContext::ValidatorContext(ValidatorContextInner &&map) : mMap(map) {
+    spdlog::trace(
+        "Creating Fidgety::ValidatorContext with provided Fidgety::ValidatorContextInner."
+    );
+}
 
 bool ValidatorContext::optionExists(const OptionIdentifier &identifier) const noexcept {
+    spdlog::trace("Checking if option exists in Fidgety::ValidatorContext.");
     return mMap.find(identifier) != mMap.end();
 }
 
 const Option &ValidatorContext::getOption(const OptionIdentifier &identifier) const {
+    spdlog::trace("Getting option from Fidgety::ValidatorContext.");
     auto iterator = mMap.find(identifier);
     if (iterator == mMap.end()) {
+        spdlog::trace("Could not find option in Fidgety::ValidatorContext.");
         FIDGETY_CRITICAL(
             OptionException,
             OptionStatus::NotFound,
@@ -71,6 +85,7 @@ const Option &ValidatorContext::getOption(const OptionIdentifier &identifier) co
             identifier
         );
     } else {
+        spdlog::trace("Option found in Fidgety::ValidatorContext.");
         return *(iterator->second);
     }
 }
@@ -79,11 +94,14 @@ const ValidatorContextInner &ValidatorContext::getInnerMap(void) const noexcept 
     return mMap;
 }
 
-Validator::Validator(void) { }
+Validator::Validator(void) {
+    spdlog::trace("Creating Fidgety::Validator");
+}
 
 ValidatorMessage Validator::validate(
     const Option &option,
     const ValidatorContext &context
 ) {
+    spdlog::trace("Validating option {0} from Fidgety::Validator.", option.getIdentifier());
     return ValidatorMessage(ValidatorMessageType::Valid, "Ok");
 }

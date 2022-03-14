@@ -28,6 +28,7 @@ namespace Fidgety {
     }
 
     VerifierIdentifier createIdentifier(void) {
+        spdlog::trace("Creating identifier in fidgety/src/verifier/verifier.cpp");
         VerifierIdentifier identifier;
         std::uniform_int_distribution<uint32_t> random;
         std::default_random_engine engine;
@@ -42,7 +43,9 @@ namespace Fidgety {
             VerifierInner(ValidatorContextCreator &&contextCreator) :
                 mContextCreator(contextCreator),
                 mIdentifier(createIdentifier())
-            { }
+            {
+                spdlog::trace("Created Fidgety::VerifierInner with contextCreator.");
+            }
 
             VerifierInner(
                 VerifierManagedOptionList &&options,
@@ -51,9 +54,13 @@ namespace Fidgety {
                 mContextCreator(contextCreator),
                 mIdentifier(createIdentifier()),
                 mOptions(options)
-            { }
+            {
+                spdlog::trace("Created Fidgety::VerifierInner with options, contextCreator.");
+            }
 
-            ~VerifierInner(void) { }
+            ~VerifierInner(void) {
+                spdlog::trace("Deleting Fidgety::VerifierInner.");
+            }
 
             VerifierInner(VerifierInner &&inner) = delete;
             VerifierInner(const VerifierInner &inner) = delete;
@@ -61,14 +68,17 @@ namespace Fidgety {
             VerifierInner &operator=(const VerifierInner &inner) = delete;
 
             bool optionExists(const OptionIdentifier &identifier) const {
+                spdlog::trace("Checking if option exists in Fidgety::VerifierInner.");
                 return mOptions.find(identifier) != mOptions.end();
             }
 
             bool isOptionLocked(const OptionIdentifier &identifier) const {
+                spdlog::trace("Checking if option is locked in Fidgety::VerifierInner.");
                 return mLocks.find(identifier) != mLocks.end();
             }
 
             std::weak_ptr<Option> lockOption(const OptionIdentifier &identifier) {
+                spdlog::debug("Locking option '{0}' in Fidgety::VerifierInner.", identifier);
                 auto option = mOptions.find(identifier);
                 if (option == mOptions.end()) {
                     FIDGETY_CRITICAL(
@@ -87,10 +97,15 @@ namespace Fidgety {
                     );
                 }
                 mLocks.insert(identifier);
+                spdlog::debug(
+                    "New lock created for option '{0}' in Fidgety::VerifierInner",
+                    identifier
+                );
                 return std::weak_ptr<Option>(option->second);
             }
 
             ValidatorMessage releaseLock(VerifierOptionLock &&lock) {
+                spdlog::debug("Releasing lock in Fidgety::VerifierInner.");
                 if (!lock.optionExists()) {
                     FIDGETY_CRITICAL(
                         VerifierException,
@@ -100,6 +115,10 @@ namespace Fidgety {
                 }
                 Option &option = lock.getMutOption();
                 const OptionIdentifier &identifier = option.getIdentifier();
+                spdlog::trace(
+                    "Looking for registered lock for '{0}' in Fidgety::VerifierInner",
+                    identifier
+                );
                 auto set_lock_it = mLocks.find(identifier);
                 if (set_lock_it == mLocks.end()) {
                     spdlog::warn(
@@ -109,6 +128,7 @@ namespace Fidgety {
                 }
                 ValidatorContext context = mContextCreator.createContext(mOptions, identifier);
                 ValidatorMessage message = option.validate(context);
+                spdlog::debug("Lock released in Fidgety::VerifierInner");
                 return message;
             }
 
@@ -155,15 +175,22 @@ namespace Fidgety {
         const VerifierManagedOptionList &verifier,
         const OptionIdentifier &identifier
     ) {
+        spdlog::trace(
+            "Creating Fidgety::ValidatorContext in Fidgety::ValidatorContextCreator for '{0}'",
+            identifier
+        );
         return ValidatorContext();
     }
 
     VerifierOptionLock::VerifierOptionLock(
         const std::weak_ptr<VerifierInner> &verifier,
         const std::weak_ptr<Option> &option
-    ) : mVerifier(verifier), mOption(option) { }
+    ) : mVerifier(verifier), mOption(option) {
+        spdlog::trace("Creating Fidgety::VerifierOptionLock.");
+    }
 
     VerifierOptionLock::~VerifierOptionLock(void) {
+        spdlog::trace("Deleting Fidgety::VerifierOptionLock.");
         if (!isReleased()) {
             std::shared_ptr<VerifierInner> verifier = mVerifier.lock();
             /* ValidatorMessage message = */verifier->releaseLock(std::move(*this));
@@ -177,6 +204,7 @@ namespace Fidgety {
     }
 
     ValidatorMessage VerifierOptionLock::release(void) {
+        spdlog::trace("Trying to release Fidgety::VerifierOptionLock manually.");
         if (!isReleased()) {
             std::shared_ptr<VerifierInner> verifier = mVerifier.lock();
             ValidatorMessage message = verifier->releaseLock(std::move(*this));
@@ -222,16 +250,24 @@ namespace Fidgety {
 
     Verifier::Verifier(ValidatorContextCreator &&contextCreator) :
         mInner(new VerifierInner(std::move(contextCreator)))
-    { }
+    {
+        spdlog::trace("Creating Fidgety::Verifier with contextCreator.");
+    }
 
     Verifier::Verifier(
         VerifierManagedOptionList &&options,
         ValidatorContextCreator &&contextCreator
-    ) : mInner(new VerifierInner(std::move(options), std::move(contextCreator))) { }
+    ) : mInner(new VerifierInner(std::move(options), std::move(contextCreator))) {
+        spdlog::trace("Creating Fidgety::Verifier with options, contextCreator.");
+    }
 
-    Verifier::Verifier(const std::shared_ptr<VerifierInner> &inner) : mInner(inner) { }
+    Verifier::Verifier(const std::shared_ptr<VerifierInner> &inner) : mInner(inner) {
+        spdlog::trace("Creating Fidgety::Verifier with inner.");
+    }
 
-    Verifier::Verifier(VerifierInner *inner) : mInner(inner) { }
+    Verifier::Verifier(VerifierInner *inner) : mInner(inner) {
+        spdlog::trace("Creating Fidgety::Verifier with inner.");
+    }
 
     bool Verifier::optionExists(const OptionIdentifier &identifier) const {
         return mInner->optionExists(identifier);
@@ -242,6 +278,7 @@ namespace Fidgety {
     }
 
     VerifierOptionLock Verifier::getLock(const OptionIdentifier &identifier) {
+        spdlog::trace("Getting lock from Fidgety::Verifier.");
         std::weak_ptr<Option> option = mInner->lockOption(identifier);
         return VerifierOptionLock(mInner, option);
     }
@@ -251,6 +288,7 @@ namespace Fidgety {
     }
 
     VerifierStatus Verifier::overwriteOptions(void) {
+        spdlog::trace("Clearing options in Fidgety::Verifier.");
         if (canBeOverwritten()) {
             mInner->getMutOptionList().clear();
             return VerifierStatus::Ok;
@@ -264,6 +302,7 @@ namespace Fidgety {
     }
 
     VerifierStatus Verifier::overwriteOptions(VerifierManagedOptionList &&options) {
+        spdlog::trace("Overwriting options with new VMOL in Fidgety::Verifier.");
         if (canBeOverwritten()) {
             mInner->getMutOptionList() = std::move(options);
             return VerifierStatus::Ok;

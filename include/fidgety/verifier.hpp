@@ -35,7 +35,7 @@ namespace Fidgety {
 
     class ValidatorContextCreator {
         public:
-            ValidatorContext createContext(
+            virtual ValidatorContext createContext(
                 const VerifierManagedOptionList &verifier,
                 const OptionIdentifier &identifier
             );
