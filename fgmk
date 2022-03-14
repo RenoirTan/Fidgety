@@ -22,6 +22,8 @@ KEY_TO_INTEGRAL = {
     "build_testing": "bool",
     "fidgety_build_testing": "bool",
     "parallel": "int",
+    "rerun_failed": "bool",
+    "output_on_failure": "bool",
     "fidgety_gtest_from_source": "bool",
     "fidgety_googletest_release_url": "str",
     "fidgety_fmtlib_from_source": "bool",
@@ -58,6 +60,8 @@ def create_default_config() -> t.Dict[str, t.Any]:
         "build_testing": None,
         "fidgety_build_testing": None,
         "parallel": None,
+        "rerun_failed": None,
+        "output_on_failure": None,
         "fidgety_gtest_from_source": None,
         "fidgety_googletest_release_url": None,
         "fidgety_fmtlib_from_source": None,
@@ -208,10 +212,11 @@ def add_flag_to_suppflags(
         value = config[key]
         if value is None:
             continue
+        flag = key.replace("_", "-")
         if isinstance(value, bool):
-            variable = f"--{key}"
+            variable = f"--{flag}"
         else:
-            variable = f"--{key} {repr(value)}"
+            variable = f"--{flag} {repr(value)}"
         suppflags.append(variable)
 
 
@@ -277,6 +282,7 @@ def get_install_suppflags(config: t.Dict[str, t.Any]) -> str:
 
 def get_test_suppflags(config: t.Dict[str, t.Any]) -> str:
     suppflags = prepare_suppflags("CMAKE_TEST_SUPPFLAGS", config)
+    add_flag_to_suppflags(suppflags, config, ["rerun_failed", "output_on_failure"])
     return " ".join(suppflags) if len(suppflags) >= 1 else None
 
 
