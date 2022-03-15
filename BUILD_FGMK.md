@@ -72,6 +72,8 @@ a list of available config keys, you can run
 | build_testing | bool | Whether to build tests. This variable is created by CMake's `enable_testing()`. |
 | fidgety_build_testing | bool | Whether to build Fidgety's tests even if it's not the top-level project. `build_testing` must still be turned on for this to work. |
 | parallel | int | How many jobs to run in parallel when building binaries. |
+| rerun_failed | bool | Whether to tell CTest to rerun failed tests, this is the same as running `ctest --rerun-failed`. |
+| output_on_failure | bool | Whether to show all output from a test if it fails, this is the same as running `ctest --output-on-failure`. |
 | fidgety_gtest_from_source | bool | Whether to build googletest from source. Turned on by default (as recommended by Google themselves). |
 | fidgety_googletest_release_url | str | The URL for the googletest source code zip file. |
 | fidgety_fmtlib_from_source | bool | Whether to build fmt from source. |
@@ -85,6 +87,7 @@ a list of available config keys, you can run
 | fidgety_qt_from_source | bool | Whether to build Qt from source. |
 | fidgety_qt_repo_url | str | The URL for Qt's git repo. |
 | fidgety_qt_repo_tag | str | The git tag for Qt's source code. |
+| fidgety_test_loglevel | str | The spdlog log level that Fidgety's tests should filter in. Allowed values are: critical, error, warn, info, debug, trace. |
 | fidgety_build_extensions | bool | Whether to build Fidgety's provided extensions. |
 | fidgety_export_cmake_dir | str | Where Fidgety's `.cmake` files should be installed to. CMake refers to these files when you call `find_package`. |
 | fidgety_export_lib_dir | str | Where Fidgety's library files (e.g. `.a`, `.so`) should be installed to. |
