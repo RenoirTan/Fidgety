@@ -36,11 +36,13 @@ class SimpleValidatorContextCreator : public virtual ValidatorContextCreator {
                 identifier
             );
             ValidatorContextInner vci;
-            for (auto option = verifier.cbegin(); option != verifier.cend(); ++option) {
-                if (option->first == identifier) {
+            for (const auto &option : verifier) {
+                if (option.first == identifier) {
                     continue;
                 } else {
-                    vci[option->first] = option->second;
+                    // other->first: Identifier of option in context
+                    // other->second: Reference to the option in context
+                    vci[option.first] = option.second;
                 }
             }
             return ValidatorContext(std::move(vci));
@@ -60,12 +62,11 @@ class SimpleValidator : public virtual Validator {
             std::map<OptionIdentifier, int64_t> values;
             values[optionIdentifier] = optionValue;
             spdlog::trace("Size of context: {0}", context.getInnerMap().size());
-            for (
-                auto other = context.getInnerMap().cbegin();
-                other != context.getInnerMap().cend();
-                ++other
-            ) {
-                values[other->first] = std::atol(other->second->getRawValue().c_str());
+            const Fidgety::ValidatorContextInner &innerMap = context.getInnerMap();
+            for (const auto &other : innerMap) {
+                // other->first: Identifier of option in context
+                // other->second: Reference to the option in context
+                values[other.first] = std::atol(other.second->getRawValue().c_str());
             }
             int64_t left = values["A"] + values["B"];
             int64_t right = values["C"] + values["D"];

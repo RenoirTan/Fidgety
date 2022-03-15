@@ -110,16 +110,6 @@ std::string Exception::getGenericDescription(void) const {
 }
 
 std::string Exception::getLongDescription(void) const {
-    /*
-    const std::string &supportingInfo = getSupportingInformation();
-    if (!supportingInfo.empty()) {
-        oss << "Details:";
-        std::istringstream iss(supportingInfo);
-        for (std::string line; std::getline(iss, line); ) {
-            oss << std::endl << "\t" << line;
-        }
-    }
-    */
     std::string supportingInfo = tabIndentSed(getSupportingInformation());
     if (supportingInfo.empty()) {
         return fmt::format("{0}\nNo extra details provided", getGenericDescription());

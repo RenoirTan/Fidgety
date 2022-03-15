@@ -43,8 +43,8 @@ namespace Fidgety {
         VerifierIdentifier identifier;
         std::uniform_int_distribution<uint32_t> random;
         std::default_random_engine engine;
-        for (size_t i = 0; i < identifier.size(); ++i) {
-            identifier[i] = random(engine);
+        for (auto &idBlock : identifier) {
+            idBlock = random(engine);
         }
         return identifier;
     }
