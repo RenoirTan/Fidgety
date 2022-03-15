@@ -115,6 +115,23 @@ namespace Fidgety {
                 return std::weak_ptr<Option>(option->second);
             }
 
+            void releaseLockOnDrop(VerifierOptionLock &&lock) {
+                spdlog::debug("Silentyl releasing lock in Fidgety::VerifierInner.");
+                if (lock.optionExists()) {
+                    const Option &option = lock.getOption();
+                    const OptionIdentifier &identifier = option.getIdentifier();
+                    auto set_lock_it = mLocks.find(identifier);
+                    if (set_lock_it == mLocks.end()) {
+                        spdlog::warn(
+                            "Lock for '{0}' was not found in Fidgety::VerifierInner::mLocks.",
+                            identifier
+                        );
+                    } else {
+                        mLocks.erase(set_lock_it);
+                    }
+                }
+            }
+
             ValidatorMessage releaseLock(VerifierOptionLock &&lock) {
                 spdlog::debug("Releasing lock in Fidgety::VerifierInner.");
                 if (!lock.optionExists()) {
@@ -131,14 +148,16 @@ namespace Fidgety {
                     identifier
                 );
                 auto set_lock_it = mLocks.find(identifier);
+                ValidatorContext context = mContextCreator->createContext(mOptions, identifier);
+                ValidatorMessage message = option.validate(context);
                 if (set_lock_it == mLocks.end()) {
                     spdlog::warn(
                         "Lock for '{0}' was not found in Fidgety::VerifierInner::mLocks.",
                         identifier
                     );
+                } else {
+                    mLocks.erase(set_lock_it);
                 }
-                ValidatorContext context = mContextCreator->createContext(mOptions, identifier);
-                ValidatorMessage message = option.validate(context);
                 spdlog::debug("Lock released in Fidgety::VerifierInner");
                 return message;
             }
@@ -204,7 +223,7 @@ namespace Fidgety {
         spdlog::trace("Deleting Fidgety::VerifierOptionLock.");
         if (!isReleased()) {
             std::shared_ptr<VerifierInner> verifier = mVerifier.lock();
-            /* ValidatorMessage message = */verifier->releaseLock(std::move(*this));
+            verifier->releaseLockOnDrop(std::move(*this));
             mVerifier.reset();
             mOption.reset();
         }
