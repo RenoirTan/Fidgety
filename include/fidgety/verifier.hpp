@@ -114,7 +114,6 @@ namespace Fidgety {
             bool canBeOverwritten(void) const;
             VerifierStatus overwriteOptions(void);
             VerifierStatus overwriteOptions(VerifierManagedOptionList &&options);
-            virtual VerifierStatus overwriteOptions(const nlohmann::json &json);
 
         protected:
             std::shared_ptr<VerifierInner> mInner;

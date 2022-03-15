@@ -21,6 +21,15 @@
 
 using namespace Fidgety;
 
+#define CONS std::map<std::string, std::string>
+#define ASSIGN_OPT(vmol, id, val)                                \
+    vmol[id] = std::make_shared<Option>(                         \
+        id,                                                      \
+        OptionEditor(OptionEditorType::TextEntry, CONS()),       \
+        std::unique_ptr<SimpleValidator>(new SimpleValidator()), \
+        OptionValue(val, OptionValueType::RAW_VALUE)             \
+    )
+
 class SimpleValidatorContextCreator : public virtual ValidatorContextCreator {
     public:
         SimpleValidatorContextCreator(void) {
@@ -82,22 +91,11 @@ class SimpleValidator : public virtual Validator {
 };
 
 VerifierManagedOptionList createOptions(void) {
-#define CONS std::map<std::string, std::string>
-#define ASSIGN_OPT(vmol, id, val) \
-    vmol[id] = std::make_shared<Option>( \
-        id, \
-        OptionEditor(OptionEditorType::TextEntry, CONS()), \
-        std::unique_ptr<SimpleValidator>(new SimpleValidator()), \
-        OptionValue(val, OptionValueType::RAW_VALUE) \
-    ) \
-
     VerifierManagedOptionList vmol;
     ASSIGN_OPT(vmol, "A", "1");
     ASSIGN_OPT(vmol, "B", "4");
     ASSIGN_OPT(vmol, "C", "2");
     ASSIGN_OPT(vmol, "D", "3");
-#undef ASSIGN_OPT
-#undef CONS
     return vmol;
 }
 
@@ -112,9 +110,11 @@ TEST(VerifierVerifier, ValidateOriginal) {
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
     VerifierOptionLock lock = verifier.getLock("A");
+    EXPECT_TRUE(verifier.isOptionLocked("A"));
     ValidatorMessage message = lock.release();
     EXPECT_EQ(message.fullMessage(), "Valid: Values match!");
     ASSERT_TRUE(lock.isReleased());
+    EXPECT_FALSE(verifier.isOptionLocked("A"));
 }
 
 TEST(VerifierVerifier, ValidateChanged) {
@@ -122,8 +122,28 @@ TEST(VerifierVerifier, ValidateChanged) {
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
     VerifierOptionLock lock = verifier.getLock("A");
+    EXPECT_TRUE(verifier.isOptionLocked("A"));
     lock.getMutOption().setValue("25");
     ValidatorMessage message = lock.release();
     EXPECT_EQ(message.fullMessage(), "Invalid: A+B does not match C+D! A+B = 29 but C+D = 5");
     ASSERT_TRUE(lock.isReleased());
+    EXPECT_FALSE(verifier.isOptionLocked("A"));
+}
+
+TEST(VerifierVerifier, OverwriteOptions) {
+    _FIDGETY_TEST_SETLOGLEVEL();
+    std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
+    Verifier verifier(createOptions(), std::move(vcc));
+    EXPECT_TRUE(verifier.optionExists("A"));
+    EXPECT_TRUE(verifier.optionExists("B"));
+    EXPECT_TRUE(verifier.optionExists("C"));
+    EXPECT_TRUE(verifier.optionExists("D"));
+
+    VerifierManagedOptionList freshVmol;
+    ASSIGN_OPT(freshVmol, "E", "10");
+    ASSIGN_OPT(freshVmol, "F", "40");
+    ASSIGN_OPT(freshVmol, "G", "20");
+    ASSIGN_OPT(freshVmol, "H", "30");
+    ASSERT_TRUE(verifier.canBeOverwritten());
+    ASSERT_EQ(verifier.overwriteOptions(std::move(freshVmol)), VerifierStatus::Ok);
 }

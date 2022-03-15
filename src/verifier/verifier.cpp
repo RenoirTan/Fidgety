@@ -344,13 +344,4 @@ namespace Fidgety {
             );
         }
     }
-
-    VerifierStatus Verifier::overwriteOptions(const nlohmann::json &json) {
-        FIDGETY_ERROR(
-            VerifierException,
-            VerifierStatus::Unimplemented,
-            "Fidgety::Verifier::overwriteOptions "
-            "cannot use nlohmann::json because it has not been implemented yet."
-        );
-    }
 }
