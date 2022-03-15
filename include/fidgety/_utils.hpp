@@ -21,7 +21,7 @@ namespace Fidgety {
             virtual std::string convertString(const std::string &s);
     };
 
-    class StringIndenter : public StringEditor {
+    class StringIndenter : public virtual StringEditor {
         public:
             StringIndenter(void);
             StringIndenter(bool useTabs);
@@ -42,7 +42,7 @@ namespace Fidgety {
     void rtrim(std::string &s);
     void trim(std::string &s);
     bool isEffectivelyEmpty(const std::string &s);
-    std::string sed(const std::string &s, StringEditor &m);
+    std::string sed(const std::string &s, StringEditor *m);
     std::string tabIndentSed(const std::string &s, uint32_t tabs=1);
     std::string spaceIndentSed(const std::string &s, uint32_t spaces=4);
 }

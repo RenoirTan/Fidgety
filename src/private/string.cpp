@@ -85,7 +85,7 @@ bool Fidgety::isEffectivelyEmpty(const std::string &s) {
     );
 }
 
-std::string Fidgety::sed(const std::string &s, StringEditor &m) {
+std::string Fidgety::sed(const std::string &s, StringEditor *m) {
     if (s.empty()) {
         return "";
     }
@@ -93,13 +93,13 @@ std::string Fidgety::sed(const std::string &s, StringEditor &m) {
     std::ostringstream oss;
     std::string line;
     if (std::getline(iss, line)) {
-        m.mutateString(line);
+        m->mutateString(line);
         oss << line;
     } else {
         return "";
     }
     while (std::getline(iss, line)) {
-        m.mutateString(line);
+        m->mutateString(line);
         oss << std::endl << line;
     }
     return oss.str();
@@ -107,10 +107,10 @@ std::string Fidgety::sed(const std::string &s, StringEditor &m) {
 
 std::string Fidgety::tabIndentSed(const std::string &s, uint32_t tabs) {
     StringIndenter indenter = StringIndenter(true, tabs);
-    return sed(s, indenter);
+    return sed(s, &indenter);
 }
 
 std::string Fidgety::spaceIndentSed(const std::string &s, uint32_t spaces) {
     StringIndenter indenter = StringIndenter(false, spaces);
-    return sed(s, indenter);
+    return sed(s, &indenter);
 }
