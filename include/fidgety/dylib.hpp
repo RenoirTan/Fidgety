@@ -33,7 +33,7 @@ namespace Fidgety {
     using DeleteClass = void (*)(T *);
 
     template <typename T>
-    using DylibBox = std::unique_ptr<T, DeleteClass<T>>;
+    using DyclassBox = std::unique_ptr<T, DeleteClass<T>>;
 
     enum class DylibStatus : int32_t {
         Ok = 0,
@@ -70,9 +70,9 @@ namespace Fidgety {
     };
 
     template <typename T>
-    class DylibLoader {
+    class DyclassLoader {
         public:
-            DylibLoader(
+            DyclassLoader(
                 const std::string &dylibPath,
                 const std::string &allocClassSymbol = "allocator",
                 const std::string &deleteClassSymbol = "deleter"
@@ -83,17 +83,17 @@ namespace Fidgety {
                 mDeleteClassSymbol(deleteClassSymbol)
             { }
 
-            ~DylibLoader() = default;
+            ~DyclassLoader() = default;
 
-            DylibLoader(const DylibLoader &loader) = delete;
-            DylibLoader &operator=(const DylibLoader &loader) = delete;
+            DyclassLoader(const DyclassLoader &loader) = delete;
+            DyclassLoader &operator=(const DyclassLoader &loader) = delete;
 
             DylibStatus openLibrary(void) {
                 if (mHandle) {
                     FIDGETY_ERROR(
                         DylibException,
                         DylibStatus::DylibAlreadyLoaded,
-                        "DylibLoader::mHandle is already being used"
+                        "DyclassLoader::mHandle is already being used"
                     );
                 }
                 mHandle = dlopen(mDylibPath.c_str(), RTLD_NOW | RTLD_LAZY);
@@ -124,17 +124,17 @@ namespace Fidgety {
                         mHandle = nullptr;
                     }
                 } else {
-                    spdlog::warn("DylibLoader::mHandle is not open");
+                    spdlog::warn("DyclassLoader::mHandle is not open");
                 }
                 return DylibStatus::Ok;
             }
 
-            DylibBox<T> getInstance(void) {
+            DyclassBox<T> getInstance(void) {
                 if (!mHandle) {
                     FIDGETY_CRITICAL(
                         DylibException,
                         DylibStatus::DylibNotLoaded,
-                        "DylibLoader::mHandle doesn't have an active dylib loaded yet"
+                        "DyclassLoader::mHandle doesn't have an active dylib loaded yet"
                     );
                 }
 
@@ -144,7 +144,7 @@ namespace Fidgety {
                     FIDGETY_CRITICAL(
                         DylibException,
                         DylibStatus::BadDylibInternals,
-                        "could not load {0} function from {1} in DylibLoader::getInstance",
+                        "could not load {0} function from {1} in DyclassLoader::getInstance",
                         mAllocClassSymbol,
                         mDylibPath
                     );
@@ -156,14 +156,14 @@ namespace Fidgety {
                     FIDGETY_CRITICAL(
                         DylibException,
                         DylibStatus::BadDylibInternals,
-                        "could not load {0} function from {1} in DylibLoader::getInstance",
+                        "could not load {0} function from {1} in DyclassLoader::getInstance",
                         mDeleteClassSymbol,
                         mDylibPath
                     );
                 }
 
                 // create the class from allocFunc and set the destructor to deleteFunc.
-                return DylibBox<T>(allocFunc(), deleteFunc);
+                return DyclassBox<T>(allocFunc(), deleteFunc);
             }
 
         private:

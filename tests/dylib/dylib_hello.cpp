@@ -16,11 +16,11 @@
 using namespace Fidgety;
 
 TEST(DylibHello, FullRun) {
-    DylibLoader<Hello> loader("./libdylib_hello_lib.so");
+    DyclassLoader<Hello> loader("./libdylib_hello_lib.so");
     ASSERT_EQ(loader.openLibrary(), DylibStatus::Ok);
 
     {
-        DylibBox<Hello> hello = loader.getInstance();
+        DyclassBox<Hello> hello = loader.getInstance();
         EXPECT_EQ(hello->greet(), "Hello, my name is Renoir");
     }
 
