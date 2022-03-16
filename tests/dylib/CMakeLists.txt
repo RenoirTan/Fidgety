@@ -1,0 +1,5 @@
+add_library(dylib_hello_lib SHARED dylib_hello_lib.cpp)
+fidgety_link_common_libraries(dylib_hello_lib)
+
+fidgety_create_test(dylib_hello dylib_hello.cpp)
+target_link_libraries(dylib_hello PRIVATE FidgetyDylib dylib_hello_lib)

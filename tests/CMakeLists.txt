@@ -1,4 +1,5 @@
 add_subdirectory(decoder)
+add_subdirectory(dylib)
 add_subdirectory(encoder)
 add_subdirectory(exception)
 add_subdirectory(options)
