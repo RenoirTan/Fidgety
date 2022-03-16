@@ -88,6 +88,10 @@ namespace Fidgety {
             DyclassLoader(const DyclassLoader &loader) = delete;
             DyclassLoader &operator=(const DyclassLoader &loader) = delete;
 
+            bool isOpened(void) const noexcept {
+                return mHandle != nullptr;
+            }
+
             DylibStatus openLibrary(void) {
                 if (mHandle) {
                     FIDGETY_ERROR(
@@ -166,7 +170,7 @@ namespace Fidgety {
                 return DyclassBox<T>(allocFunc(), deleteFunc);
             }
 
-        private:
+        protected:
             void *mHandle;
             std::string mDylibPath;
             std::string mAllocClassSymbol;
