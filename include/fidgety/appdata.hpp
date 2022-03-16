@@ -18,10 +18,18 @@
 #   include <vector>
 
 namespace Fidgety {
+    struct LoadablePartsFileNames {
+        std::vector<std::string> decoder;
+        std::vector<std::string> encoder;
+        std::vector<std::string> validator;
+        std::vector<std::string> validatorContextCreator;
+    };
+
     struct Appdata {
         std::string configFilePath;
         std::string appName;
         std::vector<std::string> searchPaths;
+        LoadablePartsFileNames loadablePartsFileNames;
     };
 }
 
