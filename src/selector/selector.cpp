@@ -8,5 +8,16 @@
  * @copyright Copyright (c) 2022
  */
 
+#include <QFile>
 #include <fidgety/appdata.hpp>
 #include <fidgety/selector.hpp>
+
+using namespace Fidgety;
+
+Selector::Selector(const Appdata &appdata) : mAppdata(appdata) { }
+
+Selector::Selector(Appdata &&appdata) : mAppdata(std::move(appdata)) { }
+
+bool Selector::isValid(void) const {
+    return true;
+}

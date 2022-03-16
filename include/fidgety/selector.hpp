@@ -42,6 +42,8 @@ namespace Fidgety {
             Selector(const Appdata &appdata);
             Selector(Appdata &&appdata);
 
+            bool isValid(void) const;
+
             std::string getDecoderLocation(void);
             std::string getEncoderLocation(void);
             std::string getValidatorLocation(void);
