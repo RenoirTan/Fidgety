@@ -83,7 +83,8 @@ a list of available config keys, you can run
 | fidgety_spdlog_release_url | str | The URL for the spdlog source code zip file. |
 | fidgety_nlohmannjson_from_source | bool | Whether to build nlohmann's json library from source. |
 | fidgety_nlohmannjson_release_url | str | The URL for the nlohmann/json source code zip file. |
-| fidgety_major_qt | int | The major version of Qt Fidgety should use. |
+| fidgety_boost_minver | str | Oldest version of Boost that Fidgety is allowed to use. |
+| fidgety_qt_major | int | The major version of Qt Fidgety should use. |
 | fidgety_qt_from_source | bool | Whether to build Qt from source. |
 | fidgety_qt_repo_url | str | The URL for Qt's git repo. |
 | fidgety_qt_repo_tag | str | The git tag for Qt's source code. |

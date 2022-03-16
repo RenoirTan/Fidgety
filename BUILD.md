@@ -9,7 +9,7 @@ You also need a working copy of git to download
 [googletest](https://github.com/google/googletest)
 from [Github](https://github.com).
 
-You will also need to install Qt5/6, spdlog, fmt and nlohmann_json with
+You will also need to install Qt5/6, Boost, spdlog, fmt and nlohmann_json with
 the corresponding *.cmake files in your system directories. This allows CMake
 to search and load these packages through the `find_package` function.
 Your distribution's package manager should be able to handle the installation

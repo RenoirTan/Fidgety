@@ -73,6 +73,16 @@ set(
     "https://github.com/nlohmann/json/archive/refs/tags/v3.10.5.zip"
     CACHE STRING "The URL of the release of nlohmann/json to use"
 )
+#set(
+#    FIDGETY_BOOST_FROM_SOURCE OFF CACHE BOOL
+#    "whether to download Boost and build it from source (not recommended for mental health)"
+#)
+#set(
+#    FIDGETY_BOOST_RELEASE_URL
+#    "https://github.com/boostorg/boost/archive/refs/tags/boost-1.78.0.zip"
+#    CACHE STRING "The URL of the release of Boost to use"
+#)
+set(FIDGETY_BOOST_MINVER 1.67.0 CACHE STRING "Minimum version of Boost")
 set(
     FIDGETY_QT_FROM_SOURCE OFF
     CACHE BOOL "whether to download Qt and build it from source"
@@ -156,6 +166,20 @@ Fidgety only targets Qt6 or Qt5 (legacy)")
     endif()
     message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
 endif()
+
+set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
+set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
+set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
+set(Boost_USE_MULTITHREADED      ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
+find_package(
+    Boost ${FIDGETY_BOOST_MINVER} REQUIRED COMPONENTS
+    filesystem regex
+)
+if(NOT Boost_FOUND)
+    message(FATAL_ERROR "Boost not found")
+endif()
+
 if(${FIDGETY_FMTLIB_FROM_SOURCE})
     set(FMT_INSTALL ON)
     fidgety_add_dependency_sourced_url(fmt ${FIDGETY_FMTLIB_RELEASE_URL})
