@@ -41,9 +41,10 @@ namespace Fidgety {
         CannotReadFile = 2,
         DylibNotLoaded = 3,
         DylibAlreadyLoaded = 4,
-        CannotOpenDylib = 5,
-        CannotCloseDylib = 6,
-        BadDylibInternals = 7
+        DylibNotClosed = 5,
+        CannotOpenDylib = 6,
+        CannotCloseDylib = 7,
+        BadDylibInternals = 8
     };
 
     class DylibException : public Exception {
@@ -56,9 +57,10 @@ namespace Fidgety {
                     case 2: return "CannotReadFile";
                     case 3: return "DylibNotLoaded";
                     case 4: return "DylibAlreadyLoaded";
-                    case 5: return "CannotOpenDylib";
-                    case 6: return "CannotCloseDylib";
-                    case 7: return "BadDylibInternals";
+                    case 5: return "DylibNotClosed";
+                    case 6: return "CannotOpenDylib";
+                    case 7: return "CannotCloseDylib";
+                    case 8: return "BadDylibInternals";
                     default: return "Other";
                 }
             }
@@ -87,6 +89,30 @@ namespace Fidgety {
 
             DyclassLoader(const DyclassLoader &loader) = delete;
             DyclassLoader &operator=(const DyclassLoader &loader) = delete;
+
+            DylibStatus overwritePath(const std::string &dylibPath) {
+                if (mHandle) {
+                    FIDGETY_ERROR(
+                        DylibException,
+                        DylibStatus::DylibNotClosed,
+                        "{0} must be closed before overwriting mDylibPath",
+                        mDylibPath
+                    );
+                } else {
+                    mDylibPath = dylibPath;
+                    return DylibStatus::Ok;
+                }
+            }
+
+            DylibStatus overwriteAllocClassSymbol(const std::string &allocClassSymbol) {
+                mAllocClassSymbol = allocClassSymbol;
+                return DylibStatus::Ok;
+            }
+
+            DylibStatus overwriteDeleteClassSymbol(const std::string &deleteClassSymbol) {
+                mDeleteClassSymbol = deleteClassSymbol;
+                return DylibStatus::Ok;
+            }
 
             bool isOpened(void) const noexcept {
                 return mHandle != nullptr;
