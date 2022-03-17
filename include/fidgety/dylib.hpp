@@ -90,12 +90,12 @@ namespace Fidgety {
             DyclassLoader(const DyclassLoader &loader) = delete;
             DyclassLoader &operator=(const DyclassLoader &loader) = delete;
 
-            DylibStatus overwritePath(const std::string &dylibPath) {
+            DylibStatus changePath(const std::string &dylibPath) {
                 if (mHandle) {
                     FIDGETY_ERROR(
                         DylibException,
                         DylibStatus::DylibNotClosed,
-                        "{0} must be closed before overwriting mDylibPath",
+                        "{0} must be closed before changing mDylibPath",
                         mDylibPath
                     );
                 } else {
@@ -104,12 +104,12 @@ namespace Fidgety {
                 }
             }
 
-            DylibStatus overwriteAllocClassSymbol(const std::string &allocClassSymbol) {
+            DylibStatus changeAllocClassSymbol(const std::string &allocClassSymbol) {
                 mAllocClassSymbol = allocClassSymbol;
                 return DylibStatus::Ok;
             }
 
-            DylibStatus overwriteDeleteClassSymbol(const std::string &deleteClassSymbol) {
+            DylibStatus changeDeleteClassSymbol(const std::string &deleteClassSymbol) {
                 mDeleteClassSymbol = deleteClassSymbol;
                 return DylibStatus::Ok;
             }
