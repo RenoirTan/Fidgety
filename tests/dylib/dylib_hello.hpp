@@ -12,7 +12,7 @@
 #   define _DYLIB_HPP
 
 #   include <string>
-#   include "spdlog/spdlog.h"
+#   include <spdlog/spdlog.h>
 
 class Hello {
     public:

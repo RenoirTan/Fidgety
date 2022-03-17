@@ -11,7 +11,7 @@
 
 #include <fmt/core.h>
 #include <nlohmann/json.hpp>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include <fidgety/decoder/normal_conf_decoder.hpp>
 #include <fidgety/_utils.hpp>
 

@@ -21,7 +21,7 @@
 #include <fidgety/decoder/normal_conf_decoder.hpp>
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 
 using namespace Fidgety;
 

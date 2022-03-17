@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2022
  */
 
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include <fidgety/selector.hpp>
 
 using namespace Fidgety;

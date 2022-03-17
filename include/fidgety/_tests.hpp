@@ -12,7 +12,7 @@
 #ifndef _FIDGETY_TESTS_HPP
 #   define _FIDGETY_TESTS_HPP
 
-#   include "spdlog/spdlog.h"
+#   include <spdlog/spdlog.h>
 #   include <fidgety/config.h>
 
 #   define _FIDGETY_SET_TESTLOGLEVEL() spdlog::set_level(spdlog::level::FIDGETY_TEST_LOGLEVEL)

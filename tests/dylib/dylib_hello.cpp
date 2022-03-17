@@ -11,7 +11,7 @@
 #include <fidgety/_tests.hpp>
 #include <fidgety/dylib.hpp>
 #include <gtest/gtest.h>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include "dylib_hello.hpp"
 
 using namespace Fidgety;

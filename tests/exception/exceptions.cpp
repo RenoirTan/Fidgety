@@ -13,7 +13,7 @@
 #include <cstring>
 #include <fidgety/_tests.hpp>
 #include <fidgety/exception.hpp>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include <gtest/gtest.h>
 
 using namespace Fidgety;

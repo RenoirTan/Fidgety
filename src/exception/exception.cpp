@@ -10,7 +10,7 @@
 
 #include <cstdlib>
 #include <iostream>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include <fidgety/exception.hpp>
 #include <fidgety/_utils.hpp>
 

@@ -13,7 +13,7 @@
 #include <string>
 #include <fidgety/options.hpp>
 #include <gtest/gtest.h>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 
 #include "dummies.hpp"
 

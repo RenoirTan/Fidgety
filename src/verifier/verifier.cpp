@@ -11,7 +11,7 @@
 
 #include <random>
 #include <set>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include <fidgety/verifier.hpp>
 #include <fidgety/_utils.hpp>
 

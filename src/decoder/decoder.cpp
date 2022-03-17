@@ -10,7 +10,7 @@
  */
 
 #include <fmt/core.h>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include <fidgety/decoder.hpp>
 #include <fidgety/_utils.hpp>
 

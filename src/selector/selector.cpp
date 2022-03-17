@@ -12,7 +12,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/range/algorithm/transform.hpp>
 #include <boost/regex.hpp>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include <fidgety/appdata.hpp>
 #include <fidgety/selector.hpp>
 

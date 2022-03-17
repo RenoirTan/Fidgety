@@ -18,7 +18,7 @@
 #   include <fidgety/_tests.hpp>
 #   include <fidgety/_utils.hpp>
 #   include <fmt/core.h>
-#   include "spdlog/spdlog.h"
+#   include <spdlog/spdlog.h>
 
 namespace Fidgety {
 

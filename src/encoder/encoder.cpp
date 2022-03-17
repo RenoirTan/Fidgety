@@ -9,7 +9,7 @@
  */
 
 #include <fmt/core.h>
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #include <fidgety/encoder.hpp>
 #include <fidgety/_utils.hpp>
 
