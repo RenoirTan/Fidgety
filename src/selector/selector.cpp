@@ -56,15 +56,17 @@ SelectorStatus Selector::processHints(void) {
             for (boost_fs::directory_iterator node(dir); node != it_end; ++node) {
                 boost_fs::path path(node->path());
                 if (boost_fs::is_regular_file(path)) {
-#define _CHK_LPFN(part) \
+#define _CHK_LPFN(part) { \
+    const char *cPath = path.c_str(); \
     auto it = std::find( \
         mAppdata.loadablePartsFileNames.part.cbegin(), \
         mAppdata.loadablePartsFileNames.part.cend(), \
-        path \
+        cPath \
     ); \
     if (it != mAppdata.loadablePartsFileNames.part.cend()) { \
-        ppl.part.emplace_back(path); \
-    }
+        ppl.part.emplace_back(cPath); \
+    } \
+} \
 
                     _CHK_LPFN(decoder);
                     _CHK_LPFN(encoder);
