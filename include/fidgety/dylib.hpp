@@ -75,7 +75,7 @@ namespace Fidgety {
     class DyclassLoader {
         public:
             DyclassLoader(
-                const std::string &dylibPath,
+                const std::string &dylibPath = "",
                 const std::string &allocClassSymbol = "allocator",
                 const std::string &deleteClassSymbol = "deleter"
             ) :
@@ -89,6 +89,9 @@ namespace Fidgety {
 
             DyclassLoader(const DyclassLoader &loader) = delete;
             DyclassLoader &operator=(const DyclassLoader &loader) = delete;
+
+            DyclassLoader(DyclassLoader &&loader) = default;
+            DyclassLoader &operator=(DyclassLoader &&loader) = default;
 
             DylibStatus changePath(const std::string &dylibPath) {
                 if (mHandle) {

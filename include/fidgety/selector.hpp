@@ -72,17 +72,17 @@ namespace Fidgety {
             Loader(Selector &&selector);
             Loader(
                 const Selector &selector,
-                DyclassLoader<Decoder> decoderLoader,
-                DyclassLoader<Encoder> encoderLoader,
-                DyclassLoader<Validator> validatorLoader,
-                DyclassLoader<ValidatorContextCreator> vccLoader
+                DyclassLoader<Decoder> &&decoderLoader,
+                DyclassLoader<Encoder> &&encoderLoader,
+                DyclassLoader<Validator> &&validatorLoader,
+                DyclassLoader<ValidatorContextCreator> &&vccLoader
             );
             Loader(
                 Selector &&selector,
-                DyclassLoader<Decoder> decoderLoader,
-                DyclassLoader<Encoder> encoderLoader,
-                DyclassLoader<Validator> validatorLoader,
-                DyclassLoader<ValidatorContextCreator> vccLoader
+                DyclassLoader<Decoder> &&decoderLoader,
+                DyclassLoader<Encoder> &&encoderLoader,
+                DyclassLoader<Validator> &&validatorLoader,
+                DyclassLoader<ValidatorContextCreator> &&vccLoader
             );
             ~Loader(void);
 
