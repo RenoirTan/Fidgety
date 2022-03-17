@@ -16,9 +16,12 @@
 #   include <fidgety/config.h>
 
 #   define _FIDGETY_SET_TESTLOGLEVEL() spdlog::set_level(spdlog::level::FIDGETY_TEST_LOGLEVEL)
-#   define _FIDGETY_INIT_TEST()      \
-    {                                \
-        _FIDGETY_SET_TESTLOGLEVEL(); \
-    }                                \
+#   define _FIDGETY_SET_TESTLOGFORMAT() \
+    spdlog::set_pattern("[source %s] [function %!] [line %#] %v")
+
+#   define _FIDGETY_INIT_TEST()       \
+    {                                 \
+        _FIDGETY_SET_TESTLOGLEVEL();  \
+    }                                 \
 
 #endif
