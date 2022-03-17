@@ -38,13 +38,7 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
         std::getline(mConfFile, line);
         ++lineNo;
         
-        size_t poundIndex = line.find('#');
-        std::string noComment;
-        if (poundIndex == std::string::npos) {
-            noComment = line;
-        } else {
-            noComment = line.substr(0, poundIndex);
-        }
+        std::string noComment = truncateAfterCopy(line, "#");
         if (isEffectivelyEmpty(noComment)) {
             continue;
         }

@@ -81,6 +81,16 @@ void Fidgety::truncateAfter(std::string &s, const std::string &b, bool caseInsen
     s.erase(sloc.begin(), s.end());
 }
 
+std::string Fidgety::truncateAfterCopy(
+    const std::string &s,
+    const std::string &b,
+    bool caseInsensitive
+) {
+    std::string c = s;
+    truncateAfter(c, b, caseInsensitive);
+    return c;
+}
+
 // empty or all spaces
 bool Fidgety::isEffectivelyEmpty(const std::string &s) {
     return boost::all(s, boost::is_space());
