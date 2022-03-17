@@ -10,6 +10,10 @@
 
 #include <algorithm>
 #include <sstream>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/find.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <fidgety/_utils.hpp>
 
 using namespace Fidgety;
@@ -59,30 +63,27 @@ StringIndenter StringIndenter::spaces(void) {
 // https://stackoverflow.com/a/217605
 // trim from start (in place)
 void Fidgety::ltrim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }));
+    boost::trim_left(s);
 }
 
 // trim from end (in place)
 void Fidgety::rtrim(std::string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
+    boost::trim_right(s);
 }
 
 // trim from both ends (in place)
 void Fidgety::trim(std::string &s) {
-    ltrim(s);
-    rtrim(s);
+    boost::trim(s);
+}
+
+void Fidgety::truncateAfter(std::string &s, const std::string &b, bool caseInsensitive) {
+    auto sloc = caseInsensitive ? boost::ifind_first(s, b) : boost::find_first(s, b);
+    s.erase(sloc.begin(), s.end());
 }
 
 // empty or all spaces
 bool Fidgety::isEffectivelyEmpty(const std::string &s) {
-    return (
-        s.empty() ||
-        std::all_of(s.begin(), s.end(), [](char c) { return std::isspace(c); })
-    );
+    return boost::all(s, boost::is_space());
 }
 
 std::string Fidgety::sed(const std::string &s, StringEditor *m) {

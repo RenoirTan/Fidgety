@@ -41,6 +41,7 @@ namespace Fidgety {
     void ltrim(std::string &s);
     void rtrim(std::string &s);
     void trim(std::string &s);
+    void truncateAfter(std::string &s, const std::string &b, bool caseInsenstive = false);
     bool isEffectivelyEmpty(const std::string &s);
     std::string sed(const std::string &s, StringEditor *m);
     std::string tabIndentSed(const std::string &s, uint32_t tabs=1);

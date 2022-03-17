@@ -1,0 +1,3 @@
+fidgety_create_test(_utils_string utils_string.cpp)
+fidgety_link_common_libraries(_utils_string)
+target_link_directories(_utils_string PRIVATE Boost::boost)

@@ -1,3 +1,4 @@
+add_subdirectory(_utils)
 add_subdirectory(decoder)
 add_subdirectory(dylib)
 add_subdirectory(encoder)
