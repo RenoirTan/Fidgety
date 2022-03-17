@@ -20,7 +20,7 @@
 using namespace Fidgety;
 
 TEST(OptionsOptionValueInner, FromString) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     {
         spdlog::debug("creating fromCharArray");
@@ -49,7 +49,7 @@ TEST(OptionsOptionValueInner, FromString) {
 }
 
 TEST(OptionsOptionValueInner, FromArrayLike) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     spdlog::debug("creating dummy nested option list for fromArrayLike");
     Fidgety::NestedOptionList nol = makeNestedOptionList(10);

@@ -100,13 +100,13 @@ VerifierManagedOptionList createOptions(void) {
 }
 
 TEST(VerifierVerifier, CreateVerifier) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
 }
 
 TEST(VerifierVerifier, ValidateOriginal) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
     VerifierOptionLock lock = verifier.getLock("A");
@@ -118,7 +118,7 @@ TEST(VerifierVerifier, ValidateOriginal) {
 }
 
 TEST(VerifierVerifier, ValidateChanged) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
     VerifierOptionLock lock = verifier.getLock("A");
@@ -131,7 +131,7 @@ TEST(VerifierVerifier, ValidateChanged) {
 }
 
 TEST(VerifierVerifier, OverwriteOptions) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
     Verifier verifier(createOptions(), std::move(vcc));
     EXPECT_TRUE(verifier.optionExists("A"));

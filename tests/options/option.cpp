@@ -18,7 +18,7 @@
 using namespace Fidgety;
 
 TEST(OptionsOption, SanityCheck) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     std::unique_ptr<Validator> validator(new Validator());
     OptionEditor editor(OptionEditorType::TextEntry, std::map<std::string, std::string>());
     OptionValue value("value", OptionValueType::RAW_VALUE);
@@ -49,7 +49,7 @@ TEST(OptionsOption, SanityCheck) {
 }
 
 TEST(OptionsOption, SetValues) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     std::unique_ptr<Validator> validator(new Validator());
     OptionEditor editor(OptionEditorType::TextEntry, std::map<std::string, std::string>());
     OptionValue value("original", OptionValueType::RAW_VALUE);

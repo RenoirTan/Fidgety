@@ -19,14 +19,14 @@
 using namespace Fidgety;
 
 TEST(OptionsOptionValue, FromString) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     OptionValue value("something", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValue().getRawValue(), "something");
 }
 
 TEST(OptionsOptionValue, FromArrayLike) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
     ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
@@ -35,7 +35,7 @@ TEST(OptionsOptionValue, FromArrayLike) {
 }
 
 TEST(OptionsOptionValue, ChangeValueString) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value("original", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
@@ -46,7 +46,7 @@ TEST(OptionsOptionValue, ChangeValueString) {
 }
 
 TEST(OptionsOptionValue, ChangeValueList) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
     {
@@ -64,7 +64,7 @@ TEST(OptionsOptionValue, ChangeValueList) {
 }
 
 TEST(OptionsOptionValue, ChangeValueInvalidType) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value("string", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
@@ -78,7 +78,7 @@ TEST(OptionsOptionValue, ChangeValueInvalidType) {
 }
 
 TEST(OptionsOptionValue, ChangeValueAmbiguous) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value("string", OptionValueType::RAW_VALUE | OptionValueType::NESTED_LIST);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
@@ -90,7 +90,7 @@ TEST(OptionsOptionValue, ChangeValueAmbiguous) {
 }
 
 TEST(OptionsOptionValue, ResetString) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value("original", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
@@ -102,7 +102,7 @@ TEST(OptionsOptionValue, ResetString) {
 }
 
 TEST(OptionsOptionValue, ResetList) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
     {
@@ -121,7 +121,7 @@ TEST(OptionsOptionValue, ResetList) {
 }
 
 TEST(OptionsOptionValue, SetAcceptedValueTypes) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value("stuff", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
@@ -137,7 +137,7 @@ TEST(OptionsOptionValue, SetAcceptedValueTypes) {
 }
 
 TEST(OptionsOptionValue, SetInvalidAcceptedValueTypes) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
 
     OptionValue value("stuff", OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);

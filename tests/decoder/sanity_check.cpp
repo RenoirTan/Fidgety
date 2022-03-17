@@ -17,7 +17,7 @@
 using namespace Fidgety;
 
 TEST(DecoderSanityCheck, ClosedFiles) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     NormalConfDecoder decoder;
     EXPECT_FALSE(decoder.isConfOpened());
     EXPECT_FALSE(decoder.isIntermediateOpened());

@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2022
  */
 
+#include <fidgety/_tests.hpp>
 #include <fidgety/dylib.hpp>
 #include <gtest/gtest.h>
 #include "spdlog/spdlog.h"
@@ -16,6 +17,7 @@
 using namespace Fidgety;
 
 TEST(DylibHello, FullRun) {
+    _FIDGETY_INIT_TEST();
     DyclassLoader<Hello> loader("./libdylib_hello_lib.so");
     ASSERT_EQ(loader.openLibrary(), DylibStatus::Ok);
 

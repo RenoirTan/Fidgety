@@ -43,7 +43,7 @@ bool filesEqual(const std::string &pathA, const std::string &pathB) {
 }
 
 TEST(EncoderEncoding, EmptyJson) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     //NormalConfEncoder encoder;
     //encoder.openConf("../../../tmp/tests/encoder/test_0.conf");
     //encoder.openIntermediate("../../../resources/tests/encoder/test_0.json");
@@ -54,7 +54,7 @@ TEST(EncoderEncoding, EmptyJson) {
 }
 
 TEST(EncoderEncoding, WellFormedJson) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     CREATE_ENCODER(1);
     ASSERT_TRUE(encoder.isConfOpened());
     ASSERT_TRUE(encoder.isIntermediateOpened());

@@ -33,7 +33,7 @@ std::string presentWorkingDirectory(void) {
 }
 
 nlohmann::json loadJsonFromFile(const std::string &path) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     spdlog::trace("opening json file '{0}'", path);
     std::ifstream handle(path, std::ifstream::in);
     spdlog::debug("is json file open? {0}", handle.is_open());
@@ -43,7 +43,7 @@ nlohmann::json loadJsonFromFile(const std::string &path) {
 }
 
 TEST(DecoderDecoding, DumpConf) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     std::string pwd = presentWorkingDirectory();
     spdlog::debug("present working directory: {0}", pwd);
     NormalConfDecoder decoder;
@@ -64,7 +64,7 @@ TEST(DecoderDecoding, DumpConf) {
 }
 
 TEST(DecoderDecoding, NoEqualsError) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     NormalConfDecoder decoder;
     ASSERT_EQ(decoder.openConf("../../../resources/tests/decoder/test_1.conf"), DecoderStatus::Ok);
     ASSERT_EQ(decoder.openIntermediate("../../../tmp/tests/decoder/test_1.json"), DecoderStatus::Ok);
@@ -74,7 +74,7 @@ TEST(DecoderDecoding, NoEqualsError) {
 }
 
 TEST(DecoderDecoding, NoKeyError) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     NormalConfDecoder decoder;
     ASSERT_EQ(decoder.openConf("../../../resources/tests/decoder/test_2.conf"), DecoderStatus::Ok);
     ASSERT_EQ(decoder.openIntermediate("../../../tmp/tests/decoder/test_2.json"), DecoderStatus::Ok);

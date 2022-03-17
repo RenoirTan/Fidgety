@@ -19,7 +19,7 @@
 using namespace Fidgety;
 
 TEST(OptionsValidatorMessage, ValidatorMessageType) {
-    _FIDGETY_TEST_SETLOGLEVEL();
+    _FIDGETY_INIT_TEST();
     ValidatorMessage valid(ValidatorMessageType::Valid);
     ValidatorMessage problematic(ValidatorMessageType::Problematic);
     ValidatorMessage invalid(ValidatorMessageType::Invalid);
