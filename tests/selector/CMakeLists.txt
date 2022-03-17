@@ -1,0 +1,3 @@
+add_library(selector_decoder SHARED selector_decoder.cpp)
+fidgety_link_common_libraries(selector_decoder)
+target_link_libraries(selector_decoder PUBLIC FidgetyDecoder)
