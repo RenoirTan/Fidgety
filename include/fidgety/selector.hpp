@@ -24,7 +24,8 @@
 namespace Fidgety {
     enum class SelectorStatus : int32_t {
         Ok = 0,
-        InvalidInfo = 1
+        InvalidInfo = 1,
+        PartNotFound = 2
     };
 
     class SelectorException : public Exception {
@@ -36,6 +37,15 @@ namespace Fidgety {
             const char *getSimpleWhat(void) const noexcept;
     };
 
+    struct ProcessedPartLocations {
+        std::vector<std::string> decoder;
+        std::vector<std::string> encoder;
+        std::vector<std::string> validator;
+        std::vector<std::string> validatorContextCreator;
+
+        void clear(void);
+    };
+
     class Selector {
         public:
             Selector(void) = delete;
@@ -43,6 +53,7 @@ namespace Fidgety {
             Selector(Appdata &&appdata);
 
             bool isValid(void) const;
+            SelectorStatus processHints(void);
 
             std::string getDecoderLocation(void);
             std::string getEncoderLocation(void);
@@ -51,6 +62,7 @@ namespace Fidgety {
 
         protected:
             Appdata mAppdata;
+            ProcessedPartLocations mLocations;
     };
 
     class Loader {
