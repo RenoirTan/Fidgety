@@ -111,7 +111,7 @@ std::string Fidgety::sed(const std::string &s, StringEditor *m) {
     }
     while (std::getline(iss, line)) {
         m->mutateString(line);
-        oss << std::endl << line;
+        oss << '\n' << line;
     }
     return oss.str();
 }

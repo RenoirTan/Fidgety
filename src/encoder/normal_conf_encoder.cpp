@@ -80,7 +80,7 @@ EncoderStatus NormalConfEncoder::dumpToConf(void) {
                 );
             }
         }
-        mConfFile << line << std::endl;
+        mConfFile << line << '\n';
         ++linesWritten;
     }
 
