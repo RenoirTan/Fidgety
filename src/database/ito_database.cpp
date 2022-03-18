@@ -26,7 +26,7 @@ std::vector<std::string> Fidgety::getCandidateIto(
     const std::vector<std::string> &appNames,
     const std::vector<std::string> &allowedFileExts,
     const std::vector<std::string> &searchPaths,
-    bool selectFirst = true
+    bool selectFirst
 ) {
     spdlog::trace("[Fidgety::getCandidateIto] selectFirst = {0}", selectFirst);
 
@@ -45,7 +45,7 @@ std::vector<std::string> Fidgety::getCandidateIto(
                 DatabaseException,
                 DatabaseStatus::InvalidData,
                 "[Fidgety::getCandidateIto] invalid file extension detected: {0}",
-                it
+                fe
             );
         }
     }
@@ -54,26 +54,44 @@ std::vector<std::string> Fidgety::getCandidateIto(
     for (const auto &strSpath : searchPaths) {
         BoostFs::path searchPath(strSpath);
         if (!BoostFs::exists(searchPath)) {
-            spdlog::trace("[Fidgety::getCandidateIto] '{0}' does not exist");
+            spdlog::trace("[Fidgety::getCandidateIto] '{0}' does not exist", searchPath.string());
             continue;
         }
         if (!BoostFs::is_directory(searchPath)) {
-            spdlog::trace("[Fidgety::getCandidateIto] '{0}' is not a directory");
+            spdlog::trace(
+                "[Fidgety::getCandidateIto] '{0}' is not a directory",
+                searchPath.string()
+            );
             continue;
         }
 
-        for (auto child : BoostFs::directory_iterator(searchPath)) {
+        for (auto deChild : BoostFs::directory_iterator(searchPath)) {
+            BoostFs::path child(deChild);
+            std::string sChild = child.string();
+
             if (!BoostFs::is_regular_file(child)) {
-                spdlog::trace("[Fidgety::getCandidateIto] '{0}' is not a file", child);
+                spdlog::trace("[Fidgety::getCandidateIto] '{0}' is not a file", sChild);
                 continue;
             }
             if (std::find(appNames.cbegin(), appNames.cend(), child) == appNames.cend()) {
-                spdlog::trace("[Fidgety::getCandidateIto] '{0}' is not part of appNames", child);
+                spdlog::trace(
+                    "[Fidgety::getCandidateIto] '{0}' is not part of appNames",
+                    sChild
+                );
                 continue;
             }
+            if (
+                std::find(appNames.cbegin(), appNames.cend(), BoostFs::extension(child))
+                == appNames.cend()
+            ) {
+                spdlog::trace(
+                    "[Fidgety::getCandidateIto] '{0}' does not have accepted file extensions",
+                    sChild
+                );
+            }
 
-            spdlog::trace("[Fidgety::getCandidateIto] candidate found: '{0}'", child);
-            candidates.emplace_back(child);
+            spdlog::trace("[Fidgety::getCandidateIto] candidate found: '{0}'", sChild);
+            candidates.emplace_back(sChild);
             if (selectFirst) {
                 spdlog::trace(
                     "[Fidgety::getCandidateIto] returning early because selectFirst is true"

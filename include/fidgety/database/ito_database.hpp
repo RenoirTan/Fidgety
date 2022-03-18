@@ -17,7 +17,7 @@
 
 namespace Fidgety {
     const char *const ALLOWED_ITO_FILEEXTS[] = {
-        "json"
+        ".json"
     }; // more to come
 
     std::vector<std::string> getCandidateIto(
