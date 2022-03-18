@@ -17,7 +17,7 @@
 #include <fidgety/selector.hpp>
 
 using namespace Fidgety;
-namespace boost_fs = boost::filesystem;
+namespace BoostFs = boost::filesystem;
 
 void ProcessedPartLocations::clear(void) {
     this->decoder.clear();
@@ -50,12 +50,12 @@ SelectorStatus Selector::processHints(void) {
    ProcessedPartLocations ppl;
 
     for (const auto &spath : mAppdata.searchPaths) {
-        boost_fs::path dir(spath);
-        if (boost_fs::exists(dir) && boost_fs::is_directory(dir)) {
-            boost_fs::directory_iterator it_end;
-            for (boost_fs::directory_iterator node(dir); node != it_end; ++node) {
-                boost_fs::path path(node->path());
-                if (boost_fs::is_regular_file(path)) {
+        BoostFs::path dir(spath);
+        if (BoostFs::exists(dir) && BoostFs::is_directory(dir)) {
+            BoostFs::directory_iterator it_end;
+            for (BoostFs::directory_iterator node(dir); node != it_end; ++node) {
+                BoostFs::path path(node->path());
+                if (BoostFs::is_regular_file(path)) {
 #define _CHK_LPFN(part) { \
     const char *cPath = path.c_str(); \
     auto it = std::find( \
