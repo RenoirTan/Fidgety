@@ -1,3 +1,4 @@
+add_subdirectory(database)
 add_subdirectory(decoder)
 add_subdirectory(editor)
 add_subdirectory(encoder)

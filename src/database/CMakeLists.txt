@@ -1,0 +1,12 @@
+fidgety_add_my_library(FidgetyDatabase STATIC database.cpp)
+set_target_properties(FidgetyDatabase PROPERTIES OUTPUT_NAME fidgety_database)
+fidgety_link_common_libraries(FidgetyDatabase)
+fidgety_link_exception(FidgetyDatabase)
+target_link_libraries(FidgetyDatabase PUBLIC FidgetyVerifier FidgetyOptions FidgetySelector)
+fidgety_install_library(FidgetyDatabase fidgety_database_config.cmake)
+
+fidgety_add_my_library(FidgetyItoDatabase STATIC ito_database.cpp)
+set_target_properties(FidgetyItoDatabase PROPERTIES OUTPUT_NAME fidgety_ito_database)
+target_link_libraries(FidgetyItoDatabase PUBLIC FidgetyDatabase)
+target_link_libraries(FidgetyItoDatabase PUBLIC Boost::boost)
+fidgety_install_library(FidgetyItoDatabase fidgety_ito_database_config.cmake)
