@@ -47,7 +47,7 @@ VerifierManagedOptionList ItoJson::toVmol(
         spdlog::trace("[Fidgety::ItoJson::toVmol] setting up option '{0}'", identifier);
 
         const auto &descItem = mDesc.find(identifier);
-        if (descItem == mDesc.cend()) {
+        if (descItem == mDesc.end()) {
             FIDGETY_CRITICAL(
                 DatabaseException,
                 DatabaseStatus::InvalidData,
@@ -58,7 +58,7 @@ VerifierManagedOptionList ItoJson::toVmol(
 
         // DEFAULT VALUE
         const auto &defaultValueJson = descItem->find("default");
-        if (defaultValueJson == descItem->cend()) {
+        if (defaultValueJson == descItem->end()) {
             FIDGETY_CRITICAL(
                 DatabaseException,
                 DatabaseStatus::InvalidData,
@@ -78,7 +78,7 @@ VerifierManagedOptionList ItoJson::toVmol(
 
         // ACCEPTED VALUE TYPES
         const auto &acceptedValueTypesJson = descItem->find("acceptedValueTypes");
-        if (acceptedValueTypesJson == descItem->cend()) {
+        if (acceptedValueTypesJson == descItem->end()) {
             FIDGETY_CRITICAL(
                 DatabaseException,
                 DatabaseStatus::InvalidData,
@@ -105,7 +105,7 @@ VerifierManagedOptionList ItoJson::toVmol(
         std::string editorType;
         std::map<std::string, std::string> editorConstraints;
         const auto &editorJson = descItem->find("editor");
-        if (editorJson == descItem->cend()) {
+        if (editorJson == descItem->end()) {
             FIDGETY_CRITICAL(
                 DatabaseException,
                 DatabaseStatus::InvalidData,
@@ -118,7 +118,7 @@ VerifierManagedOptionList ItoJson::toVmol(
             editorType = (std::string) *editorJson;
         } else if (editorJst == nlohmann::json::value_t::object) {
             const auto &editorTypeJson = editorJson->find("type");
-            if (editorTypeJson == editorJson->cend()) {
+            if (editorTypeJson == editorJson->end()) {
                 FIDGETY_CRITICAL(
                     DatabaseException,
                     DatabaseStatus::InvalidData,
@@ -137,7 +137,7 @@ VerifierManagedOptionList ItoJson::toVmol(
             editorType = (std::string) *editorTypeJson;
 
             const auto &editorConstraintsJson = editorJson->find("constraints");
-            if (editorConstraintsJson != editorJson->cend()) {
+            if (editorConstraintsJson != editorJson->end()) {
                 auto editorConstraintsJst = editorConstraintsJson->type();
                 if (editorConstraintsJst == nlohmann::json::value_t::array) {
                     size_t index = 0;
