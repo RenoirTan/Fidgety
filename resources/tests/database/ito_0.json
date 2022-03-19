@@ -14,10 +14,12 @@
             "type": "textentry"
         }
     },
-    "quality": "50",
-    "acceptedValueTypes": 2,
-    "editor": {
-        "type": "slider",
-        "constraints": {"low": 0, "high": 100}
+    "quality": {
+        "default": "50",
+        "acceptedValueTypes": 2,
+        "editor": {
+            "type": "slider",
+            "constraints": {"low": 0, "high": 100}
+        }
     }
 }

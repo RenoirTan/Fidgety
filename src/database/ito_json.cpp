@@ -122,66 +122,66 @@ VerifierManagedOptionList ItoJson::toVmol(
                 FIDGETY_CRITICAL(
                     DatabaseException,
                     DatabaseStatus::InvalidData,
-                    "[Fidgety::ItoJson::toVmol] could not find key: '{0}.editor.type'"
+                    "[Fidgety::ItoJson::toVmol] could not find key: '{0}.editor.type'",
+                    identifier
                 );
             }
             if (editorTypeJson->type() != nlohmann::json::value_t::string) {
                 FIDGETY_CRITICAL(
                     DatabaseException,
                     DatabaseStatus::InvalidData,
-                    "[Fidgety::ItoJson::toVmol] '{0}.editor.type' must be a string"
+                    "[Fidgety::ItoJson::toVmol] '{0}.editor.type' must be a string",
+                    identifier
                 );
             }
             editorType = (std::string) *editorTypeJson;
 
             const auto &editorConstraintsJson = editorJson->find("constraints");
-            if (editorConstraintsJson == editorJson->cend()) {
-                FIDGETY_CRITICAL(
-                    DatabaseException,
-                    DatabaseStatus::InvalidData,
-                    "[Fidgety::ItoJson::toVmol] could not find key: '{0}.editor.constraints'"
-                );
-            }
-            auto editorConstraintsJst = editorConstraintsJson->type();
-            if (editorConstraintsJst == nlohmann::json::value_t::array) {
-                size_t index = 0;
-                for (const auto &constraint : *editorConstraintsJson) {
-                    std::string scalar;
-                    if (jsonScalarToString(constraint, scalar)) {
-                        FIDGETY_CRITICAL(
-                            DatabaseException,
-                            DatabaseStatus::InvalidData,
-                            "[Fidgety::ItoJson::toVmol] '{0}.editor.constraints.{1} is not scalar",
-                            identifier,
-                            index
-                        );
+            if (editorConstraintsJson != editorJson->cend()) {
+                auto editorConstraintsJst = editorConstraintsJson->type();
+                if (editorConstraintsJst == nlohmann::json::value_t::array) {
+                    size_t index = 0;
+                    for (const auto &constraint : *editorConstraintsJson) {
+                        std::string scalar;
+                        if (jsonScalarToString(constraint, scalar)) {
+                            FIDGETY_CRITICAL(
+                                DatabaseException,
+                                DatabaseStatus::InvalidData,
+                                "[Fidgety::ItoJson::toVmol] "
+                                "'{0}.editor.constraints.{1} is not scalar",
+                                identifier,
+                                index
+                            );
+                        }
+                        editorConstraints[std::to_string(index)] = scalar;
+                        ++index;
                     }
-                    editorConstraints[std::to_string(index)] = scalar;
-                    ++index;
-                }
-            } else if (editorConstraintsJst == nlohmann::json::value_t::object) {
-                for (const auto &constraint : editorConstraintsJson->items()) {
-                    const std::string &key = constraint.key();
-                    const auto &value = constraint.value();
-                    std::string valueScalar;
-                    if (jsonScalarToString(value, valueScalar)) {
-                        FIDGETY_CRITICAL(
-                            DatabaseException,
-                            DatabaseStatus::InvalidData,
-                            "[Fidgety::ItoJson::toVmol] '{0}.editor.constraints.{1} is not scalar",
-                            identifier,
-                            key
-                        );
+                } else if (editorConstraintsJst == nlohmann::json::value_t::object) {
+                    for (const auto &constraint : editorConstraintsJson->items()) {
+                        const std::string &key = constraint.key();
+                        const auto &value = constraint.value();
+                        std::string valueScalar;
+                        if (jsonScalarToString(value, valueScalar)) {
+                            FIDGETY_CRITICAL(
+                                DatabaseException,
+                                DatabaseStatus::InvalidData,
+                                "[Fidgety::ItoJson::toVmol] "
+                                "'{0}.editor.constraints.{1} is not scalar",
+                                identifier,
+                                key
+                            );
+                        }
+                        editorConstraints[key] = valueScalar;
                     }
-                    editorConstraints[key] = valueScalar;
+                } else {
+                    FIDGETY_CRITICAL(
+                        DatabaseException,
+                        DatabaseStatus::InvalidData,
+                        "[Fidgety::ItoJson::toVmol] "
+                        "'{0}.editor.constraints' is not an array or object",
+                        identifier
+                    );
                 }
-            } else {
-                FIDGETY_CRITICAL(
-                    DatabaseException,
-                    DatabaseStatus::InvalidData,
-                    "[Fidgety::ItoJson::toVmol] '{0}.editor.constraints' is not an array or object",
-                    identifier
-                );
             }
         }
         std::string oets = BoostAl::to_lower_copy(editorType);
