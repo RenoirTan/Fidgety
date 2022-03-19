@@ -79,6 +79,7 @@ std::vector<std::string> Fidgety::getCandidateIto(
         for (auto deChild : BoostFs::directory_iterator(searchPath)) {
             BoostFs::path child(deChild);
             std::string sChild = child.string();
+            std::string sChildFn = child.filename().string();
 
             if (!BoostFs::is_regular_file(child)) {
                 spdlog::trace("[Fidgety::getCandidateIto] '{0}' is not a file", sChild);
@@ -88,8 +89,8 @@ std::vector<std::string> Fidgety::getCandidateIto(
                 std::find_if(
                     appNames.cbegin(),
                     appNames.cend(),
-                    [child](const std::string &appName) {
-                        return _filenameMatchesAppname(child.string(), appName);
+                    [sChildFn](const std::string &appName) {
+                        return _filenameMatchesAppname(sChildFn, appName);
                     }
                 ) == appNames.cend()
             ) {
