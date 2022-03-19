@@ -18,7 +18,9 @@
 #   cmakedefine FIDGETY_TEST_LOGLEVEL ${FIDGETY_TEST_LOGLEVEL}
 #   cmakedefine MICROSOFT_BULLSHIT
 #   ifdef MICROSOFT_BULLSHIT
-#       define SPDLOG_FMT_EXTERNAL
+#       ifndef SPDLOG_FMT_EXTERNAL
+#           define SPDLOG_FMT_EXTERNAL
+#       endif
 #   endif
 
 #endif
