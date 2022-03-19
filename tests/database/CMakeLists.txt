@@ -1,0 +1,3 @@
+fidgety_create_test(database_ito ito.cpp)
+fidgety_link_common_libraries(database_ito)
+target_link_directories(database_ito PRIVATE FidgetyItoDatabase)
