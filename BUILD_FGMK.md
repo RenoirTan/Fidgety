@@ -94,6 +94,7 @@ a list of available config keys, you can run
 | fidgety_export_lib_dir | str | Where Fidgety's library files (e.g. `.a`, `.so`) should be installed to. |
 | fidgety_export_extlib_dir | str | Where Fidgety's extension library files should be installed to. |
 | fidgety_exception_what_use_description | bool | Whether to use `Fidgety::Exception::getLongDescription` to override `std::exception::what`. |
+| microsoft_bullshit | bool | Turn on *"patches"* for intellisense. |
 
 ### `set`
 

@@ -16,5 +16,9 @@
 #   cmakedefine FIDGETY_QT_MAJOR ${FIDGETY_QT_MAJOR}
 #   cmakedefine FIDGETY_EXCEPTION_WHAT_USE_DESCRIPTION
 #   cmakedefine FIDGETY_TEST_LOGLEVEL ${FIDGETY_TEST_LOGLEVEL}
+#   cmakedefine MICROSOFT_BULLSHIT
+#   ifdef MICROSOFT_BULLSHIT
+#       define SPDLOG_FMT_EXTERNAL
+#   endif
 
 #endif
