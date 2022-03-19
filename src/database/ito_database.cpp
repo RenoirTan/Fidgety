@@ -8,9 +8,7 @@
  * @copyright Copyright (c) 2022
  */
 
-// Temporarily pacify VS Code's shoddy intellisense because it can't read
-// .vscode/c_cpp_properties.json
-#define SPDLOG_FMT_EXTERNAL
+#include <fidgety/config.h>
 
 #include <algorithm>
 #include <iterator>

@@ -88,6 +88,10 @@ class SimpleValidator : public virtual Validator {
                 );
             }
         }
+
+        SimpleValidator *clone(void) const override {
+            return new SimpleValidator();
+        }
 };
 
 VerifierManagedOptionList createOptions(void) {

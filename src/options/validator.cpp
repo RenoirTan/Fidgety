@@ -105,3 +105,7 @@ ValidatorMessage Validator::validate(
     spdlog::trace("Validating option {0} from Fidgety::Validator.", option.getIdentifier());
     return ValidatorMessage(ValidatorMessageType::Valid, "Ok");
 }
+
+Validator *Validator::clone(void) const {
+    return new Validator();
+}

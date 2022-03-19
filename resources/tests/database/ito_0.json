@@ -1,19 +1,22 @@
 {
     "size": {
         "default": "medium",
-        "editorType": {
+        "acceptedValueTypes": 2,
+        "editor": {
             "type": "dropdown",
             "constraints": ["extra small", "small", "medium", "large", "extra large"]
         }
     },
     "color": {
         "default": "blue",
-        "editorType": {
+        "acceptedValueTypes": 2,
+        "editor": {
             "type": "textentry"
         }
     },
     "quality": "50",
-    "editorType": {
+    "acceptedValueTypes": 2,
+    "editor": {
         "type": "slider",
         "constraints": {"low": 0, "high": 100}
     }

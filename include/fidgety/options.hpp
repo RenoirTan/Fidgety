@@ -92,6 +92,8 @@ namespace Fidgety {
                 const ValidatorContext &context
             );
 
+            virtual Validator *clone(void) const;
+
         protected:
     };
 
@@ -179,6 +181,16 @@ namespace Fidgety {
         Dropdown = 4,
         Options = 5,
         Checkboxes = 6
+    };
+
+    const char *const OPTION_EDITOR_TYPES_STRING[] = {
+        "blanked",
+        "textentry",
+        "toggle",
+        "slider",
+        "dropdown",
+        "options",
+        "checkboxes"
     };
 
     class OptionEditor {
