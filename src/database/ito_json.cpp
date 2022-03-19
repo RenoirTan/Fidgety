@@ -28,8 +28,8 @@ ItoJson::ItoJson(nlohmann::json &&desc) : mDesc(std::move(desc)) { }
 
 VerifierManagedOptionList ItoJson::toVmol(
     const nlohmann::json &intermediate,
-    const std::unique_ptr<Validator> &validator)
-{
+    const Validator &validator
+) {
     VerifierManagedOptionList vmol;
     for (const auto &option : intermediate.items()) {
         const OptionIdentifier &identifier = option.key();
@@ -213,7 +213,7 @@ VerifierManagedOptionList ItoJson::toVmol(
 
         OptionEditor oe(oet, std::move(editorConstraints));
         OptionIdentifier oi = identifier;
-        std::unique_ptr<Validator> ov(validator->clone());
+        std::unique_ptr<Validator> ov(validator.clone());
         OptionValue ovalue(std::move(defaultValue), acceptedValueTypes);
         ovalue.setValue(std::move(svalue));
         Option *done = new Option(std::move(oi), std::move(oe), std::move(ov), std::move(ovalue));

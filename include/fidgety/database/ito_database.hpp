@@ -42,7 +42,7 @@ namespace Fidgety {
 
             virtual VerifierManagedOptionList toVmol(
                 const nlohmann::json &intermediate,
-                const std::unique_ptr<Validator> &validator
+                const Validator &validator
             ) = 0;
     };
 
@@ -56,7 +56,7 @@ namespace Fidgety {
 
             VerifierManagedOptionList toVmol(
                 const nlohmann::json &intermediate,
-                const std::unique_ptr<Validator> &validator
+                const Validator &validator
             );
         
         protected:
