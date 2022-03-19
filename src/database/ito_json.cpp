@@ -34,6 +34,15 @@ VerifierManagedOptionList ItoJson::toVmol(
     for (const auto &option : intermediate.items()) {
         const OptionIdentifier &identifier = option.key();
         const nlohmann::json &value = option.value();
+        std::string svalue;
+        if (jsonScalarToString(value, svalue)) {
+            FIDGETY_CRITICAL(
+                DatabaseException,
+                DatabaseStatus::InvalidData,
+                "[Fidgety::ItoJson::toVmol] value of '{0}' must be a scalar (for now)",
+                identifier
+            );
+        }
 
         spdlog::trace("[Fidgety::ItoJson::toVmol] setting up option '{0}'", identifier);
 
@@ -58,7 +67,7 @@ VerifierManagedOptionList ItoJson::toVmol(
             );
         }
         std::string defaultValue;
-        if (!jsonScalarToString(*defaultValueJson, defaultValue)) {
+        if (jsonScalarToString(*defaultValueJson, defaultValue)) {
             FIDGETY_CRITICAL(
                 DatabaseException,
                 DatabaseStatus::InvalidData,
@@ -138,7 +147,7 @@ VerifierManagedOptionList ItoJson::toVmol(
                 size_t index = 0;
                 for (const auto &constraint : *editorConstraintsJson) {
                     std::string scalar;
-                    if (!jsonScalarToString(constraint, scalar)) {
+                    if (jsonScalarToString(constraint, scalar)) {
                         FIDGETY_CRITICAL(
                             DatabaseException,
                             DatabaseStatus::InvalidData,
@@ -155,7 +164,7 @@ VerifierManagedOptionList ItoJson::toVmol(
                     const std::string &key = constraint.key();
                     const auto &value = constraint.value();
                     std::string valueScalar;
-                    if (!jsonScalarToString(value, valueScalar)) {
+                    if (jsonScalarToString(value, valueScalar)) {
                         FIDGETY_CRITICAL(
                             DatabaseException,
                             DatabaseStatus::InvalidData,
@@ -205,10 +214,12 @@ VerifierManagedOptionList ItoJson::toVmol(
         OptionEditor oe(oet, std::move(editorConstraints));
         OptionIdentifier oi = identifier;
         std::unique_ptr<Validator> ov(validator->clone());
-        Option *done = new Option(std::move(oi), std::move(oe), std::move(ov), acceptedValueTypes);
+        OptionValue ovalue(std::move(defaultValue), acceptedValueTypes);
+        ovalue.setValue(std::move(svalue));
+        Option *done = new Option(std::move(oi), std::move(oe), std::move(ov), std::move(ovalue));
         std::shared_ptr<Option> spDone(done);
 
-        spdlog::debug("[FidgetyItoJson::toVmol] adding option: '{0}'", identifier);
+        spdlog::debug("[Fidgety::ItoJson::toVmol] adding option: '{0}'", identifier);
 
         vmol[identifier] = std::move(spDone);
     }
