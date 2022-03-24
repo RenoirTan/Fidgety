@@ -12,6 +12,7 @@
 #include <random>
 #include <set>
 #include <spdlog/spdlog.h>
+#include <fidgety/extensions.hpp>
 #include <fidgety/verifier.hpp>
 #include <fidgety/_utils.hpp>
 
@@ -344,4 +345,14 @@ namespace Fidgety {
             );
         }
     }
+
+#ifdef __cplusplus
+
+    extern "C" {
+        FIDGETY_ALLOC(FIDGETY_VCC_ALLOC_PROT(), ValidatorContextCreator);
+        FIDGETY_DELETE(FIDGETY_VCC_DELETE_PROT());
+    }
+
+#endif
+
 }

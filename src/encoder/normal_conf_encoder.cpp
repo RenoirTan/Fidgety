@@ -13,6 +13,7 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include <fidgety/encoder/normal_conf_encoder.hpp>
+#include <fidgety/extensions.hpp>
 #include <fidgety/_utils.hpp>
 
 using namespace Fidgety;
@@ -92,3 +93,12 @@ EncoderStatus NormalConfEncoder::dumpToConf(void) {
     );
     return EncoderStatus::Ok;
 }
+
+#ifdef __cplusplus
+
+extern "C" {
+    FIDGETY_ALLOC(FIDGETY_ENCODER_ALLOC_PROT(), NormalConfEncoder);
+    FIDGETY_DELETE(FIDGETY_ENCODER_DELETE_PROT());
+}
+
+#endif

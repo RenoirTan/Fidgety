@@ -22,6 +22,8 @@ class EnglishHello : public virtual Hello {
         }
 };
 
+#ifdef __cplusplus
+
 extern "C" {
     EnglishHello *allocator(void) {
         return new EnglishHello("Renoir");
@@ -31,3 +33,5 @@ extern "C" {
         delete hello;
     }
 }
+
+#endif

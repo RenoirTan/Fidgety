@@ -13,6 +13,7 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include <fidgety/decoder/normal_conf_decoder.hpp>
+#include <fidgety/extensions.hpp>
 #include <fidgety/_utils.hpp>
 
 using namespace Fidgety;
@@ -81,3 +82,12 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
     );
     return DecoderStatus::Ok;
 }
+
+#ifdef __cplusplus
+
+extern "C" {
+    FIDGETY_ALLOC(FIDGETY_DECODER_ALLOC_PROT(), NormalConfDecoder);
+    FIDGETY_DELETE(FIDGETY_DECODER_DELETE_PROT());
+}
+
+#endif

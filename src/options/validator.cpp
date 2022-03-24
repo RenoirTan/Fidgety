@@ -9,6 +9,7 @@
  */
 
 #include <spdlog/spdlog.h>
+#include <fidgety/extensions.hpp>
 #include <fidgety/options.hpp>
 #include <fidgety/_utils.hpp>
 
@@ -109,3 +110,12 @@ ValidatorMessage Validator::validate(
 Validator *Validator::clone(void) const {
     return new Validator();
 }
+
+#ifdef __cplusplus
+
+extern "C" {
+    FIDGETY_ALLOC(FIDGETY_VALIDATOR_ALLOC_PROT(), Validator);
+    FIDGETY_DELETE(FIDGETY_VALIDATOR_DELETE_PROT());
+}
+
+#endif

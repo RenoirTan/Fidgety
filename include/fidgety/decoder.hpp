@@ -17,10 +17,6 @@
 #   include <fstream>
 #   include <fidgety/exception.hpp>
 
-#   define FIDGETY_DECODER_ALLOC(class_name) class_name *fidgetyDecoderAlloc(void)
-#   define FIDGETY_DECODER_DELETE(class_name, parameter) \
-    void fidgetyDecoderDelete(class_name *parameter)
-
 namespace Fidgety {
     enum class DecoderStatus : int32_t {
         Ok = 0,
