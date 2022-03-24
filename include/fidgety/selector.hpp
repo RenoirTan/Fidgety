@@ -18,6 +18,7 @@
 #   include <fidgety/decoder.hpp>
 #   include <fidgety/encoder.hpp>
 #   include <fidgety/exception.hpp>
+#   include <fidgety/extensions.hpp>
 #   include <fidgety/options.hpp>
 #   include <fidgety/verifier.hpp>
 
@@ -64,18 +65,6 @@ namespace Fidgety {
             Appdata mAppdata;
             ProcessedPartLocations mLocations;
     };
-
-    constexpr char DECODER_ALLOC_SYMBOL[] = "fidgetyDecoderAlloc";
-    constexpr char DECODER_DELETE_SYMBOL[] = "fidgetyDecoderDelete";
-
-    constexpr char ENCODER_ALLOC_SYMBOL[] = "fidgetyEncoderAlloc";
-    constexpr char ENCODER_DELETE_SYMBOL[] = "fidgetyEncoderDelete";
-
-    constexpr char VALIDATOR_ALLOC_SYMBOL[] = "fidgetyValidatorAlloc";
-    constexpr char VALIDATOR_DELETE_SYMBOL[] = "fidgetyValidatorDelete";
-
-    constexpr char VCC_ALLOC_SYMBOL[] = "fidgetyVccAlloc";
-    constexpr char VCC_DELETE_SYMBOL[] = "fidgetyVccDelete";
 
     class Loader {
         public:
