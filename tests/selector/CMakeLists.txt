@@ -9,3 +9,7 @@ target_link_libraries(selector_encoder PUBLIC FidgetyEncoder)
 add_library(selector_validator SHARED selector_validator.cpp)
 fidgety_link_common_libraries(selector_validator)
 target_link_libraries(selector_encoder PUBLIC FidgetyOptions)
+
+add_library(selector_vcc SHARED selector_vcc.cpp)
+fidgety_link_common_libraries(selector_vcc)
+target_link_libraries(selector_vcc PUBLIC FidgetyVerifier)
