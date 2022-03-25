@@ -34,17 +34,15 @@ ValidatorMessageType ValidatorMessage::getMessageType(void) const noexcept {
     return mType;
 }
 
-namespace Fidgety {
-    inline const char *_ValidatorMessageTypeToStr(const ValidatorMessageType mt) {
-        switch (mt) {
-            case ValidatorMessageType::Valid: return "Valid";
-            case ValidatorMessageType::Problematic: return "Problematic";
-            case ValidatorMessageType::Invalid: return "Invalid";
-            case ValidatorMessageType::Unexpected: return "Unexpected";
-            default: throw fmt::format("Invalid ValidatorMessageType: {0}", (int32_t) mt);
-        }
+static inline const char *_ValidatorMessageTypeToStr(const ValidatorMessageType mt) {
+    switch (mt) {
+        case ValidatorMessageType::Valid: return "Valid";
+        case ValidatorMessageType::Problematic: return "Problematic";
+        case ValidatorMessageType::Invalid: return "Invalid";
+        case ValidatorMessageType::Unexpected: return "Unexpected";
+        default: throw fmt::format("Invalid ValidatorMessageType: {0}", (int32_t) mt);
     }
-};
+}
 
 std::string ValidatorMessage::fullMessage(void) const {
     spdlog::trace("Creating full message from ValidatorMessage.");

@@ -22,15 +22,13 @@ using namespace Fidgety;
 namespace BoostAl = boost::algorithm;
 namespace BoostFs = boost::filesystem;
 
-namespace Fidgety {
-    bool _filenameMatchesAppname(const std::string &fn, const std::string &an) noexcept {
-        if (fn.size() < an.size()) {
-            return false;
-        }
-        std::string fnTruncated = fn.substr(0, an.size());
-        BoostAl::to_lower(fnTruncated);
-        return (fnTruncated == BoostAl::to_lower_copy(an));
+static bool _filenameMatchesAppname(const std::string &fn, const std::string &an) noexcept {
+    if (fn.size() < an.size()) {
+        return false;
     }
+    std::string fnTruncated = fn.substr(0, an.size());
+    BoostAl::to_lower(fnTruncated);
+    return (fnTruncated == BoostAl::to_lower_copy(an));
 }
 
 std::vector<std::string> Fidgety::getCandidateIto(
