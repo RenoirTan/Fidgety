@@ -13,6 +13,7 @@
 #include <fidgety/_tests.hpp>
 #include <fidgety/_utils.hpp>
 #include <fidgety/decoder.hpp>
+#include <fidgety/extensions.hpp>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
@@ -54,3 +55,12 @@ class Exp2Decoder : public virtual Decoder {
         return DecoderStatus::Ok;
     }
 };
+
+#ifdef __cplusplus
+
+extern "C" {
+    FIDGETY_ALLOC(FIDGETY_DECODER_ALLOC_PROT(), Exp2Decoder);
+    FIDGETY_DELETE(FIDGETY_DECODER_DELETE_PROT());
+}
+
+#endif
