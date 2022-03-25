@@ -8,8 +8,15 @@ target_link_libraries(selector_encoder PUBLIC FidgetyEncoder)
 
 add_library(selector_validator SHARED selector_validator.cpp)
 fidgety_link_common_libraries(selector_validator)
-target_link_libraries(selector_encoder PUBLIC FidgetyOptions)
+target_link_libraries(selector_validator PUBLIC FidgetyOptions)
 
 add_library(selector_vcc SHARED selector_vcc.cpp)
 fidgety_link_common_libraries(selector_vcc)
 target_link_libraries(selector_vcc PUBLIC FidgetyVerifier)
+
+fidgety_create_test(selector_exp2 selector_exp2.cpp)
+target_link_libraries(selector_exp2 PRIVATE FidgetySelector)
+target_link_libraries(
+    selector_exp2 PRIVATE
+    selector_decoder selector_encoder selector_validator selector_vcc
+)
