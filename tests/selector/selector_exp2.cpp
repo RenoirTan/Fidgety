@@ -37,3 +37,10 @@ static inline Appdata _makeAppdata(void) {
     };
     return appdata;
 }
+
+TEST(SelectorExp2, Selector) {
+    _FIDGETY_INIT_TEST();
+    Selector selector(_makeAppdata());
+    ASSERT_TRUE(selector.isValid());
+    ASSERT_EQ(selector.processHints(), SelectorStatus::Ok);
+}
