@@ -30,3 +30,12 @@ class Exp2ValidatorContextCreator : public ValidatorContextCreator {
         return ValidatorContext(std::move(vci));
     }
 };
+
+#ifdef __cplusplus
+
+extern "C" {
+    FIDGETY_ALLOC(FIDGETY_VCC_ALLOC_PROT(), Exp2ValidatorContextCreator);
+    FIDGETY_DELETE(FIDGETY_VCC_DELETE_PROT());
+}
+
+#endif
