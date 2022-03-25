@@ -9,7 +9,7 @@
  */
 
 #include <spdlog/spdlog.h>
-#include <fidgety/extensions.hpp>
+//#include <fidgety/extensions.hpp>
 #include <fidgety/options.hpp>
 #include <fidgety/_utils.hpp>
 
@@ -111,6 +111,7 @@ Validator *Validator::clone(void) const {
     return new Validator();
 }
 
+/*
 #ifdef __cplusplus
 
 extern "C" {
@@ -119,3 +120,4 @@ extern "C" {
 }
 
 #endif
+*/
