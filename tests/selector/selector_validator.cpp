@@ -54,14 +54,14 @@ class Exp2Validator : public Validator {
             // Simple way to check if numbers are consecutive powers of 2
             // They don't necessarily have to start with 1 (2^0)
 
-            const Option &zeroeth_option = context.getOption("0");
-            if (zeroeth_option.getValueType() != OptionValueType::RAW_VALUE) {
+            const Option &zeroethOption = context.getOption("0");
+            if (zeroethOption.getValueType() != OptionValueType::RAW_VALUE) {
                 return ValidatorMessage(
                     ValidatorMessageType::Unexpected,
                     "zeroeth value must be a raw value"
                 );
             }
-            std::string zsvalue = zeroeth_option.getRawValue();
+            std::string zsvalue = zeroethOption.getRawValue();
             int64_t zivalue;
             try {
                 zivalue = std::stol(zsvalue);
