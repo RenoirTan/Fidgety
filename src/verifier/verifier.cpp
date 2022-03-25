@@ -12,7 +12,7 @@
 #include <random>
 #include <set>
 #include <spdlog/spdlog.h>
-#include <fidgety/extensions.hpp>
+//#include <fidgety/extensions.hpp>
 #include <fidgety/verifier.hpp>
 #include <fidgety/_utils.hpp>
 
@@ -346,6 +346,7 @@ namespace Fidgety {
         }
     }
 
+/*
 #ifdef __cplusplus
 
     extern "C" {
@@ -354,5 +355,6 @@ namespace Fidgety {
     }
 
 #endif
+*/
 
 }
