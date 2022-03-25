@@ -91,3 +91,12 @@ class Exp2Validator : public Validator {
         return new Exp2Validator();
     }
 };
+
+#ifdef __cplusplus
+
+extern "C" {
+    FIDGETY_ALLOC(FIDGETY_VALIDATOR_ALLOC_PROT(), Exp2Validator);
+    FIDGETY_DELETE(FIDGETY_VALIDATOR_DELETE_PROT());
+}
+
+#endif
