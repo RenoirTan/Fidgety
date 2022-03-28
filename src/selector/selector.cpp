@@ -26,11 +26,16 @@ void ProcessedPartLocations::clear(void) {
     this->validatorContextCreator.clear();
 }
 
-Selector::Selector(const Appdata &appdata) : mAppdata(appdata) { }
+Selector::Selector(const Appdata &appdata) : mAppdata(appdata) {
+    spdlog::trace("[Fidgety::Selector::Selector] creating selector");
+}
 
-Selector::Selector(Appdata &&appdata) : mAppdata(std::move(appdata)) { }
+Selector::Selector(Appdata &&appdata) : mAppdata(std::move(appdata)) {
+    spdlog::trace("[Fidgety::Selector::Selector] creating selector");
+}
 
 bool Selector::isValid(void) const {
+    spdlog::debug("[Fidgety::Selector::isValid] checking if mAppdata is valid");
 // Check if LoadablePartsFileNames is non-zero (not empty)
 #define CHK_LPFN_NZ(part)                                   \
     if (mAppdata.loadablePartsFileNames.part.size() == 0) { \
@@ -47,24 +52,30 @@ bool Selector::isValid(void) const {
 }
 
 SelectorStatus Selector::processHints(void) {
-   ProcessedPartLocations ppl;
+    spdlog::debug("[Fidgety::Selector::processHints] processing hints");
+    ProcessedPartLocations ppl;
 
     for (const auto &spath : mAppdata.searchPaths) {
+        spdlog::trace("[Fidgety::Selector::processHints] searching through '{}'", spath);
         BoostFs::path dir(spath);
         if (BoostFs::exists(dir) && BoostFs::is_directory(dir)) {
+            spdlog::trace("[Fidgety::Selector::processHints] valid search path");
             BoostFs::directory_iterator it_end;
             for (BoostFs::directory_iterator node(dir); node != it_end; ++node) {
                 BoostFs::path path(node->path());
+                BoostFs::path filename = path.leaf();
+                const char *cFilename = filename.c_str();
+                spdlog::trace("[Fidgety::Selector::processHints] checking file '{}'", cFilename);
                 if (BoostFs::is_regular_file(path)) {
 #define _CHK_LPFN(part) { \
-    const char *cPath = path.c_str(); \
     auto it = std::find( \
         mAppdata.loadablePartsFileNames.part.cbegin(), \
         mAppdata.loadablePartsFileNames.part.cend(), \
-        cPath \
+        cFilename \
     ); \
     if (it != mAppdata.loadablePartsFileNames.part.cend()) { \
-        ppl.part.emplace_back(cPath); \
+        ppl.part.emplace_back(cFilename); \
+        spdlog::trace("[Fidgety::Selector::processHints] file matches one requirement"); \
     } \
 } \
 
@@ -76,8 +87,12 @@ SelectorStatus Selector::processHints(void) {
 #undef _CHK_LPFN
                 }
             }
+        } else {
+            spdlog::trace("[Fidgety::Selector::processHints] invalid search path");
         }
     }
+
+    spdlog::debug("[Fidgety::Selector::processHints] using new ppl");
 
     mLocations = std::move(ppl);
     return SelectorStatus::Ok;

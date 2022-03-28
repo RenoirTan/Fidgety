@@ -48,8 +48,8 @@ TEST(SelectorExp2, Selector) {
     std::string encoderLocation = selector.getEncoderLocation();
     std::string validatorLocation = selector.getValidatorLocation();
     std::string vccLocation = selector.getValidatorContextCreatorLocation();
-    EXPECT_EQ(decoderLocation, "selector_decoder.so");
-    EXPECT_EQ(encoderLocation, "selector_encoder.so");
-    EXPECT_EQ(validatorLocation, "selector_validator.so");
-    EXPECT_EQ(vccLocation, "selector_vcc.so");
+    EXPECT_EQ(decoderLocation, "libselector_decoder.so");
+    EXPECT_EQ(encoderLocation, "libselector_encoder.so");
+    EXPECT_EQ(validatorLocation, "libselector_validator.so");
+    EXPECT_EQ(vccLocation, "libselector_vcc.so");
 }
