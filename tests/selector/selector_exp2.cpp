@@ -43,4 +43,13 @@ TEST(SelectorExp2, Selector) {
     Selector selector(_makeAppdata());
     ASSERT_TRUE(selector.isValid());
     ASSERT_EQ(selector.processHints(), SelectorStatus::Ok);
+    
+    std::string decoderLocation = selector.getDecoderLocation();
+    std::string encoderLocation = selector.getEncoderLocation();
+    std::string validatorLocation = selector.getValidatorLocation();
+    std::string vccLocation = selector.getValidatorContextCreatorLocation();
+    EXPECT_EQ(decoderLocation, "selector_decoder.so");
+    EXPECT_EQ(encoderLocation, "selector_encoder.so");
+    EXPECT_EQ(validatorLocation, "selector_validator.so");
+    EXPECT_EQ(vccLocation, "selector_vcc.so");
 }
