@@ -57,7 +57,7 @@ SelectorStatus Selector::checkValidity(void) const {
 // Check if LoadablePartsFileNames is non-zero (not empty)
 #define CHK_LPFN_NZ(part)                                   \
     if (mAppdata.loadablePartsFileNames.part.size() == 0) { \
-        return SelectorStatus::MissingInfo;                                       \
+        return SelectorStatus::MissingInfo;                 \
     }                                                       \
 
     CHK_LPFN_NZ(decoder);
@@ -101,34 +101,35 @@ SelectorStatus Selector::processHints(void) {
         spdlog::trace("[Fidgety::Selector::processHints] searching through '{}'", spath);
         BoostFs::path dir(spath);
         if (BoostFs::exists(dir) && BoostFs::is_directory(dir)) {
-            spdlog::trace("[Fidgety::Selector::processHints] valid search path");
-            BoostFs::directory_iterator it_end;
-            for (BoostFs::directory_iterator node(dir); node != it_end; ++node) {
-                BoostFs::path path(node->path());
-                BoostFs::path filename = path.leaf();
-                const char *cFilename = filename.c_str();
-                spdlog::trace("[Fidgety::Selector::processHints] checking file '{}'", cFilename);
-                if (BoostFs::is_regular_file(path)) {
-#define _CHK_LPFN(part) { \
-    auto it = std::find( \
-        mAppdata.loadablePartsFileNames.part.cbegin(), \
-        mAppdata.loadablePartsFileNames.part.cend(), \
-        cFilename \
-    ); \
-    if (it != mAppdata.loadablePartsFileNames.part.cend()) { \
-        ppl.part.emplace_back(cFilename); \
-        spdlog::trace("[Fidgety::Selector::processHints] file matches one requirement"); \
-    } \
-} \
+            spdlog::trace("[Fidgety::Selector::processHints] valid search path: {}", spath);
 
-                    _CHK_LPFN(decoder);
-                    _CHK_LPFN(encoder);
-                    _CHK_LPFN(validator);
-                    _CHK_LPFN(validatorContextCreator);
-
-#undef _CHK_LPFN
+            spdlog::trace("[Fidgety::Selector::processHints] finding all files in search path");
+            std::vector<std::string> dirFiles;
+            BoostFs::directory_iterator itEnd;
+            for (BoostFs::directory_iterator node(dir); node != itEnd; ++node) {
+                BoostFs::path tentativePath = node->path();
+                if (BoostFs::is_regular_file(tentativePath)) {
+                    dirFiles.push_back(tentativePath.leaf().string());
                 }
             }
+
+            spdlog::trace("[Fidgety::Selector::processHints] looking through module file names");
+
+#define INTERSECT_PPL(part)                                                         \
+    for (const auto &moduleFileName : mAppdata.loadablePartsFileNames.part) {       \
+        auto mfnDfIt = std::find(dirFiles.begin(), dirFiles.end(), moduleFileName); \
+        if (mfnDfIt != dirFiles.end()) {                                            \
+            ppl.part.push_back((dir / *mfnDfIt).string());                          \
+        }                                                                           \
+    }                                                                               \
+
+            INTERSECT_PPL(decoder);
+            INTERSECT_PPL(encoder);
+            INTERSECT_PPL(validator);
+            INTERSECT_PPL(validatorContextCreator);
+
+#undef INTERSECT_PPL
+
         } else {
             spdlog::trace("[Fidgety::Selector::processHints] invalid search path");
         }
