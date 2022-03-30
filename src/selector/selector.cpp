@@ -19,6 +19,20 @@
 using namespace Fidgety;
 namespace BoostFs = boost::filesystem;
 
+std::string SelectorException::codeAsErrorType(void) const {
+    switch (mCode) {
+        case 0: return "Ok";
+        case 1: return "InvalidInfo";
+        case 2: return "MissingInfo";
+        case 3: return "PartNotFound";
+        default: return "Other";
+    }
+}
+
+const char *SelectorException::getSimpleWhat(void) const noexcept {
+    return "A Fidgety::SelectorException occurred.";
+}
+
 void ProcessedPartLocations::clear(void) {
     this->decoder.clear();
     this->encoder.clear();
@@ -35,11 +49,15 @@ Selector::Selector(Appdata &&appdata) : mAppdata(std::move(appdata)) {
 }
 
 bool Selector::isValid(void) const {
+    return checkValidity() == SelectorStatus::Ok;
+}
+
+SelectorStatus Selector::checkValidity(void) const {
     spdlog::debug("[Fidgety::Selector::isValid] checking if mAppdata is valid");
 // Check if LoadablePartsFileNames is non-zero (not empty)
 #define CHK_LPFN_NZ(part)                                   \
     if (mAppdata.loadablePartsFileNames.part.size() == 0) { \
-        return false;                                       \
+        return SelectorStatus::MissingInfo;                                       \
     }                                                       \
 
     CHK_LPFN_NZ(decoder);
@@ -59,7 +77,7 @@ bool Selector::isValid(void) const {
             elemFromFirst                                                     \
         );                                                                    \
         if (matchIt != mAppdata.loadablePartsFileNames.second.end()) {        \
-            return false;                                                     \
+            return SelectorStatus::InvalidInfo;                               \
         }                                                                     \
     }                                                                         \
 
@@ -72,7 +90,7 @@ bool Selector::isValid(void) const {
 
 #undef CHK_LPFN_NC
 
-    return true;
+    return SelectorStatus::Ok;
 }
 
 SelectorStatus Selector::processHints(void) {
