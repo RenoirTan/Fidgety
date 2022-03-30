@@ -53,7 +53,7 @@ bool Selector::isValid(void) const {
 }
 
 SelectorStatus Selector::checkValidity(void) const {
-    spdlog::debug("[Fidgety::Selector::isValid] checking if mAppdata is valid");
+    spdlog::debug("[Fidgety::Selector::checkValidity] checking if mAppdata is valid");
 // Check if LoadablePartsFileNames is non-zero (not empty)
 #define CHK_LPFN_NZ(part)                                   \
     if (mAppdata.loadablePartsFileNames.part.size() == 0) { \
