@@ -26,7 +26,8 @@ namespace Fidgety {
     enum class SelectorStatus : int32_t {
         Ok = 0,
         InvalidInfo = 1,
-        PartNotFound = 2
+        MissingInfo = 2,
+        PartNotFound = 3
     };
 
     class SelectorException : public Exception {

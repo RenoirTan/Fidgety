@@ -43,10 +43,34 @@ bool Selector::isValid(void) const {
     }                                                       \
 
     CHK_LPFN_NZ(decoder);
-    CHK_LPFN_NZ(encoder);
-    CHK_LPFN_NZ(validator);
-    CHK_LPFN_NZ(validatorContextCreator);
+    // The cases below are now handled by CHK_LPFN_NC
+    // because if #second is empty, matchIt == #second.end()
+    // CHK_LPFN_NZ(encoder);
+    // CHK_LPFN_NZ(validator);
+    // CHK_LPFN_NZ(validatorContextCreator);
 #undef CHK_LPFN_NZ
+
+// Check for no clashes
+#define CHK_LPFN_NC(first, second)                                            \
+    for (const auto &elemFromFirst : mAppdata.loadablePartsFileNames.first) { \
+        auto matchIt = std::find(                                             \
+            mAppdata.loadablePartsFileNames.second.begin(),                   \
+            mAppdata.loadablePartsFileNames.second.end(),                     \
+            elemFromFirst                                                     \
+        );                                                                    \
+        if (matchIt != mAppdata.loadablePartsFileNames.second.end()) {        \
+            return false;                                                     \
+        }                                                                     \
+    }                                                                         \
+
+    CHK_LPFN_NC(decoder, encoder);
+    CHK_LPFN_NC(decoder         , validator);
+    CHK_LPFN_NC(decoder                    , validatorContextCreator);
+    CHK_LPFN_NC(         encoder, validator);
+    CHK_LPFN_NC(         encoder           , validatorContextCreator);
+    CHK_LPFN_NC(                  validator, validatorContextCreator);
+
+#undef CHK_LPFN_NC
 
     return true;
 }
