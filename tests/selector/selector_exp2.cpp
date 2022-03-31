@@ -92,17 +92,20 @@ TEST(SelectorExp2, Loader) {
     }
     VerifierManagedOptionList vmol;
     size_t index = 0;
-    for (const auto &value : intermediate) {
+    for (const auto &value : intermediate["exp2"]) {
+        std::string identifier = fmt::format("{}", index);
+        spdlog::trace("[SelectorExp2_Loader] creating option with identifier: {}", identifier);
         OptionEditor oe(OptionEditorType::TextEntry, std::map<std::string, std::string>());
         std::unique_ptr<Validator> myValidator(validator->clone());
         int32_t avt = OptionValueType::RAW_VALUE;
+        OptionValue ovalue((std::string) value, avt);
         auto option = std::make_shared<Option>(
-            fmt::format("{}", index),
+            std::string(identifier),
             std::move(oe),
             std::move(myValidator),
-            avt
+            std::move(ovalue)
         );
-        vmol[fmt::format("{}", index)] = option;
+        vmol[identifier] = option;
         ++index;
     }
 
