@@ -98,7 +98,7 @@ TEST(SelectorExp2, Loader) {
         OptionEditor oe(OptionEditorType::TextEntry, std::map<std::string, std::string>());
         std::unique_ptr<Validator> myValidator(validator->clone());
         int32_t avt = OptionValueType::RAW_VALUE;
-        OptionValue ovalue((std::string) value, avt);
+        OptionValue ovalue(fmt::format("{}", (std::int64_t) value), avt);
         auto option = std::make_shared<Option>(
             std::string(identifier),
             std::move(oe),
