@@ -60,6 +60,8 @@ TEST(SelectorExp2, Selector) {
 }
 
 TEST(SelectorExp2, Loader) {
+#define INTERMEDIATE_FILE "../../../tmp/tests/selector/test_0.json"
+
     _FIDGETY_INIT_TEST();
     _SELECTOR_TEST();
 
@@ -75,8 +77,6 @@ TEST(SelectorExp2, Loader) {
     DyclassBox<Encoder> encoder = loader.getEncoder();
     DyclassBox<Validator> validator = loader.getValidator();
     DyclassBox<ValidatorContextCreator> vcc = loader.getValidatorContextCreator();
-
-#define INTERMEDIATE_FILE "../../../tmp/tests/selector/test_0.json"
 
     ASSERT_EQ(decoder->openConf(appdata.configFilePath), DecoderStatus::Ok);
     ASSERT_EQ(decoder->openIntermediate(INTERMEDIATE_FILE), DecoderStatus::Ok);

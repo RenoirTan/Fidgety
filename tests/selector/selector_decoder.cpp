@@ -19,7 +19,7 @@
 
 using namespace Fidgety;
 
-class Exp2Decoder : public virtual Decoder {
+class Exp2Decoder : public Decoder {
     DecoderStatus dumpToIntermediate(void) {
         spdlog::trace("dumping Exp2Decoder::mConfFile to Exp2Decoder::mIntermediateFile");
 
