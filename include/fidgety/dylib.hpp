@@ -171,6 +171,15 @@ namespace Fidgety {
                     );
                 }
 
+                spdlog::trace(
+                    "[Fidgety::DyclassLoader::getInstance] mAllocClassSymbol: {0}",
+                    mAllocClassSymbol
+                );
+                spdlog::trace(
+                    "[Fidgety::DyclassLoader::getInstance] mDeleteClassSymbol: {0}",
+                    mDeleteClassSymbol
+                );
+
                 // Look for a symbol named "allocator" (or whatever) and assign to allocFunc
                 auto allocFunc = (AllocClass<T>) dlsym(mHandle, mAllocClassSymbol.c_str());
                 if (!allocFunc) {

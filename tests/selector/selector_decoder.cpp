@@ -61,6 +61,13 @@ class Exp2Decoder : public virtual Decoder {
 extern "C" {
     FIDGETY_ALLOC(FIDGETY_DECODER_ALLOC_PROT(), Exp2Decoder);
     FIDGETY_DELETE(FIDGETY_DECODER_DELETE_PROT());
+    /*
+    void FIDGETY_DECODER_DELETE_SYMBOL(Exp2Decoder *thing) {
+        spdlog::info("WHAT THE FUCK: {0}", (void *) thing);
+        spdlog::info("is it a fucking valid pointer??? {0}", thing->isConfOpened());
+        delete thing;
+    }
+    */
 }
 
 #endif

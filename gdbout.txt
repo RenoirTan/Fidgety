@@ -1,0 +1,79 @@
+See tests/selector/selector_decoder.cpp
+
+This is what the backtrace shows when you write
+```
+FIDGETY_DELETE(FIDGETY_DECODER_DELETE_PROT());
+```
+
+#0  0x00007ffff563934c in __pthread_kill_implementation () from /usr/lib/libc.so.6
+#1  0x00007ffff55ec4b8 in raise () from /usr/lib/libc.so.6
+#2  0x00007ffff55d6534 in abort () from /usr/lib/libc.so.6
+#3  0x00007ffff562d397 in __libc_message () from /usr/lib/libc.so.6
+#4  0x00007ffff564333c in malloc_printerr () from /usr/lib/libc.so.6
+#5  0x00007ffff5644ff4 in _int_free () from /usr/lib/libc.so.6
+#6  0x00007ffff5647be3 in free () from /usr/lib/libc.so.6
+#7  0x00007ffff7f66b78 in fidgetyDecoderDelete ()
+   from /home/renoir/Code/remote/github.com/RenoirTan/Fidgety/build/tests/selector/libselector_decoder.so
+#8  0x00005555555d958c in std::unique_ptr<Fidgety::Decoder, void (*)(Fidgety::Decoder*)>::~unique_ptr() ()
+#9  0x00005555555d4ca2 in SelectorExp2_Loader_Test::TestBody() ()
+#10 0x000055555564f8ca in void testing::internal::HandleSehExceptionsInMethodIfSupported<testing::Test, void>(testing::Test*, void (testing::Test::*)(), char const*) ()
+#11 0x0000555555647f1b in void testing::internal::HandleExceptionsInMethodIfSupported<testing::Test, void>(testing::Test*, void (testing::Test::*)(), char const*) ()
+#12 0x000055555561e1a2 in testing::Test::Run() ()
+#13 0x000055555561ebb6 in testing::TestInfo::Run() ()
+#14 0x000055555561f46c in testing::TestSuite::Run() ()
+#15 0x000055555562eaf4 in testing::internal::UnitTestImpl::RunAllTests() ()
+#16 0x0000555555650c79 in bool testing::internal::HandleSehExceptionsInMethodIfSupported<testing::internal::UnitTestImpl, bool>(testing::internal::UnitTestImpl*, bool (testing::internal::UnitTestImpl::*)(), char const*) ()
+#17 0x000055555564902b in bool testing::internal::HandleExceptionsInMethodIfSupported<testing::internal::UnitTestImpl, bool>(testing::internal::UnitTestImpl*, bool (testing::internal::UnitTestImpl::*)(), char const*) ()
+#18 0x000055555562d311 in testing::UnitTest::Run() ()
+#19 0x0000555555662ed2 in RUN_ALL_TESTS() ()
+
+
+
+Whereis this is what happens when you write
+```
+void FIDGETY_DECODER_DELETE_SYMBOL(Exp2Decoder *thing) {
+    spdlog::info("WHAT THE FUCK: {0}", (void *) thing);
+    spdlog::info("is it a fucking valid pointer??? {0}", thing->isConfOpened());
+    delete thing;
+}
+```
+
+Program received signal SIGSEGV, Segmentation fault.
+__gnu_cxx::__exchange_and_add_dispatch (__val=-1, __mem=0x0) at /usr/src/debug/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/ext/atomicity.h:99
+99      /usr/src/debug/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/ext/atomicity.h: No such file or directory.
+(gdb) backtrace
+#0  __gnu_cxx::__exchange_and_add_dispatch (__val=-1, __mem=0x0)
+    at /usr/src/debug/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/ext/atomicity.h:99
+#1  std::locale::_Impl::_M_remove_reference (this=0x0)
+    at /usr/src/debug/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/bits/locale_classes.h:566
+#2  std::locale::~locale (this=0x5555556f33d0, __in_chrg=<optimized out>)
+    at /usr/src/debug/gcc/libstdc++-v3/src/c++98/locale.cc:94
+#3  0x00007ffff59ccf1d in std::basic_streambuf<char, std::char_traits<char> >::~basic_streambuf (
+    this=<optimized out>, __in_chrg=<optimized out>)
+    at /usr/src/debug/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/streambuf:202
+#4  std::basic_filebuf<char, std::char_traits<char> >::~basic_filebuf (this=<optimized out>, 
+    __in_chrg=<optimized out>)
+    at /usr/src/debug/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/fstream:257
+#5  std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream (this=0x5555556f3390, 
+    __in_chrg=<optimized out>, __vtt_parm=<optimized out>)
+    at /usr/src/debug/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include/fstream:868
+#6  0x00007ffff7f9bb78 in Fidgety::Decoder::~Decoder() ()
+   from /home/renoir/Code/remote/github.com/RenoirTan/Fidgety/build/tests/selector/libselector_decoder.so
+#7  0x00007ffff7f6c780 in Exp2Decoder::~Exp2Decoder() ()
+   from /home/renoir/Code/remote/github.com/RenoirTan/Fidgety/build/tests/selector/libselector_decoder.so
+#8  0x00007ffff7f66d26 in fidgetyDecoderDelete ()
+   from /home/renoir/Code/remote/github.com/RenoirTan/Fidgety/build/tests/selector/libselector_decoder.so
+#9  0x00005555555d958c in std::unique_ptr<Fidgety::Decoder, void (*)(Fidgety::Decoder*)>::~unique_ptr() ()
+#10 0x00005555555d4ca2 in SelectorExp2_Loader_Test::TestBody() ()
+#11 0x000055555564f8ca in void testing::internal::HandleSehExceptionsInMethodIfSupported<testing::Test, void>(testing::Test*, void (testing::Test::*)(), char const*) ()
+#12 0x0000555555647f1b in void testing::internal::HandleExceptionsInMethodIfSupported<testing::Test, void>(testing::Test*, void (testing::Test::*)(), char const*) ()
+--Type <RET> for more, q to quit, c to continue without paging--
+#13 0x000055555561e1a2 in testing::Test::Run() ()
+#14 0x000055555561ebb6 in testing::TestInfo::Run() ()
+#15 0x000055555561f46c in testing::TestSuite::Run() ()
+#16 0x000055555562eaf4 in testing::internal::UnitTestImpl::RunAllTests() ()
+#17 0x0000555555650c79 in bool testing::internal::HandleSehExceptionsInMethodIfSupported<testing::internal::UnitTestImpl, bool>(testing::internal::UnitTestImpl*, bool (testing::internal::UnitTestImpl::*)(), char const*) ()
+#18 0x000055555564902b in bool testing::internal::HandleExceptionsInMethodIfSupported<testing::internal::UnitTestImpl, bool>(testing::internal::UnitTestImpl*, bool (testing::internal::UnitTestImpl::*)(), char const*) ()
+#19 0x000055555562d311 in testing::UnitTest::Run() ()
+#20 0x0000555555662ed2 in RUN_ALL_TESTS() ()
+#21 0x0000555555662e57 in main ()

@@ -34,26 +34,36 @@ class Exp2Encoder : public Encoder {
             spdlog::trace("[Exp2Encoder::dumpToConf] running through intermediate json");
 
             nlohmann::json intermediate = nlohmann::json::parse(mIntermediateFile);
-            if (intermediate.type() != nlohmann::json::value_t::array) {
+            if (intermediate.type() != nlohmann::json::value_t::object) {
                 FIDGETY_CRITICAL(
                     EncoderException,
                     EncoderStatus::VerifierError,
-                    "[Exp2Encoder::dumpToConf] mIntermediateFile does not have a list"
+                    "[Exp2Encoder::dumpToConf] mIntermediateFile does not have a object"
+                );
+            }
+
+            nlohmann::json exp2List = intermediate["exp2"];
+            if (exp2List.type() != nlohmann::json::value_t::array) {
+                FIDGETY_CRITICAL(
+                    EncoderException,
+                    EncoderStatus::VerifierError,
+                    "[Exp2Encoder::dumpToConf] intermediate['exp2'] is not an array"
                 );
             }
 
             size_t linesWritten = 0;
-            for (const auto &item : intermediate) {
+            for (const auto &item : exp2List) {
                 switch (item.type()) {
 #define VALUE_TO_LINE(njvt, cxxvt) \
     case njvt: { \
         mConfFile << (cxxvt) item << '\n'; \
         ++linesWritten; \
+        break; \
     } \
 
                     VALUE_TO_LINE(nlohmann::json::value_t::string, std::string)
                     VALUE_TO_LINE(nlohmann::json::value_t::number_integer, int64_t)
-                    VALUE_TO_LINE(nlohmann::json::value_t::number_unsigned, int64_t)
+                    VALUE_TO_LINE(nlohmann::json::value_t::number_unsigned, uint64_t)
 
 #undef VALUE_TO_LINE
 
@@ -69,7 +79,7 @@ class Exp2Encoder : public Encoder {
                 }
             }
 
-            spdlog::trace("[Exp2Encoder::dumpToConf] {0} lines written to mConfFile");
+            spdlog::trace("[Exp2Encoder::dumpToConf] {0} lines written to mConfFile", linesWritten);
             mConfFile.flush();
             spdlog::debug("[Exp2Encoder::dumpToConf] success");
             return EncoderStatus::Ok;
