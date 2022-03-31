@@ -9,6 +9,7 @@
  */
 
 #include <spdlog/spdlog.h>
+#include <fidgety/extensions.hpp>
 #include <fidgety/selector.hpp>
 
 using namespace Fidgety;
@@ -57,6 +58,13 @@ Loader::Loader(
     );
 }
 
+Loader::~Loader(void) {
+    mDecoderLoader.closeLibrary();
+    mEncoderLoader.closeLibrary();
+    mValidatorLoader.closeLibrary();
+    mVccLoader.closeLibrary();
+}
+
 Loader::Loader(Loader &&loader) :
     mSelector(std::move(loader.mSelector)),
     mDecoderLoader(std::move(loader.mDecoderLoader)),
@@ -76,6 +84,68 @@ Loader &Loader::operator=(Loader &&loader) {
     mVccLoader = std::move(loader.mVccLoader);
 
     return *this;
+}
+
+SelectorStatus Loader::lateInit(void) {
+    spdlog::trace("[Fidgety::Loader::lateInit] initialising loader");
+    SelectorStatus status = mSelector.checkValidity();
+    if (status != SelectorStatus::Ok) return status;
+    status = mSelector.processHints();
+    if (status != SelectorStatus::Ok) return status;
+
+    std::string decoderLocation = mSelector.getDecoderLocation();
+    spdlog::trace("[Fidgety::Loader::lateInit] decoderLocation: {0}", decoderLocation);
+    if (decoderLocation.empty()) {
+        FIDGETY_ERROR(
+            SelectorException,
+            SelectorStatus::PartNotFound,
+            "[Fidgety::Loader::lateInit] could not find decoder"
+        );
+    }
+    std::string encoderLocation = mSelector.getEncoderLocation();
+    spdlog::trace("[Fidgety::Loader::lateInit] encoderLocation: {0}", encoderLocation);
+    if (encoderLocation.empty()) {
+        FIDGETY_ERROR(
+            SelectorException,
+            SelectorStatus::PartNotFound,
+            "[Fidgety::Loader::lateInit] could not find encoder"
+        );
+    }
+    std::string validatorLocation = mSelector.getValidatorLocation();
+    spdlog::trace("[Fidgety::Loader::lateInit] validatorLocation: {0}", validatorLocation);
+    if (validatorLocation.empty()) {
+        FIDGETY_ERROR(
+            SelectorException,
+            SelectorStatus::PartNotFound,
+            "[Fidgety::Loader::lateInit] could not find validator"
+        );
+    }
+    std::string vccLocation = mSelector.getValidatorContextCreatorLocation();
+    spdlog::trace("[Fidgety::Loader::lateInit] vccLocation: {0}", vccLocation);
+    if (vccLocation.empty()) {
+        FIDGETY_ERROR(
+            SelectorException,
+            SelectorStatus::PartNotFound,
+            "[Fidgety::Loader::lateInit] could not find validator context creator"
+        );
+    }
+
+    spdlog::trace("[Fidgety::Loader::lateInit] updating dylib loaders");
+
+    mDecoderLoader.changePath(decoderLocation);
+    mDecoderLoader.changeAllocClassSymbol(Fidgety::DECODER_ALLOC_SYMBOL);
+    mDecoderLoader.changeDeleteClassSymbol(Fidgety::DECODER_DELETE_SYMBOL);
+    mEncoderLoader.changePath(encoderLocation);
+    mEncoderLoader.changeAllocClassSymbol(Fidgety::ENCODER_ALLOC_SYMBOL);
+    mEncoderLoader.changeDeleteClassSymbol(Fidgety::ENCODER_DELETE_SYMBOL);
+    mValidatorLoader.changePath(validatorLocation);
+    mValidatorLoader.changeAllocClassSymbol(Fidgety::VALIDATOR_ALLOC_SYMBOL);
+    mValidatorLoader.changeDeleteClassSymbol(Fidgety::VALIDATOR_DELETE_SYMBOL);
+    mVccLoader.changePath(vccLocation);
+    mVccLoader.changeAllocClassSymbol(Fidgety::VCC_ALLOC_SYMBOL);
+    mVccLoader.changeDeleteClassSymbol(Fidgety::VCC_DELETE_SYMBOL);
+
+    return SelectorStatus::Ok;
 }
 
 bool Loader::isDecoderLoaded(void) const noexcept {

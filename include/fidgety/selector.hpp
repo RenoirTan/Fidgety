@@ -92,6 +92,8 @@ namespace Fidgety {
             Loader(Loader &&selector);
             Loader &operator=(Loader &&selector);
 
+            SelectorStatus lateInit(void);
+
             bool isDecoderLoaded(void) const noexcept;
             bool isEncoderLoaded(void) const noexcept;
             bool isValidatorLoaded(void) const noexcept;

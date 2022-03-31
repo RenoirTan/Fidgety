@@ -15,7 +15,7 @@ fidgety_link_common_libraries(selector_vcc)
 target_link_libraries(selector_vcc PUBLIC FidgetyVerifier)
 
 fidgety_create_test(selector_exp2 selector_exp2.cpp)
-target_link_libraries(selector_exp2 PRIVATE FidgetySelector)
+target_link_libraries(selector_exp2 PRIVATE FidgetySelector nlohmann_json)
 target_link_libraries(
     selector_exp2 PRIVATE
     selector_decoder selector_encoder selector_validator selector_vcc

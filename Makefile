@@ -24,6 +24,7 @@ build: generate
 setup_test_env:
 	mkdir -p tmp/tests/decoder
 	mkdir -p tmp/tests/encoder
+	mkdir -p tmp/tests/selector
 
 test: build setup_test_env
 	$(CTEST) $(CMAKE_TEST_FLAGS)
