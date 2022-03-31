@@ -53,10 +53,13 @@ class Exp2Encoder : public Encoder {
 
             size_t linesWritten = 0;
             for (const auto &item : exp2List) {
+                if (linesWritten > 0) {
+                    mConfFile << '\n';
+                }
                 switch (item.type()) {
 #define VALUE_TO_LINE(njvt, cxxvt) \
     case njvt: { \
-        mConfFile << (cxxvt) item << '\n'; \
+        mConfFile << (cxxvt) item; \
         ++linesWritten; \
         break; \
     } \

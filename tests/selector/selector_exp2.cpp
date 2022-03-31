@@ -138,5 +138,10 @@ TEST(SelectorExp2, Loader) {
     ASSERT_EQ(loader.closeValidator(), DylibStatus::Ok);
     ASSERT_EQ(loader.closeValidatorContextCreator(), DylibStatus::Ok);
 
+    EXPECT_TRUE(filesEqual(
+        "../../../resources/tests/selector/test_0.conf",
+        "../../../tmp/tests/selector/test_0.conf"
+    ));
+
 #undef INTERMEDIATE_FILE
 }

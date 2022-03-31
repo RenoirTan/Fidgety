@@ -27,21 +27,6 @@ using namespace Fidgety;
     EXPECT_EQ(encoder.openConf(cs), EncoderStatus::Ok);                                           \
     EXPECT_EQ(encoder.openIntermediate(is), EncoderStatus::Ok);
 
-bool filesEqual(const std::string &pathA, const std::string &pathB) {
-    std::ifstream fileA(pathA), fileB(pathB);
-    std::string lineA, lineB;
-    // While not EOF for files A and B
-    while (fileA.good() && fileB.good()) {
-        std::getline(fileA, lineA); std::getline(fileB, lineB);
-        if (lineA != lineB) {
-            return false;
-        }
-    }
-    // If either file is longer than the other, this expression will be false
-    // It will never be the case where fileA and fileB will be good at the same time
-    return fileA.good() == fileB.good();
-}
-
 TEST(EncoderEncoding, EmptyJson) {
     _FIDGETY_INIT_TEST();
     //NormalConfEncoder encoder;
