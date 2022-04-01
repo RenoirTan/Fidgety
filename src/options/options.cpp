@@ -8,11 +8,165 @@
  * @copyright Copyright (c) 2022
  */
 
+#include <algorithm>
+#include <cctype>
+#include <boost/algorithm/string.hpp>
 #include <spdlog/spdlog.h>
 #include <fidgety/options.hpp>
 #include <fidgety/_utils.hpp>
 
 using namespace Fidgety;
+
+NewOptionIdentifier::NewOptionIdentifier(const std::string &path) : mPath(path) { }
+
+NewOptionIdentifier::NewOptionIdentifier(std::string &&path) : mPath(std::move(path)) { }
+
+NewOptionIdentifier &NewOptionIdentifier::operator=(const std::string &path) {
+    mPath = path;
+    return *this;
+}
+
+NewOptionIdentifier &NewOptionIdentifier::operator=(std::string &&path) {
+    mPath = std::move(path);
+    return *this;
+}
+
+bool NewOptionIdentifier::isValid(void) const noexcept {
+    if (mPath.empty()) {
+        return false;
+    }
+    std::vector<OptionName> splat = split();
+    for (const auto &name : splat) {
+        if (name.empty() || (std::isdigit(name[0]) && !isDecimalInteger(name))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+NewOptionIdentifier::operator std::string(void) const {
+    return mPath;
+}
+
+const std::string &NewOptionIdentifier::getPath(void) const {
+    return mPath;
+}
+
+size_t NewOptionIdentifier::depth(void) const {
+    return countSubstr(mPath, OPTION_NAME_DELIMITER) + 1;
+}
+
+std::vector<OptionName> NewOptionIdentifier::split(void) const {
+    std::vector<OptionName> splat;
+    boost::split(splat, mPath, boost::is_any_of(OPTION_NAME_DELIMITER));
+    return splat;
+}
+
+NewOptionIdentifier::Iterator NewOptionIdentifier::at(size_t index) const {
+    size_t start = 0, end = mPath.find(OPTION_NAME_DELIMITER);
+    size_t count = 0;
+    for (count = 0; count < index; ++count) {
+        size_t delimLoc = mPath.find(OPTION_NAME_DELIMITER, start);
+        if (delimLoc == std::string::npos) {
+            end = delimLoc;
+            break;
+        }
+        start = delimLoc+1;
+    }
+    // if out of bounds
+    if (count < index) {
+        return NewOptionIdentifier::Iterator {
+            .identifier = this,
+            .index = index,
+            .name = "",
+            .state = NewOptionIdentifier::Iterator::OUT_OF_BOUNDS
+        };
+    } else {
+        end = (end == std::string::npos) ? mPath.size() : end;
+        return NewOptionIdentifier::Iterator {
+            .identifier = this,
+            .index = index,
+            .name = mPath.substr(start, end-start),
+            .state = NewOptionIdentifier::Iterator::VALID
+        };
+    }
+}
+
+NewOptionIdentifier::Iterator NewOptionIdentifier::begin(void) const { return at(0); }
+
+NewOptionIdentifier::Iterator NewOptionIdentifier::end(void) const {
+    return NewOptionIdentifier::Iterator {
+        .identifier = this,
+        .index = depth() + 1,
+        .name = "",
+        .state = NewOptionIdentifier::Iterator::OUT_OF_BOUNDS
+    };
+}
+
+NewOptionIdentifier::Iterator::reference NewOptionIdentifier::Iterator::operator*(void) {
+    return this->name;
+}
+
+NewOptionIdentifier::Iterator::pointer NewOptionIdentifier::Iterator::operator->(void) {
+    return &(this->name);
+}
+
+NewOptionIdentifier::Iterator::reference NewOptionIdentifier::Iterator::operator[](
+    difference_type offset
+) {
+    Iterator somewhere = (*this) + offset;
+    return *somewhere;
+}
+
+NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator+=(difference_type offset) {
+    *this = this->identifier->at(this->index + offset);
+    return *this;
+}
+
+NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator-=(difference_type offset) {
+    if (this->index < offset) {
+        *this = this->identifier->end();
+    } else {
+        *this->identifier->at(this->index - offset);
+    }
+    return *this;
+}
+
+NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator+(
+    difference_type offset
+) const {
+    NewOptionIdentifier::Iterator copy = *this;
+    copy += offset;
+    return copy;
+}
+
+NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator-(
+    difference_type offset
+) const {
+    NewOptionIdentifier::Iterator copy = *this;
+    copy -= offset;
+    return copy;
+}
+
+NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator++(void) {
+    return *this += 1;
+}
+
+NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator++(int) {
+    NewOptionIdentifier::Iterator copy = *this;
+    *this += 1;
+    return copy;
+}
+
+NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator--(void) {
+    return *this -= 1;
+}
+
+NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator--(int) {
+    NewOptionIdentifier::Iterator copy = *this;
+    *this -= 1;
+    return copy;
+}
 
 std::string OptionException::codeAsErrorType(void) const {
     switch (mCode) {

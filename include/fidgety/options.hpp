@@ -13,6 +13,7 @@
 #   define FIDGETY_OPTIONS_HPP
 
 #   include <iostream>
+#   include <iterator>
 #   include <map>
 #   include <memory>
 #   include <string>
@@ -28,6 +29,7 @@ namespace Fidgety {
     class ValidatorMessage;
     class ValidatorContext;
     class Validator;
+    class NewOptionIdentifier;
     enum class OptionStatus;
     class OptionException;
     class OptionValue;
@@ -40,8 +42,11 @@ namespace Fidgety {
      */
 
     using OptionIdentifier = std::string;
+    using OptionName = std::string;
     using ValidatorContextInner = std::map<OptionIdentifier, std::shared_ptr<Option>>;
     using NestedOptionList = std::vector<std::shared_ptr<Option>>;
+    using OptionIdentifierList = std::vector<OptionIdentifier>;
+    using InnerOptionsNameList = std::vector<OptionName>;
 
     enum class ValidatorMessageType : int32_t {
         Valid = 0,
@@ -95,6 +100,78 @@ namespace Fidgety {
             virtual Validator *clone(void) const;
 
         protected:
+    };
+
+    // Always use char array just in case
+    constexpr char OPTION_NAME_DELIMITER[] = ".";
+
+    class NewOptionIdentifier {
+        public:
+
+            struct Iterator {
+                using iterator_category = std::random_access_iterator_tag;
+                using difference_type = std::ptrdiff_t;
+                using value_type = const OptionName;
+                using pointer = value_type*;
+                using reference = value_type&;
+
+                static const int32_t VALID = 0;
+                static const int32_t OUT_OF_BOUNDS = 1;
+
+                // dereference
+
+                reference operator*(void);
+                pointer operator->(void);
+                reference operator[](difference_type steps);
+
+                // traversal
+
+                Iterator &operator+=(difference_type steps);
+                Iterator &operator-=(difference_type steps);
+
+                Iterator operator+(difference_type steps) const;
+                Iterator operator-(difference_type steps) const;
+
+                Iterator &operator++(void); // ++it
+                Iterator operator++(int); // it++
+                Iterator &operator--(void); // --it
+                Iterator operator--(int); // it--
+
+                // comparison
+
+                friend bool operator==(const Iterator &a, const Iterator &b);
+                friend bool operator!=(const Iterator &a, const Iterator &b);
+
+                friend bool operator<(const Iterator &a, const Iterator &b);
+                friend bool operator>(const Iterator &a, const Iterator &b);
+                friend bool operator<=(const Iterator &a, const Iterator &b);
+                friend bool operator>=(const Iterator &a, const Iterator &b);
+
+                const NewOptionIdentifier *identifier;
+                size_t index;
+                OptionName name;
+                int32_t state;
+            };
+
+            NewOptionIdentifier(const std::string &path);
+            NewOptionIdentifier(std::string &&path);
+
+            NewOptionIdentifier &operator=(const std::string &path);
+            NewOptionIdentifier &operator=(std::string &&path);
+
+            bool isValid(void) const noexcept;
+
+            operator std::string(void) const;
+            const std::string &getPath(void) const;
+
+            size_t depth(void) const;
+            std::vector<OptionName> split(void) const;
+            Iterator at(size_t index) const;
+            Iterator begin(void) const;
+            Iterator end(void) const;
+
+        protected:
+            std::string mPath;
     };
 
     enum class OptionStatus : int32_t {

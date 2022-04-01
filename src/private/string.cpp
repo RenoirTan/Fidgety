@@ -96,6 +96,25 @@ bool Fidgety::isEffectivelyEmpty(const std::string &s) {
     return boost::all(s, boost::is_space());
 }
 
+bool Fidgety::isDecimalInteger(const std::string &s) {
+    return boost::all(s, boost::is_digit());
+}
+
+size_t Fidgety::countSubstr(const std::string &s, const std::string &substr) {
+    if (substr.empty()) {
+        return 0;
+    }
+    size_t count = 0;
+    for (
+        size_t lastFound = s.find(substr);
+        lastFound != std::string::npos;
+        lastFound = s.find(substr, lastFound + substr.size())
+    ) {
+        ++count;
+    }
+    return count;
+}
+
 std::string Fidgety::sed(const std::string &s, StringEditor *m) {
     if (s.empty()) {
         return "";

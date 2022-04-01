@@ -48,6 +48,8 @@ namespace Fidgety {
         bool caseInsensitive = false
     );
     bool isEffectivelyEmpty(const std::string &s);
+    bool isDecimalInteger(const std::string &s);
+    size_t countSubstr(const std::string &s, const std::string &substr);
     std::string sed(const std::string &s, StringEditor *m);
     std::string tabIndentSed(const std::string &s, uint32_t tabs=1);
     std::string spaceIndentSed(const std::string &s, uint32_t spaces=4);
