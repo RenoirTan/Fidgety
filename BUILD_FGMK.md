@@ -66,6 +66,7 @@ a list of available config keys, you can run
 | cmake_build_suppflags | list | Supplementary flags for build Fidgety. |
 | cmake_install_suppflags | list | Supplementary flags when installing Fidgety. |
 | cmake_test_suppflags | list | Supplementary flags for running unit tests. |
+| cmake_build_type | str | Specify the build type used by CMake. See [this page](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html) for more info. |
 | dist_dir | str | Install prefix. |
 | build_dir | str | CMake build directory. |
 | src_dir | str | The source directory. This should be where the top level CMakeLists.txt should be. |

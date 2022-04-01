@@ -16,6 +16,7 @@ KEY_TO_INTEGRAL = {
     "cmake_build_suppflags": "list",
     "cmake_install_suppflags": "list",
     "cmake_test_suppflags": "list",
+    "cmake_build_type": "str",
     "dist_dir": "str",
     "build_dir": "str",
     "src_dir": "str",
@@ -57,6 +58,7 @@ def create_default_config() -> t.Dict[str, t.Any]:
         "cmake_build_suppflags": [],
         "cmake_install_suppflags": [],
         "cmake_test_suppflags": [],
+        "cmake_build_type": None,
         "dist_dir": None,
         "build_dir": None,
         "src_dir": None,
@@ -248,6 +250,7 @@ def get_generate_suppflags(config: t.Dict[str, t.Any]) -> str:
         suppflags,
         config,
         [
+            "cmake_build_type",
             "build_testing",
             "fidgety_build_testing",
             "fidgety_gtest_from_source",
