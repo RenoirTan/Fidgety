@@ -46,7 +46,9 @@ class Exp2Decoder : public Decoder {
         }
 
         spdlog::trace("generating intermediate");
-        nlohmann::json intermediate;
+
+        clearCache();
+        nlohmann::json &intermediate = getMutCachedIntermediate();
         intermediate["exp2"] = exp2;
 
         spdlog::debug("writing intermediate");

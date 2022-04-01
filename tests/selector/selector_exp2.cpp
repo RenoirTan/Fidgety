@@ -10,7 +10,6 @@
  * @copyright Copyright (c) 2022
  */
 
-#include <fstream>
 #include <fidgety/_tests.hpp>
 #include <fidgety/_utils.hpp>
 #include <fidgety/appdata.hpp>
@@ -84,12 +83,8 @@ TEST(SelectorExp2, Loader) {
     ASSERT_EQ(decoder->closeConf(), DecoderStatus::Ok);
     ASSERT_EQ(decoder->closeIntermediate(), DecoderStatus::Ok);
 
-    nlohmann::json intermediate;
-    {
-        std::ifstream intermediateFile;
-        intermediateFile.open(INTERMEDIATE_FILE);
-        intermediateFile >> intermediate;
-    }
+    const nlohmann::json &intermediate = decoder->getCachedIntermediate();
+
     VerifierManagedOptionList vmol;
     size_t index = 0;
     for (const auto &value : intermediate["exp2"]) {

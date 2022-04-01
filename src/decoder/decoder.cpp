@@ -178,3 +178,16 @@ DecoderStatus Decoder::useNewIntermediate(std::ofstream &&newIntermediate) {
 }
 
 DecoderStatus Decoder::dumpToIntermediate(void) { return DecoderStatus::Ok; }
+
+void Decoder::clearCache(void) {
+    spdlog::trace("[Fidgety::Decoder::clearCache] clearing cached intermediate");
+    mCached.clear();
+}
+
+const nlohmann::json &Decoder::getCachedIntermediate(void) const noexcept {
+    return mCached;
+}
+
+nlohmann::json &Decoder::getMutCachedIntermediate(void) noexcept {
+    return mCached;
+}

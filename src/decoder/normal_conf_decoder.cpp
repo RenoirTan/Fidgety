@@ -32,7 +32,8 @@ DecoderStatus NormalConfDecoder::dumpToIntermediate(void) {
 
     // PARSING PART
 
-    nlohmann::json intermediate;
+    clearCache();
+    nlohmann::json &intermediate = getMutCachedIntermediate();
     size_t lineNo = 0;
     while (mConfFile.good()) {
         std::string line;

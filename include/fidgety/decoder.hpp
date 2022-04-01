@@ -16,6 +16,7 @@
 
 #   include <fstream>
 #   include <fidgety/exception.hpp>
+#   include <nlohmann/json.hpp>
 
 namespace Fidgety {
     enum class DecoderStatus : int32_t {
@@ -43,6 +44,7 @@ namespace Fidgety {
         public:
             Decoder(void) noexcept;
             ~Decoder(void);
+
             bool isConfOpened(void) noexcept;
             DecoderStatus openConf(const std::string &inPath);
             DecoderStatus closeConf(void);
@@ -51,11 +53,16 @@ namespace Fidgety {
             DecoderStatus openIntermediate(const std::string &outPath);
             DecoderStatus closeIntermediate(void);
             DecoderStatus useNewIntermediate(std::ofstream &&newIntermediate);
+
             virtual DecoderStatus dumpToIntermediate(void);
+            void clearCache(void);
+            const nlohmann::json &getCachedIntermediate(void) const noexcept;
+            nlohmann::json &getMutCachedIntermediate(void) noexcept;
 
         protected:
             std::ifstream mConfFile;
             std::ofstream mIntermediateFile;
+            nlohmann::json mCached;
     };
 }
 
