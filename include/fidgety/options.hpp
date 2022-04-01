@@ -39,9 +39,9 @@ namespace Fidgety {
      * End Forward Declarations
      */
 
-    typedef std::string OptionIdentifier;
-    typedef std::map<OptionIdentifier, std::shared_ptr<Option>> ValidatorContextInner;
-    typedef std::vector<std::shared_ptr<Option>> NestedOptionList;
+    using OptionIdentifier = std::string;
+    using ValidatorContextInner = std::map<OptionIdentifier, std::shared_ptr<Option>>;
+    using NestedOptionList = std::vector<std::shared_ptr<Option>>;
 
     enum class ValidatorMessageType : int32_t {
         Valid = 0,

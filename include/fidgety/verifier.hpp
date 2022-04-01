@@ -30,8 +30,8 @@ namespace Fidgety {
 
     // END FORWARD DECLARATIONS
 
-    typedef std::map<OptionIdentifier, std::shared_ptr<Option>> VerifierManagedOptionList;
-    typedef std::array<uint32_t, 16> VerifierIdentifier;
+    using VerifierManagedOptionList = std::map<OptionIdentifier, std::shared_ptr<Option>>;
+    using VerifierIdentifier = std::array<uint32_t, 16>;
 
     class ValidatorContextCreator {
         public:
