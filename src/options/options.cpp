@@ -63,13 +63,9 @@ std::vector<OptionName> NewOptionIdentifier::split(void) const {
 }
 
 NewOptionIdentifier::Iterator NewOptionIdentifier::at(size_t index) const {
-    spdlog::trace("[OptionIdentifier::at] index: {0}", index);
     size_t start = 0, end = mPath.find(OPTION_NAME_DELIMITER);
     size_t count = 0;
     for (count = 0; count <= index; ++count) {
-        spdlog::trace("[OptionIdentifier::at] count: {0}", count);
-        spdlog::trace("[OptionIdentifier::at] start: {0}", start);
-        spdlog::trace("[OptionIdentifier::at] end: {0}", end);
         end = mPath.find(OPTION_NAME_DELIMITER, start);
         if (end == std::string::npos) {
             break;
@@ -78,9 +74,6 @@ NewOptionIdentifier::Iterator NewOptionIdentifier::at(size_t index) const {
         }
     }
     end = (end == std::string::npos) ? mPath.size() : end;
-    spdlog::trace("[OptionIdentifier::at] count: {0}", count);
-    spdlog::trace("[OptionIdentifier::at] start: {0}", start);
-    spdlog::trace("[OptionIdentifier::at] end: {0}", end);
     // if out of bounds
     if (count < index) {
         return NewOptionIdentifier::Iterator {
@@ -134,7 +127,7 @@ NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator-=(differe
     if (this->index < offset) {
         *this = this->identifier->end();
     } else {
-        *this->identifier->at(this->index - offset);
+        *this = this->identifier->at(this->index - offset);
     }
     return *this;
 }

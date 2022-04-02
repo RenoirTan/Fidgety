@@ -56,26 +56,6 @@ TEST(OptionsOptionIdentifier, Iterator) {
         EXPECT_EQ(it, PARTS[index]);
         ++index;
     }
-    spdlog::info(
-        "[OptionsOptionIdentifier::Iterator] sizeof(Iterator): {0}",
-        sizeof(NewOptionIdentifier::Iterator)
-    );
-    spdlog::info(
-        "[OptionsOptionIdentifier::Iterator] offsetof(Iterator, identifier): {0}",
-        offsetof(NewOptionIdentifier::Iterator, identifier)
-    );
-    spdlog::info(
-        "[OptionsOptionIdentifier::Iterator] offsetof(Iterator, identifier): {0}",
-        offsetof(NewOptionIdentifier::Iterator, index)
-    );
-    spdlog::info(
-        "[OptionsOptionIdentifier::Iterator] offsetof(Iterator, identifier): {0}",
-        offsetof(NewOptionIdentifier::Iterator, name)
-    );
-    spdlog::info(
-        "[OptionsOptionIdentifier::Iterator] offsetof(Iterator, identifier): {0}",
-        offsetof(NewOptionIdentifier::Iterator, state)
-    );
     EXPECT_EQ(identifier.at(5), identifier.end());
     EXPECT_EQ(identifier.at(1)+2, identifier.at(3));
     EXPECT_EQ(identifier.at(4)-4, identifier.at(0));
