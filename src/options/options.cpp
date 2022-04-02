@@ -175,19 +175,14 @@ NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator--(int) {
     return copy;
 }
 
+/*
+
 static inline bool _oiitComparable(
     const NewOptionIdentifier::Iterator &a,
     const NewOptionIdentifier::Iterator &b
 ) {
     return (a.identifier == b.identifier && a.state == b.state);
 }
-
-#define _OIIT_CMP(fnName, cmpOp) \
-    bool NewOptionIdentifier::Iterator::fnName( \
-        const NewOptionIdentifier::Iterator &b, \
-    ) { \
-        return (_oiitComparable(*this, b) && this->index cmpOp b.index); \
-    } \
 
 #define _OIIT_CMPEX(cmpOp) \
     ( \
@@ -205,6 +200,7 @@ bool Fidgety::operator==(
     const NewOptionIdentifier::Iterator &a,
     const NewOptionIdentifier::Iterator &b
 ) {
+    spdlog::trace("[Fidgety::operator==] this is being used");
     return _OIIT_CMPEX(==);
 }
 
@@ -244,6 +240,8 @@ bool Fidgety::operator>=(
 }
 
 #undef _OIIT_CMP
+
+*/
 
 std::string OptionException::codeAsErrorType(void) const {
     switch (mCode) {

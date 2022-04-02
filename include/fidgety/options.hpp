@@ -139,13 +139,43 @@ namespace Fidgety {
 
                 // comparison
 
-                friend bool operator==(const Iterator &a, const Iterator &b);
-                friend bool operator!=(const Iterator &a, const Iterator &b);
+#define _FIDGETY_OIIT_CMPEX(cmpOp) \
+    ( \
+        a.identifier == b.identifier && \
+        ( \
+            (a.state == b.state) && \
+            ( \
+                (a.state == NewOptionIdentifier::Iterator::VALID && a.index cmpOp b.index) || \
+                a.state == NewOptionIdentifier::Iterator::OUT_OF_BOUNDS \
+            ) \
+        ) \
+    ) \
 
-                friend bool operator<(const Iterator &a, const Iterator &b);
-                friend bool operator>(const Iterator &a, const Iterator &b);
-                friend bool operator<=(const Iterator &a, const Iterator &b);
-                friend bool operator>=(const Iterator &a, const Iterator &b);
+                friend bool operator==(const Iterator &a, const Iterator &b) {
+                    return _FIDGETY_OIIT_CMPEX(==);
+                }
+
+                friend bool operator!=(const Iterator &a, const Iterator &b) {
+                    return !(a == b);
+                }
+
+                friend bool operator<(const Iterator &a, const Iterator &b) {
+                    return _FIDGETY_OIIT_CMPEX(<);
+                }
+
+                friend bool operator>(const Iterator &a, const Iterator &b) {
+                    return _FIDGETY_OIIT_CMPEX(>);
+                }
+
+                friend bool operator<=(const Iterator &a, const Iterator &b) {
+                    return _FIDGETY_OIIT_CMPEX(<=);
+                }
+
+                friend bool operator>=(const Iterator &a, const Iterator &b) {
+                    return _FIDGETY_OIIT_CMPEX(>=);
+                }
+
+#undef _FIDGETY_OIIT_CMPEX
 
                 const NewOptionIdentifier *identifier;
                 size_t index;
