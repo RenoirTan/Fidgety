@@ -139,13 +139,13 @@ namespace Fidgety {
 
                 // comparison
 
-                friend bool operator==(const Iterator &a, const Iterator &b);
-                friend bool operator!=(const Iterator &a, const Iterator &b);
+                bool operator==(const Iterator &b) const;
+                bool operator!=(const Iterator &b) const;
 
-                friend bool operator<(const Iterator &a, const Iterator &b);
-                friend bool operator>(const Iterator &a, const Iterator &b);
-                friend bool operator<=(const Iterator &a, const Iterator &b);
-                friend bool operator>=(const Iterator &a, const Iterator &b);
+                bool operator<(const Iterator &b) const;
+                bool operator>(const Iterator &b) const;
+                bool operator<=(const Iterator &b) const;
+                bool operator>=(const Iterator &b) const;
 
                 const NewOptionIdentifier *identifier;
                 size_t index;

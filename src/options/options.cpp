@@ -168,6 +168,58 @@ NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator--(int) {
     return copy;
 }
 
+static inline bool oiitComparable(
+    const NewOptionIdentifier::Iterator &a,
+    const NewOptionIdentifier::Iterator &b
+) {
+    return (a.identifier == b.identifier && !(a.state & b.state));
+}
+
+#define _OIIT_CMP(fnName, cmpOp) \
+    bool NewOptionIdentifier::Iterator::fnName( \
+        const NewOptionIdentifier::Iterator &b, \
+    ) { \
+        return (oiitComparable(*this, b) && this->index cmpOp b.index); \
+    } \
+
+bool NewOptionIdentifier::Iterator::operator==(
+    const NewOptionIdentifier::Iterator &b
+) const {
+    return (oiitComparable(*this, b) && this->index == b.index);
+}
+
+bool NewOptionIdentifier::Iterator::operator!=(
+    const NewOptionIdentifier::Iterator &b
+) const {
+    return !(*this == b);
+}
+
+bool NewOptionIdentifier::Iterator::operator<(
+    const NewOptionIdentifier::Iterator &b
+) const {
+    return (oiitComparable(*this, b) && this->index < b.index);
+}
+
+bool NewOptionIdentifier::Iterator::operator>(
+    const NewOptionIdentifier::Iterator &b
+) const {
+    return (oiitComparable(*this, b) && this->index > b.index);
+}
+
+bool NewOptionIdentifier::Iterator::operator<=(
+    const NewOptionIdentifier::Iterator &b
+) const {
+    return (oiitComparable(*this, b) && this->index <= b.index);
+}
+
+bool NewOptionIdentifier::Iterator::operator>=(
+    const NewOptionIdentifier::Iterator &b
+) const {
+    return (oiitComparable(*this, b) && this->index >= b.index);
+}
+
+#undef _OIIT_CMP
+
 std::string OptionException::codeAsErrorType(void) const {
     switch (mCode) {
         case 0: return "Ok";
