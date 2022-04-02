@@ -63,16 +63,24 @@ std::vector<OptionName> NewOptionIdentifier::split(void) const {
 }
 
 NewOptionIdentifier::Iterator NewOptionIdentifier::at(size_t index) const {
+    spdlog::trace("[OptionIdentifier::at] index: {0}", index);
     size_t start = 0, end = mPath.find(OPTION_NAME_DELIMITER);
     size_t count = 0;
-    for (count = 0; count < index; ++count) {
-        size_t delimLoc = mPath.find(OPTION_NAME_DELIMITER, start);
-        if (delimLoc == std::string::npos) {
-            end = delimLoc;
+    for (count = 0; count <= index; ++count) {
+        spdlog::trace("[OptionIdentifier::at] count: {0}", count);
+        spdlog::trace("[OptionIdentifier::at] start: {0}", start);
+        spdlog::trace("[OptionIdentifier::at] end: {0}", end);
+        end = mPath.find(OPTION_NAME_DELIMITER, start);
+        if (end == std::string::npos) {
             break;
+        } else if (count < index) {
+            start = end+1;
         }
-        start = delimLoc+1;
     }
+    end = (end == std::string::npos) ? mPath.size() : end;
+    spdlog::trace("[OptionIdentifier::at] count: {0}", count);
+    spdlog::trace("[OptionIdentifier::at] start: {0}", start);
+    spdlog::trace("[OptionIdentifier::at] end: {0}", end);
     // if out of bounds
     if (count < index) {
         return NewOptionIdentifier::Iterator {
@@ -82,7 +90,6 @@ NewOptionIdentifier::Iterator NewOptionIdentifier::at(size_t index) const {
             .state = NewOptionIdentifier::Iterator::OUT_OF_BOUNDS
         };
     } else {
-        end = (end == std::string::npos) ? mPath.size() : end;
         return NewOptionIdentifier::Iterator {
             .identifier = this,
             .index = index,
@@ -97,7 +104,7 @@ NewOptionIdentifier::Iterator NewOptionIdentifier::begin(void) const { return at
 NewOptionIdentifier::Iterator NewOptionIdentifier::end(void) const {
     return NewOptionIdentifier::Iterator {
         .identifier = this,
-        .index = depth() + 1,
+        .index = depth(),
         .name = "",
         .state = NewOptionIdentifier::Iterator::OUT_OF_BOUNDS
     };
@@ -168,54 +175,72 @@ NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator--(int) {
     return copy;
 }
 
-static inline bool oiitComparable(
+static inline bool _oiitComparable(
     const NewOptionIdentifier::Iterator &a,
     const NewOptionIdentifier::Iterator &b
 ) {
-    return (a.identifier == b.identifier && !(a.state & b.state));
+    return (a.identifier == b.identifier && a.state == b.state);
 }
 
 #define _OIIT_CMP(fnName, cmpOp) \
     bool NewOptionIdentifier::Iterator::fnName( \
         const NewOptionIdentifier::Iterator &b, \
     ) { \
-        return (oiitComparable(*this, b) && this->index cmpOp b.index); \
+        return (_oiitComparable(*this, b) && this->index cmpOp b.index); \
     } \
 
-bool NewOptionIdentifier::Iterator::operator==(
+#define _OIIT_CMPEX(cmpOp) \
+    ( \
+        a.identifier == b.identifier && \
+        ( \
+            (a.state == b.state) && \
+            ( \
+                (a.state == NewOptionIdentifier::Iterator::VALID && a.index cmpOp b.index) || \
+                a.state == NewOptionIdentifier::Iterator::OUT_OF_BOUNDS \
+            ) \
+        ) \
+    ) \
+
+bool Fidgety::operator==(
+    const NewOptionIdentifier::Iterator &a,
     const NewOptionIdentifier::Iterator &b
-) const {
-    return (oiitComparable(*this, b) && this->index == b.index);
+) {
+    return _OIIT_CMPEX(==);
 }
 
-bool NewOptionIdentifier::Iterator::operator!=(
+bool Fidgety::operator!=(
+    const NewOptionIdentifier::Iterator &a,
     const NewOptionIdentifier::Iterator &b
-) const {
-    return !(*this == b);
+) {
+    return !(a == b);
 }
 
-bool NewOptionIdentifier::Iterator::operator<(
+bool Fidgety::operator<(
+    const NewOptionIdentifier::Iterator &a,
     const NewOptionIdentifier::Iterator &b
-) const {
-    return (oiitComparable(*this, b) && this->index < b.index);
+) {
+    return _OIIT_CMPEX(<);
 }
 
-bool NewOptionIdentifier::Iterator::operator>(
+bool Fidgety::operator>(
+    const NewOptionIdentifier::Iterator &a,
     const NewOptionIdentifier::Iterator &b
-) const {
-    return (oiitComparable(*this, b) && this->index > b.index);
+) {
+    return _OIIT_CMPEX(>);
 }
 
-bool NewOptionIdentifier::Iterator::operator<=(
+bool Fidgety::operator<=(
+    const NewOptionIdentifier::Iterator &a,
     const NewOptionIdentifier::Iterator &b
-) const {
-    return (oiitComparable(*this, b) && this->index <= b.index);
+) {
+    return _OIIT_CMPEX(<=);
 }
 
-bool NewOptionIdentifier::Iterator::operator>=(
-    const NewOptionIdentifier::Iterator &b
-) const {
-    return (oiitComparable(*this, b) && this->index >= b.index);
+bool Fidgety::operator>=(
+    const NewOptionIdentifier::Iterator &a,
+    const NewOptionIdentifier::Iterator &b)
+{
+    return _OIIT_CMPEX(>=);
 }
 
 #undef _OIIT_CMP
