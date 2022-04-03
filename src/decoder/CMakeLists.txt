@@ -2,7 +2,7 @@ fidgety_add_my_library(FidgetyDecoder STATIC decoder.cpp)
 set_target_properties(FidgetyDecoder PROPERTIES OUTPUT_NAME fidgety_decoder)
 fidgety_link_common_libraries(FidgetyDecoder)
 fidgety_link_exception(FidgetyDecoder)
-target_link_libraries(FidgetyDecoder PUBLIC nlohmann_json)
+target_link_libraries(FidgetyDecoder PUBLIC nlohmann_json::nlohmann_json)
 fidgety_install_library(FidgetyDecoder fidgety_decoder_config.cmake)
 
 if(FIDGETY_BUILD_EXTENSIONS)

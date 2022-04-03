@@ -131,7 +131,7 @@ macro(fidgety_link_test_libraries)
     elseif(NOT BUILD_TESTING)
         message(FATAL_ERROR "tests must be enabled to use this macro")
     endif()
-    target_link_libraries(${ARGV0} PRIVATE nlohmann_json spdlog::spdlog)
+    target_link_libraries(${ARGV0} PRIVATE nlohmann_json::nlohmann_json spdlog::spdlog)
     target_link_libraries(${ARGV0} PRIVATE ${GTEST} ${GTEST_MAIN})
 endmacro()
 
