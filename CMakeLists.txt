@@ -168,8 +168,12 @@ Fidgety only targets Qt6 or Qt5 (legacy)")
     message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
 endif()
 
-set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
-set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
+#set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
+else()
+    set(Boost_USE_DEBUG_LIBS         ON)
+endif()
 set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
