@@ -215,7 +215,7 @@ namespace Fidgety {
                 return a != b.mPath;
             }
 
-            operator std::string(void) const;
+            operator const std::string &(void) const;
             const std::string &getPath(void) const;
 
             size_t depth(void) const;

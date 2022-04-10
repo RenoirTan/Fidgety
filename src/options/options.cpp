@@ -44,7 +44,13 @@ bool NewOptionIdentifier::isValid(void) const noexcept {
     return true;
 }
 
+/*
 NewOptionIdentifier::operator std::string(void) const {
+    return mPath;
+}
+*/
+
+NewOptionIdentifier::operator const std::string &(void) const {
     return mPath;
 }
 
