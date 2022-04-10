@@ -28,9 +28,12 @@ TEST(OptionsOptionValue, FromString) {
 TEST(OptionsOptionValue, FromArrayLike) {
     _FIDGETY_INIT_TEST();
 
-    OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
+    std::pair<OptionsMap, NestedOptionNameList> res = makeNestedOptionList(3);
+    OptionsMap omap = res.first;
+    NestedOptionNameList nonl = res.second;
+    OptionValue value(std::move(nonl), OptionValueType::NESTED_LIST);
     ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
-    const NestedOptionList &nol = value.getValue().getNestedList();
+    const NestedOptionNameList &nol = value.getValue().getNestedList();
     ASSERT_EQ(nol.size(), 3);
 }
 
@@ -48,17 +51,22 @@ TEST(OptionsOptionValue, ChangeValueString) {
 TEST(OptionsOptionValue, ChangeValueList) {
     _FIDGETY_INIT_TEST();
 
-    OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
+    std::pair<OptionsMap, NestedOptionNameList> res = makeNestedOptionList(3);
+    OptionsMap omap = res.first;
+    NestedOptionNameList nonl = res.second;
+    OptionValue value(std::move(nonl), OptionValueType::NESTED_LIST);
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
-        const NestedOptionList &nol = value.getValue().getNestedList();
+        const NestedOptionNameList &nol = value.getValue().getNestedList();
         ASSERT_EQ(nol.size(), 3);
     }
 
-    value.setValue(makeNestedOptionList(2));
+    res = makeNestedOptionList(2);
+    nonl = res.second;
+    value.setValue(std::move(nonl));
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
-        const NestedOptionList &nol = value.getValue().getNestedList();
+        const NestedOptionNameList &nol = value.getValue().getNestedList();
         ASSERT_EQ(nol.size(), 2);
     }
 }
@@ -71,7 +79,9 @@ TEST(OptionsOptionValue, ChangeValueInvalidType) {
     ASSERT_EQ(value.getValue().getRawValue(), "string");
 
     try {
-        value.setValue(makeNestedOptionList(3));
+        std::pair<OptionsMap, NestedOptionNameList> res = makeNestedOptionList(3);
+        NestedOptionNameList nonl = res.second;
+        value.setValue(std::move(nonl));
     } catch (const OptionException &oe) {
         EXPECT_EQ(oe.getCode(), (int32_t) OptionStatus::InvalidValueType);
     }
@@ -84,8 +94,11 @@ TEST(OptionsOptionValue, ChangeValueAmbiguous) {
     ASSERT_EQ(value.getValueType(), OptionValueType::RAW_VALUE);
     ASSERT_EQ(value.getValue().getRawValue(), "string");
 
-    value.setValue(makeNestedOptionList(3));
-    const NestedOptionList &nol = value.getValue().getNestedList();
+    std::pair<OptionsMap, NestedOptionNameList> res = makeNestedOptionList(3);
+    OptionsMap omap = res.first;
+    NestedOptionNameList nonl = res.second;
+    value.setValue(std::move(nonl));
+    const NestedOptionNameList &nol = value.getValue().getNestedList();
     EXPECT_EQ(nol.size(), 3);
 }
 
@@ -104,18 +117,23 @@ TEST(OptionsOptionValue, ResetString) {
 TEST(OptionsOptionValue, ResetList) {
     _FIDGETY_INIT_TEST();
 
-    OptionValue value(makeNestedOptionList(3), OptionValueType::NESTED_LIST);
+    std::pair<OptionsMap, NestedOptionNameList> res = makeNestedOptionList(3);
+    OptionsMap omap = res.first;
+    NestedOptionNameList nonl = res.second;
+    OptionValue value(std::move(nonl), OptionValueType::NESTED_LIST);
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
-        const NestedOptionList &nol = value.getValue().getNestedList();
+        const NestedOptionNameList &nol = value.getValue().getNestedList();
         ASSERT_EQ(nol.size(), 3);
     }
 
-    value.setValue(makeNestedOptionList(2));
+    res = makeNestedOptionList(2);
+    nonl = res.second;
+    value.setValue(std::move(nonl));
     value.resetValue();
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
-        const NestedOptionList &nol = value.getValue().getNestedList();
+        const NestedOptionNameList &nol = value.getValue().getNestedList();
         ASSERT_EQ(nol.size(), 3);
     }
 }
@@ -128,10 +146,13 @@ TEST(OptionsOptionValue, SetAcceptedValueTypes) {
     ASSERT_EQ(value.getValue().getRawValue(), "stuff");
 
     value.setAcceptedValueTypes(OptionValueType::RAW_VALUE | OptionValueType::NESTED_LIST);
-    value.setValue(makeNestedOptionList(3));
+    std::pair<OptionsMap, NestedOptionNameList> res = makeNestedOptionList(3);
+    OptionsMap omap = res.first;
+    NestedOptionNameList nonl = res.second;
+    value.setValue(std::move(nonl));
     {
         ASSERT_EQ(value.getValueType(), OptionValueType::NESTED_LIST);
-        const NestedOptionList &nol = value.getValue().getNestedList();
+        const NestedOptionNameList &nol = value.getValue().getNestedList();
         ASSERT_EQ(nol.size(), 3);
     }
 }

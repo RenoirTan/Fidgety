@@ -44,8 +44,9 @@ namespace Fidgety {
 
     // using OptionIdentifier = std::string;
     using OptionName = std::string;
-    using ValidatorContextInner = std::map<OptionIdentifier, std::shared_ptr<Option>>;
-    using NestedOptionList = std::vector<std::shared_ptr<Option>>;
+    using OptionsMap = std::map<OptionIdentifier, std::shared_ptr<Option>>;
+    using ValidatorContextInner = OptionsMap;
+    using NestedOptionNameList = std::vector<OptionName>;
     using OptionIdentifierList = std::vector<OptionIdentifier>;
     using InnerOptionsNameList = std::vector<OptionName>;
 
@@ -250,7 +251,7 @@ namespace Fidgety {
     };
 
     union _OptionValueInner {
-        NestedOptionList nestedList;
+        NestedOptionNameList nestedList;
         std::string rawValue;
 
         ~_OptionValueInner(void);
@@ -263,7 +264,7 @@ namespace Fidgety {
         OptionValueInner(void);
         OptionValueInner(const char *rawValue);
         OptionValueInner(std::string &&rawValue);
-        OptionValueInner(NestedOptionList &&nestedList);
+        OptionValueInner(NestedOptionNameList &&nestedList);
         ~OptionValueInner(void);
 
         OptionValueInner(const OptionValueInner &other);
@@ -273,7 +274,7 @@ namespace Fidgety {
 
         void _deleteCurrentValue(void);
 
-        const NestedOptionList &getNestedList(void) const;
+        const NestedOptionNameList &getNestedList(void) const;
         const std::string &getRawValue(void) const;
     };
 
@@ -364,18 +365,18 @@ namespace Fidgety {
             const OptionValueInner &getDefaultValue(void) const noexcept;
 
             int32_t getValueType(void) const;
-            const NestedOptionList &getNestedList(void) const;
+            const NestedOptionNameList &getNestedList(void) const;
             const std::string &getRawValue(void) const;
 
             int32_t getDefaultValueType(void) const;
-            const NestedOptionList &getDefaultNestedList(void) const;
+            const NestedOptionNameList &getDefaultNestedList(void) const;
             const std::string &getDefaultRawValue(void) const;
 
             OptionStatus setValue(std::string &&value);
-            OptionStatus setValue(NestedOptionList &&value);
+            OptionStatus setValue(NestedOptionNameList &&value);
 
             OptionStatus setDefaultValue(std::string &&defaultValue);
-            OptionStatus setDefaultValue(NestedOptionList &&defaultValue);
+            OptionStatus setDefaultValue(NestedOptionNameList &&defaultValue);
 
             OptionStatus resetValue(void);
             OptionStatus setAcceptedValueTypes(int32_t acceptedValueTypes);

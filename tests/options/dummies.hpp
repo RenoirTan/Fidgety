@@ -14,6 +14,7 @@
 #ifndef _DUMMIES_HPP
 #   define _DUMMIES_HPP
 
+#   include <utility> // std::pair
 #   include <fidgety/options.hpp>
 #   include <fidgety/_tests.hpp>
 #   include <fidgety/_utils.hpp>
@@ -39,18 +40,20 @@ namespace Fidgety {
         return option;
     }
 
-    NestedOptionList makeNestedOptionList(size_t number) {
+    std::pair<OptionsMap, NestedOptionNameList> makeNestedOptionList(size_t number) {
         spdlog::debug("MAKING NESTED OPTION LIST");
-        NestedOptionList nol;
+        OptionsMap omap;
+        NestedOptionNameList nonl;
         for (size_t i = 0; i < number; ++i) {
             spdlog::trace("NOL COUNT: {0}", i);
             Option *option = new Option(
                 std::move(makeDummyOption(fmt::format("Option {0}", i)))
             );
-            nol.emplace_back(option);
+            nonl.push_back(option->getIdentifier());
+            omap.emplace(option->getIdentifier(), option);
         }
         spdlog::debug("MADE NESTED OPTION LIST");
-        return nol;
+        return {omap, nonl};
     }
 
     ValidatorContextInner makeValidatorContextInner(size_t number) {

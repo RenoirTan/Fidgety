@@ -52,16 +52,22 @@ TEST(OptionsOptionValueInner, FromArrayLike) {
     _FIDGETY_INIT_TEST();
 
     spdlog::debug("creating dummy nested option list for fromArrayLike");
-    Fidgety::NestedOptionList nol = makeNestedOptionList(10);
+    std::pair<OptionsMap, NestedOptionNameList> res = makeNestedOptionList(10);
+    OptionsMap omap = res.first; NestedOptionNameList nonl = res.second;
     spdlog::debug("creating fromVector");
-    OptionValueInner fromVector(std::move(nol));
+    OptionValueInner fromVector(std::move(nonl));
     spdlog::debug("fromVector created");
     spdlog::debug("checking fromVector's valueType");
     ASSERT_EQ(fromVector.valueType, OptionValueType::NESTED_LIST);
     spdlog::debug("getting reference to the nested list stored inside fromVector");
-    const Fidgety::NestedOptionList &stored = fromVector.getNestedList();
+    const Fidgety::NestedOptionNameList &stored = fromVector.getNestedList();
     spdlog::debug("checking the length of the nested list");
     ASSERT_EQ(stored.size(), 10);
     spdlog::debug("making sure the identifier at index 5 is correct");
-    EXPECT_EQ(stored.at(5)->getIdentifier(), "Option 5");
+    EXPECT_EQ(stored.at(5), "Option 5");
+    {
+        std::shared_ptr<Option> option = omap[stored.at(5)];
+        EXPECT_EQ(option->getValueType(), OptionValueType::RAW_VALUE);
+        EXPECT_EQ(option->getRawValue(), "");
+    }
 }

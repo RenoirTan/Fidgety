@@ -283,11 +283,11 @@ OptionValueInner::OptionValueInner(std::string &&rawValue) :
     spdlog::debug("created Fidgety::OptionValueInner with std::string");
 }
 
-OptionValueInner::OptionValueInner(NestedOptionList &&nestedList) :
+OptionValueInner::OptionValueInner(NestedOptionNameList &&nestedList) :
     valueType(OptionValueType::NESTED_LIST),
     value { nestedList: nestedList }
 {
-    spdlog::debug("created Fidgety::OptionValueInner with a NestedOptionList");
+    spdlog::debug("created Fidgety::OptionValueInner with a NestedOptionNameList");
 }
 
 OptionValueInner::~OptionValueInner(void) {
@@ -340,7 +340,7 @@ OptionValueInner &OptionValueInner::operator=(const OptionValueInner &other) {
             spdlog::trace(
                 "detected nested option list when assigning Fidgety::OptionValueInner by copying"
             );
-            new (&this->value.nestedList) NestedOptionList(other.value.nestedList);
+            new (&this->value.nestedList) NestedOptionNameList(other.value.nestedList);
             this->valueType = other.valueType;
             break;
         }
@@ -375,7 +375,7 @@ OptionValueInner &OptionValueInner::operator=(OptionValueInner &&other) {
             spdlog::trace(
                 "detected nested option list when assigning Fidgety::OptionValueInner by moving"
             );
-            new (&this->value.nestedList) NestedOptionList(std::move(other.value.nestedList));
+            new (&this->value.nestedList) NestedOptionNameList(std::move(other.value.nestedList));
             this->valueType = other.valueType;
             break;
         }
@@ -394,7 +394,7 @@ void OptionValueInner::_deleteCurrentValue(void) {
         }
         case OptionValueType::NESTED_LIST: {
             spdlog::trace("NESTED_LIST detected when deleting value in Fidgety::OptionValueInner");
-            this->value.nestedList.NestedOptionList::~vector();
+            this->value.nestedList.NestedOptionNameList::~vector();
             break;
         }
         default: {
@@ -409,7 +409,7 @@ void OptionValueInner::_deleteCurrentValue(void) {
     }
 }
 
-const NestedOptionList &OptionValueInner::getNestedList(void) const {
+const NestedOptionNameList &OptionValueInner::getNestedList(void) const {
     spdlog::trace("getting nested option list from Fidgety::OptionValueInner");
     spdlog::trace("OptionValueInner::valueType == {0}", this->valueType);
     if (this->valueType == OptionValueType::NESTED_LIST) {
@@ -647,7 +647,7 @@ int32_t Option::getValueType(void) const {
     return getValue().valueType;
 }
 
-const NestedOptionList &Option::getNestedList(void) const {
+const NestedOptionNameList &Option::getNestedList(void) const {
     return getValue().getNestedList();
 }
 
@@ -659,7 +659,7 @@ int32_t Option::getDefaultValueType(void) const {
     return getDefaultValue().valueType;
 }
 
-const NestedOptionList &Option::getDefaultNestedList(void) const {
+const NestedOptionNameList &Option::getDefaultNestedList(void) const {
     return getDefaultValue().getNestedList();
 }
 
@@ -673,8 +673,8 @@ OptionStatus Option::setValue(std::string &&value) {
     return mValue.setValue(std::move(v));
 }
 
-OptionStatus Option::setValue(NestedOptionList &&value) {
-    spdlog::trace("setting value of Fidgety::Option ({0}) using Fidgety::NestedOptionList", mIdentifier);
+OptionStatus Option::setValue(NestedOptionNameList &&value) {
+    spdlog::trace("setting value of Fidgety::Option ({0}) using Fidgety::NestedOptionNameList", mIdentifier);
     OptionValueInner v(std::move(value));
     return mValue.setValue(std::move(v));
 }
@@ -685,9 +685,9 @@ OptionStatus Option::setDefaultValue(std::string &&defaultValue) {
     return mValue.setDefaultValue(std::move(dv));
 }
 
-OptionStatus Option::setDefaultValue(NestedOptionList &&defaultValue) {
+OptionStatus Option::setDefaultValue(NestedOptionNameList &&defaultValue) {
     spdlog::trace(
-        "setting default value of Fidgety::Option ({0}) using Fidgety::NestedOptionList",
+        "setting default value of Fidgety::Option ({0}) using Fidgety::NestedOptionNameList",
         mIdentifier
     );
     OptionValueInner dv(std::move(defaultValue));

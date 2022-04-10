@@ -69,11 +69,14 @@ TEST(OptionsOption, SetValues) {
     ASSERT_EQ(option.getValueType(), OptionValueType::RAW_VALUE);
     EXPECT_EQ(option.getValue().getRawValue(), "original");
 
+    std::pair<OptionsMap, NestedOptionNameList> res = makeNestedOptionList(3);
+    OptionsMap omap = res.first;
+    NestedOptionNameList tempNonl = res.second;
     option.setAcceptedValueTypes(OptionValueType::RAW_VALUE | OptionValueType::NESTED_LIST);
-    option.setValue(makeNestedOptionList(3));
+    option.setValue(std::move(tempNonl));
     ASSERT_EQ(option.getValueType(), OptionValueType::NESTED_LIST);
     {
-        const NestedOptionList &nol = option.getNestedList();
+        const NestedOptionNameList &nol = option.getNestedList();
         EXPECT_EQ(nol.size(), 3);
     }
 
