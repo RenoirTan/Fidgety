@@ -13,6 +13,7 @@
 
 #   include <map>
 #   include <memory>
+#   include <set>
 #   include <nlohmann/json.hpp>
 #   include <fidgety/exception.hpp>
 #   include <fidgety/options.hpp>
@@ -107,6 +108,7 @@ namespace Fidgety {
             Verifier &operator=(Verifier &&verifier) = default;
             Verifier &operator=(const Verifier &verifier) = delete;
 
+            size_t numberOfLocks(void) const;
             bool optionExists(const OptionIdentifier &identifier) const;
             bool isOptionLocked(const OptionIdentifier &identifier) const;
             VerifierOptionLock getLock(const OptionIdentifier &identifier);
@@ -114,6 +116,9 @@ namespace Fidgety {
             bool canBeOverwritten(void) const;
             VerifierStatus overwriteOptions(void);
             VerifierStatus overwriteOptions(VerifierManagedOptionList &&options);
+
+            VerifierStatus purgeOrphanedOptions(void);
+            VerifierStatus purgeOrphanedOptions(const std::set<OptionIdentifier> &identifiers);
 
         protected:
             std::shared_ptr<VerifierInner> mInner;

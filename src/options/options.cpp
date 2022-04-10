@@ -84,6 +84,36 @@ OptionIdentifier OptionIdentifier::operator+(const std::string &addon) const {
     return identifier;
 }
 
+// shitty O(n^2) algo
+size_t OptionIdentifier::findSubset(const OptionIdentifier &identifier) const {
+    const size_t myDepth = depth();
+    const size_t otherDepth = identifier.depth();
+    if (myDepth < otherDepth) {
+        return npos;
+    }
+    const auto itOtherBegin = identifier.begin();
+    const auto itOtherEnd = identifier.end();
+    for (size_t index = 0; index < myDepth; ++index) {
+        // no possible matches
+        if ((myDepth-index) < otherDepth) {
+            return npos;
+        }
+        auto itMe = at(index);
+        bool found = true;
+        for (auto itOther = itOtherBegin; itOther != itOtherEnd; ++itOther) {
+            if (*itMe != *itOther) {
+                found = false;
+                break;
+            }
+            ++itMe;
+        }
+        if (found) {
+            return index;
+        }
+    }
+    return npos;
+}
+
 size_t OptionIdentifier::depth(void) const {
     return countSubstr(mPath, OPTION_NAME_DELIMITER) + 1;
 }
