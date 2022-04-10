@@ -30,6 +30,10 @@ TEST(OptionsOptionIdentifier, Identifier) {
     EXPECT_EQ((std::string) identifier, _VALID_ID_STR);
     EXPECT_EQ(identifier.depth(), 5);
     EXPECT_EQ(identifier.split(), std::vector<OptionName>(_PARTS));
+
+    EXPECT_EQ(identifier + "size", _VALID_ID_STR ".size");
+    identifier += "shadow";
+    EXPECT_EQ(identifier, _VALID_ID_STR ".shadow");
 }
 
 TEST(OptionsOptionIdentifier, InvalidIdentifier) {

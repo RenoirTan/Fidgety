@@ -224,6 +224,9 @@ namespace Fidgety {
             operator const std::string &(void) const;
             const std::string &getPath(void) const;
 
+            OptionIdentifier &operator+=(const std::string &addon);
+            OptionIdentifier operator+(const std::string &addon) const;
+
             size_t depth(void) const;
             std::vector<OptionName> split(void) const;
             Iterator at(size_t index) const;
@@ -238,7 +241,9 @@ namespace Fidgety {
         Ok = 0,
         InvalidValueType = 1,
         IncompatibleOptionEditor = 2,
-        NotFound = 3
+        NotFound = 3,
+        InvalidIdentifier = 4,
+        InvalidName = 5
     };
 
     class OptionException : public Exception {

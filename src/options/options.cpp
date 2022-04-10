@@ -33,13 +33,17 @@ OptionIdentifier &OptionIdentifier::operator=(std::string &&path) {
     return *this;
 }
 
+static bool _validateOptionIdentifierName(const std::string &name) {
+    return !(name.empty() || (std::isdigit(name[0]) && !isDecimalInteger(name)));
+}
+
 bool OptionIdentifier::isValid(void) const noexcept {
     if (mPath.empty()) {
         return false;
     }
     std::vector<OptionName> splat = split();
     for (const auto &name : splat) {
-        if (name.empty() || (std::isdigit(name[0]) && !isDecimalInteger(name))) {
+        if (!_validateOptionIdentifierName(name)) {
             return false;
         }
     }
@@ -58,6 +62,26 @@ OptionIdentifier::operator const std::string &(void) const {
 
 const std::string &OptionIdentifier::getPath(void) const {
     return mPath;
+}
+
+OptionIdentifier &OptionIdentifier::operator+=(const std::string &addon) {
+    if (!_validateOptionIdentifierName(addon)) {
+        FIDGETY_CRITICAL(
+            OptionException,
+            OptionStatus::InvalidName,
+            "[Fidgety::OptionIdentifier::operator+=] bad addon: '{}'",
+            addon
+        );
+    }
+    mPath += '.';
+    mPath += addon;
+    return *this;
+}
+
+OptionIdentifier OptionIdentifier::operator+(const std::string &addon) const {
+    OptionIdentifier identifier(*this);
+    identifier += addon;
+    return identifier;
 }
 
 size_t OptionIdentifier::depth(void) const {
@@ -250,6 +274,8 @@ std::string OptionException::codeAsErrorType(void) const {
         case 1: return "InvalidValueType";
         case 2: return "IncompatibleOptionEditor";
         case 3: return "NotFound";
+        case 4: return "InvalidIdentifier";
+        case 5: return "InvalidName";
         default: return "Other";
     }
 }
