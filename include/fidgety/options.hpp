@@ -18,6 +18,7 @@
 #   include <memory>
 #   include <string>
 #   include <vector>
+#   include <fmt/format.h>
 #   include <fidgety/exception.hpp>
 
 namespace Fidgety {
@@ -29,7 +30,7 @@ namespace Fidgety {
     class ValidatorMessage;
     class ValidatorContext;
     class Validator;
-    class NewOptionIdentifier;
+    class OptionIdentifier;
     enum class OptionStatus;
     class OptionException;
     class OptionValue;
@@ -41,7 +42,7 @@ namespace Fidgety {
      * End Forward Declarations
      */
 
-    using OptionIdentifier = std::string;
+    // using OptionIdentifier = std::string;
     using OptionName = std::string;
     using ValidatorContextInner = std::map<OptionIdentifier, std::shared_ptr<Option>>;
     using NestedOptionList = std::vector<std::shared_ptr<Option>>;
@@ -105,7 +106,7 @@ namespace Fidgety {
     // Always use char array just in case
     constexpr char OPTION_NAME_DELIMITER[] = ".";
 
-    class NewOptionIdentifier {
+    class OptionIdentifier {
         public:
 
             struct Iterator {
@@ -139,14 +140,14 @@ namespace Fidgety {
 
                 // comparison
 
-#define _FIDGETY_OIIT_CMPEX(cmpOp) \
+#   define _FIDGETY_OIIT_CMPEX(cmpOp) \
     ( \
         a.identifier == b.identifier && \
         ( \
             (a.state == b.state) && \
             ( \
-                (a.state == NewOptionIdentifier::Iterator::VALID && a.index cmpOp b.index) || \
-                a.state == NewOptionIdentifier::Iterator::OUT_OF_BOUNDS \
+                (a.state == OptionIdentifier::Iterator::VALID && a.index cmpOp b.index) || \
+                a.state == OptionIdentifier::Iterator::OUT_OF_BOUNDS \
             ) \
         ) \
     ) \
@@ -175,45 +176,49 @@ namespace Fidgety {
                     return _FIDGETY_OIIT_CMPEX(>=);
                 }
 
-#undef _FIDGETY_OIIT_CMPEX
+#   undef _FIDGETY_OIIT_CMPEX
 
-                const NewOptionIdentifier *identifier;
+                const OptionIdentifier *identifier;
                 size_t index;
                 OptionName name;
                 int32_t state;
             };
 
-            NewOptionIdentifier(const std::string &path);
-            NewOptionIdentifier(std::string &&path);
+            OptionIdentifier(const std::string &path);
+            OptionIdentifier(std::string &&path);
+            OptionIdentifier(const char path[]);
 
-            NewOptionIdentifier &operator=(const std::string &path);
-            NewOptionIdentifier &operator=(std::string &&path);
+            OptionIdentifier &operator=(const std::string &path);
+            OptionIdentifier &operator=(std::string &&path);
 
             bool isValid(void) const noexcept;
 
-            friend bool operator==(const NewOptionIdentifier &a, const NewOptionIdentifier &b) {
-                return a.mPath == b.mPath;
-            }
+#   define _FIDGETY_OI_CMP(cmpOp) \
+    friend bool operator cmpOp(const OptionIdentifier &a, const OptionIdentifier &b) { \
+        return a.mPath cmpOp b.mPath; \
+    } \
+    \
+    friend bool operator cmpOp(const OptionIdentifier &a, const std::string &b) { \
+        return a.mPath cmpOp b; \
+    } \
+    friend bool operator cmpOp(const std::string &a, const OptionIdentifier &b) { \
+        return a cmpOp b.mPath; \
+    } \
+    friend bool operator cmpOp(const OptionIdentifier &a, const char b[]) {\
+        return a.mPath cmpOp b; \
+    } \
+    friend bool operator cmpOp(const char a[], const OptionIdentifier &b) { \
+        return b.mPath cmpOp a; \
+    } \
 
-            friend bool operator==(const NewOptionIdentifier &a, const std::string &b) {
-                return a.mPath == b;
-            }
+            _FIDGETY_OI_CMP(==)
+            _FIDGETY_OI_CMP(!=)
+            _FIDGETY_OI_CMP(<)
+            _FIDGETY_OI_CMP(<=)
+            _FIDGETY_OI_CMP(>)
+            _FIDGETY_OI_CMP(>=)
 
-            friend bool operator==(const std::string &a, const NewOptionIdentifier &b) {
-                return a == b.mPath;
-            }
-
-            friend bool operator!=(const NewOptionIdentifier &a, const NewOptionIdentifier &b) {
-                return a.mPath != b.mPath;
-            }
-
-            friend bool operator!=(const NewOptionIdentifier &a, const std::string &b) {
-                return a.mPath != b;
-            }
-
-            friend bool operator!=(const std::string &a, const NewOptionIdentifier &b) {
-                return a != b.mPath;
-            }
+#   undef _FIDGETY_OI_CMP
 
             operator const std::string &(void) const;
             const std::string &getPath(void) const;
@@ -390,5 +395,27 @@ namespace Fidgety {
             OptionEditor mOptionEditor;
     };
 }
+
+// https://fmt.dev/latest/api.html#format-api
+template <> struct fmt::formatter<Fidgety::OptionIdentifier> : fmt::formatter<std::string> {
+    /*
+    auto parse(fmt::format_parse_context &prsCtx) -> decltype(prsCtx.begin()) {
+        // only "{}" allowed as the formatter
+        auto it = prsCtx.begin(), end = prsCtx.end();
+        if (it != end && *it != '}') {
+            throw format_error("invalid format (fmt::formatter<Fidgety::OptionIdentifier>");
+        }
+        return it;
+    }
+    */
+
+    auto format(
+        const Fidgety::OptionIdentifier &oi,
+        fmt::format_context &fmtCtx
+    ) -> decltype(fmtCtx.out()) {
+        // literally just copy paste the string
+        return fmt::formatter<std::string>::format(oi.getPath(), fmtCtx);
+    }
+};
 
 #endif

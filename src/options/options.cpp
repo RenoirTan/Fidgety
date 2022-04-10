@@ -17,21 +17,23 @@
 
 using namespace Fidgety;
 
-NewOptionIdentifier::NewOptionIdentifier(const std::string &path) : mPath(path) { }
+OptionIdentifier::OptionIdentifier(const std::string &path) : mPath(path) { }
 
-NewOptionIdentifier::NewOptionIdentifier(std::string &&path) : mPath(std::move(path)) { }
+OptionIdentifier::OptionIdentifier(std::string &&path) : mPath(std::move(path)) { }
 
-NewOptionIdentifier &NewOptionIdentifier::operator=(const std::string &path) {
+OptionIdentifier::OptionIdentifier(const char path[]) : mPath(path) { }
+
+OptionIdentifier &OptionIdentifier::operator=(const std::string &path) {
     mPath = path;
     return *this;
 }
 
-NewOptionIdentifier &NewOptionIdentifier::operator=(std::string &&path) {
+OptionIdentifier &OptionIdentifier::operator=(std::string &&path) {
     mPath = std::move(path);
     return *this;
 }
 
-bool NewOptionIdentifier::isValid(void) const noexcept {
+bool OptionIdentifier::isValid(void) const noexcept {
     if (mPath.empty()) {
         return false;
     }
@@ -45,30 +47,30 @@ bool NewOptionIdentifier::isValid(void) const noexcept {
 }
 
 /*
-NewOptionIdentifier::operator std::string(void) const {
+OptionIdentifier::operator std::string(void) const {
     return mPath;
 }
 */
 
-NewOptionIdentifier::operator const std::string &(void) const {
+OptionIdentifier::operator const std::string &(void) const {
     return mPath;
 }
 
-const std::string &NewOptionIdentifier::getPath(void) const {
+const std::string &OptionIdentifier::getPath(void) const {
     return mPath;
 }
 
-size_t NewOptionIdentifier::depth(void) const {
+size_t OptionIdentifier::depth(void) const {
     return countSubstr(mPath, OPTION_NAME_DELIMITER) + 1;
 }
 
-std::vector<OptionName> NewOptionIdentifier::split(void) const {
+std::vector<OptionName> OptionIdentifier::split(void) const {
     std::vector<OptionName> splat;
     boost::split(splat, mPath, boost::is_any_of(OPTION_NAME_DELIMITER));
     return splat;
 }
 
-NewOptionIdentifier::Iterator NewOptionIdentifier::at(size_t index) const {
+OptionIdentifier::Iterator OptionIdentifier::at(size_t index) const {
     size_t start = 0, end = mPath.find(OPTION_NAME_DELIMITER);
     size_t count = 0;
     for (count = 0; count <= index; ++count) {
@@ -82,54 +84,54 @@ NewOptionIdentifier::Iterator NewOptionIdentifier::at(size_t index) const {
     end = (end == std::string::npos) ? mPath.size() : end;
     // if out of bounds
     if (count < index) {
-        return NewOptionIdentifier::Iterator {
+        return OptionIdentifier::Iterator {
             .identifier = this,
             .index = index,
             .name = "",
-            .state = NewOptionIdentifier::Iterator::OUT_OF_BOUNDS
+            .state = OptionIdentifier::Iterator::OUT_OF_BOUNDS
         };
     } else {
-        return NewOptionIdentifier::Iterator {
+        return OptionIdentifier::Iterator {
             .identifier = this,
             .index = index,
             .name = mPath.substr(start, end-start),
-            .state = NewOptionIdentifier::Iterator::VALID
+            .state = OptionIdentifier::Iterator::VALID
         };
     }
 }
 
-NewOptionIdentifier::Iterator NewOptionIdentifier::begin(void) const { return at(0); }
+OptionIdentifier::Iterator OptionIdentifier::begin(void) const { return at(0); }
 
-NewOptionIdentifier::Iterator NewOptionIdentifier::end(void) const {
-    return NewOptionIdentifier::Iterator {
+OptionIdentifier::Iterator OptionIdentifier::end(void) const {
+    return OptionIdentifier::Iterator {
         .identifier = this,
         .index = depth(),
         .name = "",
-        .state = NewOptionIdentifier::Iterator::OUT_OF_BOUNDS
+        .state = OptionIdentifier::Iterator::OUT_OF_BOUNDS
     };
 }
 
-NewOptionIdentifier::Iterator::reference NewOptionIdentifier::Iterator::operator*(void) {
+OptionIdentifier::Iterator::reference OptionIdentifier::Iterator::operator*(void) {
     return this->name;
 }
 
-NewOptionIdentifier::Iterator::pointer NewOptionIdentifier::Iterator::operator->(void) {
+OptionIdentifier::Iterator::pointer OptionIdentifier::Iterator::operator->(void) {
     return &(this->name);
 }
 
-NewOptionIdentifier::Iterator::reference NewOptionIdentifier::Iterator::operator[](
+OptionIdentifier::Iterator::reference OptionIdentifier::Iterator::operator[](
     difference_type offset
 ) {
     Iterator somewhere = (*this) + offset;
     return *somewhere;
 }
 
-NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator+=(difference_type offset) {
+OptionIdentifier::Iterator &OptionIdentifier::Iterator::operator+=(difference_type offset) {
     *this = this->identifier->at(this->index + offset);
     return *this;
 }
 
-NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator-=(difference_type offset) {
+OptionIdentifier::Iterator &OptionIdentifier::Iterator::operator-=(difference_type offset) {
     if (this->index < offset) {
         *this = this->identifier->end();
     } else {
@@ -138,38 +140,38 @@ NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator-=(differe
     return *this;
 }
 
-NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator+(
+OptionIdentifier::Iterator OptionIdentifier::Iterator::operator+(
     difference_type offset
 ) const {
-    NewOptionIdentifier::Iterator copy = *this;
+    OptionIdentifier::Iterator copy = *this;
     copy += offset;
     return copy;
 }
 
-NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator-(
+OptionIdentifier::Iterator OptionIdentifier::Iterator::operator-(
     difference_type offset
 ) const {
-    NewOptionIdentifier::Iterator copy = *this;
+    OptionIdentifier::Iterator copy = *this;
     copy -= offset;
     return copy;
 }
 
-NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator++(void) {
+OptionIdentifier::Iterator &OptionIdentifier::Iterator::operator++(void) {
     return *this += 1;
 }
 
-NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator++(int) {
-    NewOptionIdentifier::Iterator copy = *this;
+OptionIdentifier::Iterator OptionIdentifier::Iterator::operator++(int) {
+    OptionIdentifier::Iterator copy = *this;
     *this += 1;
     return copy;
 }
 
-NewOptionIdentifier::Iterator &NewOptionIdentifier::Iterator::operator--(void) {
+OptionIdentifier::Iterator &OptionIdentifier::Iterator::operator--(void) {
     return *this -= 1;
 }
 
-NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator--(int) {
-    NewOptionIdentifier::Iterator copy = *this;
+OptionIdentifier::Iterator OptionIdentifier::Iterator::operator--(int) {
+    OptionIdentifier::Iterator copy = *this;
     *this -= 1;
     return copy;
 }
@@ -177,8 +179,8 @@ NewOptionIdentifier::Iterator NewOptionIdentifier::Iterator::operator--(int) {
 /*
 
 static inline bool _oiitComparable(
-    const NewOptionIdentifier::Iterator &a,
-    const NewOptionIdentifier::Iterator &b
+    const OptionIdentifier::Iterator &a,
+    const OptionIdentifier::Iterator &b
 ) {
     return (a.identifier == b.identifier && a.state == b.state);
 }
@@ -189,51 +191,51 @@ static inline bool _oiitComparable(
         ( \
             (a.state == b.state) && \
             ( \
-                (a.state == NewOptionIdentifier::Iterator::VALID && a.index cmpOp b.index) || \
-                a.state == NewOptionIdentifier::Iterator::OUT_OF_BOUNDS \
+                (a.state == OptionIdentifier::Iterator::VALID && a.index cmpOp b.index) || \
+                a.state == OptionIdentifier::Iterator::OUT_OF_BOUNDS \
             ) \
         ) \
     ) \
 
 bool Fidgety::operator==(
-    const NewOptionIdentifier::Iterator &a,
-    const NewOptionIdentifier::Iterator &b
+    const OptionIdentifier::Iterator &a,
+    const OptionIdentifier::Iterator &b
 ) {
     spdlog::trace("[Fidgety::operator==] this is being used");
     return _OIIT_CMPEX(==);
 }
 
 bool Fidgety::operator!=(
-    const NewOptionIdentifier::Iterator &a,
-    const NewOptionIdentifier::Iterator &b
+    const OptionIdentifier::Iterator &a,
+    const OptionIdentifier::Iterator &b
 ) {
     return !(a == b);
 }
 
 bool Fidgety::operator<(
-    const NewOptionIdentifier::Iterator &a,
-    const NewOptionIdentifier::Iterator &b
+    const OptionIdentifier::Iterator &a,
+    const OptionIdentifier::Iterator &b
 ) {
     return _OIIT_CMPEX(<);
 }
 
 bool Fidgety::operator>(
-    const NewOptionIdentifier::Iterator &a,
-    const NewOptionIdentifier::Iterator &b
+    const OptionIdentifier::Iterator &a,
+    const OptionIdentifier::Iterator &b
 ) {
     return _OIIT_CMPEX(>);
 }
 
 bool Fidgety::operator<=(
-    const NewOptionIdentifier::Iterator &a,
-    const NewOptionIdentifier::Iterator &b
+    const OptionIdentifier::Iterator &a,
+    const OptionIdentifier::Iterator &b
 ) {
     return _OIIT_CMPEX(<=);
 }
 
 bool Fidgety::operator>=(
-    const NewOptionIdentifier::Iterator &a,
-    const NewOptionIdentifier::Iterator &b)
+    const OptionIdentifier::Iterator &a,
+    const OptionIdentifier::Iterator &b)
 {
     return _OIIT_CMPEX(>=);
 }

@@ -22,7 +22,7 @@
 
 namespace Fidgety {
 
-    Option makeDummyOption(std::string &&identifier) {
+    Option makeDummyOption(OptionIdentifier &&identifier) {
         spdlog::debug("MAKING DUMMY OPTION");
         std::unique_ptr<Validator> validator(new Validator());
         OptionEditor oet(
