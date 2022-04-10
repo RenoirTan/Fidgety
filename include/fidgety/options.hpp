@@ -191,6 +191,30 @@ namespace Fidgety {
 
             bool isValid(void) const noexcept;
 
+            friend bool operator==(const NewOptionIdentifier &a, const NewOptionIdentifier &b) {
+                return a.mPath == b.mPath;
+            }
+
+            friend bool operator==(const NewOptionIdentifier &a, const std::string &b) {
+                return a.mPath == b;
+            }
+
+            friend bool operator==(const std::string &a, const NewOptionIdentifier &b) {
+                return a == b.mPath;
+            }
+
+            friend bool operator!=(const NewOptionIdentifier &a, const NewOptionIdentifier &b) {
+                return a.mPath != b.mPath;
+            }
+
+            friend bool operator!=(const NewOptionIdentifier &a, const std::string &b) {
+                return a.mPath != b;
+            }
+
+            friend bool operator!=(const std::string &a, const NewOptionIdentifier &b) {
+                return a != b.mPath;
+            }
+
             operator std::string(void) const;
             const std::string &getPath(void) const;
 

@@ -62,4 +62,10 @@ TEST(OptionsOptionIdentifier, Iterator) {
     EXPECT_EQ(identifier.at(2)-3, identifier.end());
     EXPECT_EQ(identifier.at(0), identifier.begin());
     EXPECT_EQ(identifier.end(), identifier.end());
+    EXPECT_EQ(NewOptionIdentifier("somewhere.hi"), NewOptionIdentifier("somewhere.hi"));
+    EXPECT_EQ(NewOptionIdentifier("somewhere.hi"), "somewhere.hi");
+    EXPECT_EQ("somewhere.hi", NewOptionIdentifier("somewhere.hi"));
+    EXPECT_NE(NewOptionIdentifier("somewhere.hi"), NewOptionIdentifier("somewhere.bye"));
+    EXPECT_NE(NewOptionIdentifier("somewhere.hi"), "somewhere.bye");
+    EXPECT_NE("somewhere.hi", NewOptionIdentifier("somewhere.bye"));
 }
