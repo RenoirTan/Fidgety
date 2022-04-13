@@ -17,6 +17,8 @@
 
 using namespace Fidgety;
 
+const size_t OptionIdentifier::npos = std::string::npos;
+
 OptionIdentifier::OptionIdentifier(const std::string &path) : mPath(path) { }
 
 OptionIdentifier::OptionIdentifier(std::string &&path) : mPath(std::move(path)) { }

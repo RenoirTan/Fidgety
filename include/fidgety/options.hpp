@@ -227,7 +227,7 @@ namespace Fidgety {
             OptionIdentifier &operator+=(const std::string &addon);
             OptionIdentifier operator+(const std::string &addon) const;
 
-            static const size_t npos = std::string::npos;
+            static const size_t npos;
             size_t findSubset(const OptionIdentifier &identifier) const;
 
             size_t depth(void) const;

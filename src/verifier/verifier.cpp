@@ -25,6 +25,66 @@ static inline void _unionSet(std::set<T> &a, const std::set<T> &b) {
     }
 }
 
+static inline bool _optionHasOption(const Option &option, const OptionIdentifier &identifier) {
+    // assuming that option is nested list
+    for (const auto &child : option.getNestedList()) {
+        if (option.getIdentifier() + child == identifier) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static inline bool _isOrphan(
+    const VerifierManagedOptionList &vmol,
+    const OptionIdentifier &identifier,
+    size_t currentDepth,
+    const std::set<OptionIdentifier> notOrphans
+) {
+    spdlog::trace("[_isOrphan] currentDepth: {}", currentDepth);
+    for (const auto &notOrphanId : notOrphans) {
+        spdlog::trace("[_isOrphan] comparing '{}'", notOrphanId);
+        size_t notOrphanIdDepth = notOrphanId.depth();
+        spdlog::trace("[_isOrphan] notOrphanIdDepth: {}", notOrphanIdDepth);
+        if (notOrphanIdDepth != currentDepth-1) {
+            continue;
+        }
+        auto notOrphan = vmol.find(notOrphanId);
+        if (notOrphan == vmol.end()) {
+            continue;
+        }
+        if (
+            notOrphan->second->getValueType() == OptionValueType::NESTED_LIST &&
+            _optionHasOption(*(notOrphan->second), identifier)
+        ) {
+            spdlog::trace("[_isOrphan] '{}' has '{}'", notOrphanId, identifier);
+            return false;
+        } else {
+            spdlog::trace("[_isOrphan] '{}' does not have '{}'", notOrphanId, identifier);
+        }
+    }
+    return true;
+}
+
+static inline std::vector<OptionIdentifier> _findOrphansInOption(
+    const VerifierManagedOptionList &vmol,
+    const OptionIdentifier &identifier
+) {
+    auto myIt = vmol.find(identifier);
+    const auto &option = myIt->second;
+    if (myIt == vmol.end() || option->getValueType() != OptionValueType::NESTED_LIST) {
+        return {};
+    }
+    std::vector<OptionIdentifier> orphans;
+    for (const auto &childName : option->getNestedList()) {
+        OptionIdentifier child = identifier + childName;
+        if (vmol.find(child) == vmol.end()) {
+            orphans.push_back(std::move(child));
+        }
+    }
+    return orphans;
+}
+
 static VerifierStatus _findOrphans(
     const VerifierManagedOptionList &vmol,
     std::set<OptionIdentifier> &orphans
@@ -45,15 +105,13 @@ static VerifierStatus _findOrphans(
         for (const auto &idOpPair : vmol) {
             const OptionIdentifier &identifier = idOpPair.first;
             if (identifier.depth() == currentDepth) {
-                for (const auto &notOrphan : notOrphans) {
-                    if (notOrphan.depth() != currentDepth-1) {
-                        continue;
-                    }
-                    if (identifier.findSubset(notOrphan) != OptionIdentifier::npos) {
-                        currentUnorphanedBuffer.emplace(identifier);
-                    } else {
-                        orphans.emplace(identifier);
-                    }
+                spdlog::trace("[_findOrphans] checking '{}'", identifier);
+                if (_isOrphan(vmol, identifier, currentDepth, notOrphans)) {
+                    spdlog::debug("[_findOrphans] _isOrphan: {}", identifier);
+                    orphans.emplace(identifier);
+                } else {
+                    spdlog::debug("[_findOrphans] !_isOrphan: {}", identifier);
+                    currentUnorphanedBuffer.insert(identifier);
                 }
                 ++nAccounted;
             }
@@ -423,11 +481,15 @@ VerifierStatus Verifier::overwriteOptions(VerifierManagedOptionList &&options) {
 }
 
 VerifierStatus Verifier::purgeOrphanedOptions(void) {
+    spdlog::debug("[Fidgety::Verifier::purgeOrphanedOptions] purging orphans");
     std::set<OptionIdentifier> orphans;
     return purgeOrphanedOptions(orphans);
 }
 
 VerifierStatus Verifier::purgeOrphanedOptions(const std::set<OptionIdentifier> &identifiers) {
+    spdlog::debug(
+        "[Fidgety::Verifier::purgeOrphanedOptions] purging options listed in 'identifiers'"
+    );
     std::set<OptionIdentifier> orphans(identifiers);
     VerifierStatus status = mInner->findOrphanedOptions(orphans);
     if (status != VerifierStatus::Ok)

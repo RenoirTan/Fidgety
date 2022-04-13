@@ -73,3 +73,14 @@ TEST(OptionsOptionIdentifier, Iterator) {
     EXPECT_NE(OptionIdentifier("somewhere.hi"), "somewhere.bye");
     EXPECT_NE("somewhere.hi", OptionIdentifier("somewhere.bye"));
 }
+
+TEST(OptionsOptionIdentifier, FindSubset) {
+    _FIDGETY_INIT_TEST();
+    OptionIdentifier identifier("a.b.c.d.e");
+    ASSERT_EQ(identifier.depth(), 5);
+    EXPECT_EQ(identifier.findSubset("a.b"), 0);
+    EXPECT_EQ(identifier.findSubset("c.d.e"), 2);
+    EXPECT_EQ(identifier.findSubset("e"), 4);
+    EXPECT_EQ(identifier.findSubset("a.b.d"), OptionIdentifier::npos);
+    EXPECT_EQ(identifier.findSubset("not even there"), OptionIdentifier::npos);
+}
