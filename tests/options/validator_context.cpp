@@ -37,7 +37,7 @@ TEST(OptionsValidatorContext, FromDummies) {
     ASSERT_EQ(option5.getValueType(), OptionValueType::RAW_VALUE);
     ASSERT_EQ(option5.getRawValue(), "");
     try {
-        const NestedOptionList &nol = option5.getNestedList();
+        const NestedOptionNameList &nonl = option5.getNestedList();
     } catch (const OptionException &oe) {
         EXPECT_EQ(oe.getCode(), (int32_t) OptionStatus::InvalidValueType);
     }

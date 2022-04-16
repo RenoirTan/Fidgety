@@ -18,6 +18,123 @@
 
 using namespace Fidgety;
 
+template <typename T>
+static inline void _unionSet(std::set<T> &a, const std::set<T> &b) {
+    for (const T& thing : b) {
+        a.emplace(thing);
+    }
+}
+
+static inline bool _optionHasOption(const Option &option, const OptionIdentifier &identifier) {
+    // assuming that option is nested list
+    for (const auto &child : option.getNestedList()) {
+        if (option.getIdentifier() + child == identifier) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static inline bool _isOrphan(
+    const VerifierManagedOptionList &vmol,
+    const OptionIdentifier &identifier,
+    size_t currentDepth,
+    const std::set<OptionIdentifier> notOrphans
+) {
+    spdlog::trace("[_isOrphan] currentDepth: {}", currentDepth);
+    for (const auto &notOrphanId : notOrphans) {
+        spdlog::trace("[_isOrphan] comparing '{}'", notOrphanId);
+        size_t notOrphanIdDepth = notOrphanId.depth();
+        spdlog::trace("[_isOrphan] notOrphanIdDepth: {}", notOrphanIdDepth);
+        if (notOrphanIdDepth != currentDepth-1) {
+            continue;
+        }
+        auto notOrphan = vmol.find(notOrphanId);
+        if (notOrphan == vmol.end()) {
+            continue;
+        }
+        if (
+            notOrphan->second->getValueType() == OptionValueType::NESTED_LIST &&
+            _optionHasOption(*(notOrphan->second), identifier)
+        ) {
+            spdlog::trace("[_isOrphan] '{}' has '{}'", notOrphanId, identifier);
+            return false;
+        } else {
+            spdlog::trace("[_isOrphan] '{}' does not have '{}'", notOrphanId, identifier);
+        }
+    }
+    return true;
+}
+
+static inline std::vector<OptionIdentifier> _findOrphansInOption(
+    const VerifierManagedOptionList &vmol,
+    const OptionIdentifier &identifier
+) {
+    auto myIt = vmol.find(identifier);
+    const auto &option = myIt->second;
+    if (myIt == vmol.end() || option->getValueType() != OptionValueType::NESTED_LIST) {
+        return {};
+    }
+    std::vector<OptionIdentifier> orphans;
+    for (const auto &childName : option->getNestedList()) {
+        OptionIdentifier child = identifier + childName;
+        if (vmol.find(child) == vmol.end()) {
+            orphans.push_back(std::move(child));
+        }
+    }
+    return orphans;
+}
+
+static VerifierStatus _findOrphans(
+    const VerifierManagedOptionList &vmol,
+    std::set<OptionIdentifier> &orphans
+) {
+    const size_t nOptions = vmol.size();
+    size_t nAccounted = 0;
+    std::set<OptionIdentifier> notOrphans;
+    for (const auto &idOpPair : vmol) {
+        const OptionIdentifier &identifier = idOpPair.first;
+        if (identifier.depth() == 1) {
+            notOrphans.emplace(identifier);
+        }
+    }
+    nAccounted += notOrphans.size();
+    size_t currentDepth = 2;
+    while (nAccounted < nOptions) {
+        std::set<OptionIdentifier> currentUnorphanedBuffer;
+        for (const auto &idOpPair : vmol) {
+            const OptionIdentifier &identifier = idOpPair.first;
+            if (identifier.depth() == currentDepth) {
+                spdlog::trace("[_findOrphans] checking '{}'", identifier);
+                if (_isOrphan(vmol, identifier, currentDepth, notOrphans)) {
+                    spdlog::debug("[_findOrphans] _isOrphan: {}", identifier);
+                    orphans.emplace(identifier);
+                } else {
+                    spdlog::debug("[_findOrphans] !_isOrphan: {}", identifier);
+                    currentUnorphanedBuffer.insert(identifier);
+                }
+                ++nAccounted;
+            }
+        }
+        _unionSet(notOrphans, currentUnorphanedBuffer);
+        ++currentDepth;
+    }
+    return VerifierStatus::Ok;
+}
+
+static VerifierStatus _purgeOrphans(
+    VerifierManagedOptionList &vmol,
+    const std::set<OptionIdentifier> &orphans
+) {
+    for (const auto &identifier : orphans) {
+        auto it = vmol.find(identifier);
+        if (it != vmol.end()) {
+            vmol.erase(it);
+        }
+    }
+    return VerifierStatus::Ok;
+}
+
 std::string VerifierException::codeAsErrorType(void) const {
     switch (mCode) {
         case 0: return "Ok";
@@ -79,6 +196,10 @@ class Fidgety::VerifierInner {
         VerifierInner(const VerifierInner &inner) = delete;
         VerifierInner &operator=(VerifierInner &&inner) = delete;
         VerifierInner &operator=(const VerifierInner &inner) = delete;
+
+        size_t numberOfLocks(void) const {
+            return mLocks.size();
+        }
 
         bool optionExists(const OptionIdentifier &identifier) const {
             spdlog::trace("Checking if option exists in Fidgety::VerifierInner.");
@@ -196,6 +317,14 @@ class Fidgety::VerifierInner {
             return mLocks;
         }
 
+        VerifierStatus findOrphanedOptions(std::set<OptionIdentifier> &orphans) {
+            return _findOrphans(mOptions, orphans);
+        }
+
+        VerifierStatus purgeOrphanedOptions(const std::set<OptionIdentifier> &orphans) {
+            return _purgeOrphans(mOptions, orphans);
+        }
+
     protected:
         std::unique_ptr<ValidatorContextCreator> mContextCreator;
         VerifierIdentifier mIdentifier;
@@ -301,6 +430,10 @@ Verifier::Verifier(VerifierInner *inner) : mInner(inner) {
     spdlog::trace("Creating Fidgety::Verifier with inner.");
 }
 
+size_t Verifier::numberOfLocks(void) const {
+    return mInner->numberOfLocks();
+}
+
 bool Verifier::optionExists(const OptionIdentifier &identifier) const {
     return mInner->optionExists(identifier);
 }
@@ -345,6 +478,23 @@ VerifierStatus Verifier::overwriteOptions(VerifierManagedOptionList &&options) {
             "Cannot overwrite the options in this Fidgety::Verifier."
         );
     }
+}
+
+VerifierStatus Verifier::purgeOrphanedOptions(void) {
+    spdlog::debug("[Fidgety::Verifier::purgeOrphanedOptions] purging orphans");
+    std::set<OptionIdentifier> orphans;
+    return purgeOrphanedOptions(orphans);
+}
+
+VerifierStatus Verifier::purgeOrphanedOptions(const std::set<OptionIdentifier> &identifiers) {
+    spdlog::debug(
+        "[Fidgety::Verifier::purgeOrphanedOptions] purging options listed in 'identifiers'"
+    );
+    std::set<OptionIdentifier> orphans(identifiers);
+    VerifierStatus status = mInner->findOrphanedOptions(orphans);
+    if (status != VerifierStatus::Ok)
+        return status;
+    return mInner->purgeOrphanedOptions(orphans);
 }
 
 /*

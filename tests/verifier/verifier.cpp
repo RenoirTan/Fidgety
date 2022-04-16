@@ -30,6 +30,16 @@ using namespace Fidgety;
         OptionValue(val, OptionValueType::RAW_VALUE)             \
     )
 
+#define ASSIGN_OPT_NESTED(vmol, id, ...) {                         \
+    NestedOptionNameList noml({__VA_ARGS__});                      \
+    vmol[id] = std::make_shared<Option>(                           \
+        id,                                                        \
+        OptionEditor(OptionEditorType::TextEntry, CONS()),         \
+        std::unique_ptr<SimpleValidator>(new SimpleValidator()),   \
+        OptionValue(std::move(noml), OptionValueType::NESTED_LIST) \
+    );                                                             \
+}                                                                  \
+
 class SimpleValidatorContextCreator : public virtual ValidatorContextCreator {
     public:
         SimpleValidatorContextCreator(void) {
@@ -150,4 +160,35 @@ TEST(VerifierVerifier, OverwriteOptions) {
     ASSIGN_OPT(freshVmol, "H", "30");
     ASSERT_TRUE(verifier.canBeOverwritten());
     ASSERT_EQ(verifier.overwriteOptions(std::move(freshVmol)), VerifierStatus::Ok);
+}
+
+TEST(VerifierVerifier, PurgeOrphans) {
+    _FIDGETY_INIT_TEST();
+    std::unique_ptr<ValidatorContextCreator> vcc(new SimpleValidatorContextCreator());
+    VerifierManagedOptionList vmol;
+    ASSIGN_OPT_NESTED(vmol, "A", "B");
+    ASSIGN_OPT_NESTED(vmol, "A.B", "F", "G"); // g has no value
+    ASSIGN_OPT(vmol, "A.B.F", "a.b.f:raw");
+    ASSIGN_OPT(vmol, "A.B.G", "a.b.g:raw");
+    ASSIGN_OPT_NESTED(vmol, "A.C", "D", "E");
+    ASSIGN_OPT(vmol, "A.C.D", "a.c.d:raw");
+    ASSIGN_OPT(vmol, "A.C.E", "a.c.e:raw");
+    Verifier verifier(std::move(vmol), std::move(vcc));
+    EXPECT_TRUE(verifier.optionExists("A"));
+    EXPECT_TRUE(verifier.optionExists("A.B"));
+    EXPECT_TRUE(verifier.optionExists("A.B.F"));
+    EXPECT_TRUE(verifier.optionExists("A.B.G"));
+    EXPECT_TRUE(verifier.optionExists("A.C"));
+    EXPECT_TRUE(verifier.optionExists("A.C.D"));
+    EXPECT_TRUE(verifier.optionExists("A.C.E"));
+
+    ASSERT_EQ(verifier.purgeOrphanedOptions(), VerifierStatus::Ok);
+    ASSERT_EQ(verifier.numberOfLocks(), 0);
+    EXPECT_TRUE(verifier.optionExists("A"));
+    EXPECT_TRUE(verifier.optionExists("A.B"));
+    EXPECT_TRUE(verifier.optionExists("A.B.F"));
+    EXPECT_TRUE(verifier.optionExists("A.B.G"));
+    EXPECT_FALSE(verifier.optionExists("A.C"));
+    EXPECT_FALSE(verifier.optionExists("A.C.D"));
+    EXPECT_FALSE(verifier.optionExists("A.C.E"));
 }

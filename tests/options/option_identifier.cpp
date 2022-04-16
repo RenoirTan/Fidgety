@@ -17,25 +17,29 @@ using namespace Fidgety;
 
 #define _VALID_ID_STR "appearance.theme.icon.priority.4"
 
-static inline NewOptionIdentifier _createIdentifier(void) {
-    return NewOptionIdentifier(_VALID_ID_STR);
+static inline OptionIdentifier _createIdentifier(void) {
+    return OptionIdentifier(_VALID_ID_STR);
 }
 
 #define _PARTS {"appearance", "theme", "icon", "priority", "4"}
 
 TEST(OptionsOptionIdentifier, Identifier) {
     _FIDGETY_INIT_TEST();
-    NewOptionIdentifier identifier = _createIdentifier();
+    OptionIdentifier identifier = _createIdentifier();
     EXPECT_TRUE(identifier.isValid());
     EXPECT_EQ((std::string) identifier, _VALID_ID_STR);
     EXPECT_EQ(identifier.depth(), 5);
     EXPECT_EQ(identifier.split(), std::vector<OptionName>(_PARTS));
+
+    EXPECT_EQ(identifier + "size", _VALID_ID_STR ".size");
+    identifier += "shadow";
+    EXPECT_EQ(identifier, _VALID_ID_STR ".shadow");
 }
 
 TEST(OptionsOptionIdentifier, InvalidIdentifier) {
     _FIDGETY_INIT_TEST();
 #define _CASE(id) { \
-    NewOptionIdentifier identifier(id); \
+    OptionIdentifier identifier(id); \
     EXPECT_FALSE(identifier.isValid()); \
 }
 
@@ -48,7 +52,7 @@ TEST(OptionsOptionIdentifier, InvalidIdentifier) {
 
 TEST(OptionsOptionIdentifier, Iterator) {
     _FIDGETY_INIT_TEST();
-    NewOptionIdentifier identifier = _createIdentifier();
+    OptionIdentifier identifier = _createIdentifier();
     const char *PARTS[] = _PARTS;
     size_t index = 0;
     for (const auto &it : identifier) {
@@ -62,10 +66,21 @@ TEST(OptionsOptionIdentifier, Iterator) {
     EXPECT_EQ(identifier.at(2)-3, identifier.end());
     EXPECT_EQ(identifier.at(0), identifier.begin());
     EXPECT_EQ(identifier.end(), identifier.end());
-    EXPECT_EQ(NewOptionIdentifier("somewhere.hi"), NewOptionIdentifier("somewhere.hi"));
-    EXPECT_EQ(NewOptionIdentifier("somewhere.hi"), "somewhere.hi");
-    EXPECT_EQ("somewhere.hi", NewOptionIdentifier("somewhere.hi"));
-    EXPECT_NE(NewOptionIdentifier("somewhere.hi"), NewOptionIdentifier("somewhere.bye"));
-    EXPECT_NE(NewOptionIdentifier("somewhere.hi"), "somewhere.bye");
-    EXPECT_NE("somewhere.hi", NewOptionIdentifier("somewhere.bye"));
+    EXPECT_EQ(OptionIdentifier("somewhere.hi"), OptionIdentifier("somewhere.hi"));
+    EXPECT_EQ(OptionIdentifier("somewhere.hi"), "somewhere.hi");
+    EXPECT_EQ("somewhere.hi", OptionIdentifier("somewhere.hi"));
+    EXPECT_NE(OptionIdentifier("somewhere.hi"), OptionIdentifier("somewhere.bye"));
+    EXPECT_NE(OptionIdentifier("somewhere.hi"), "somewhere.bye");
+    EXPECT_NE("somewhere.hi", OptionIdentifier("somewhere.bye"));
+}
+
+TEST(OptionsOptionIdentifier, FindSubset) {
+    _FIDGETY_INIT_TEST();
+    OptionIdentifier identifier("a.b.c.d.e");
+    ASSERT_EQ(identifier.depth(), 5);
+    EXPECT_EQ(identifier.findSubset("a.b"), 0);
+    EXPECT_EQ(identifier.findSubset("c.d.e"), 2);
+    EXPECT_EQ(identifier.findSubset("e"), 4);
+    EXPECT_EQ(identifier.findSubset("a.b.d"), OptionIdentifier::npos);
+    EXPECT_EQ(identifier.findSubset("not even there"), OptionIdentifier::npos);
 }
