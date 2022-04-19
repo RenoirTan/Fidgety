@@ -32,4 +32,6 @@ root of the project directory.
 `fgmk` is a python script that saves build configurations and manages the build
 process for Fidgety. It's essentially a wrapper over the Makefile I wrote which
 is a wrapper over CMake which is a wrapper over Make again. You can learn more
-by reading [**BUILD_FGMK.md**](BUILD_FGMK.md)
+by reading [**BUILD_FGMK.md**](BUILD_FGMK.md). This document will also suggest
+suitable configurations for building Fidgety on some commonly used
+distributions. See [**BUILD_FGMK#Configurations**](BUILD_FGMK.md#configurations)

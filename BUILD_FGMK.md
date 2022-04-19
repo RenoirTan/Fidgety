@@ -3,6 +3,93 @@
 This markdown document describes how to use `fgmk` to streamline the Fidgety
 build process.
 
+## Configurations
+
+Due to availability of some libraries in different distributions, Fidgety may
+have to download libraries, or explicitly set the version of the relevant
+dependencies when generating the CMake build folder. These options can be
+specified using `fgmk` or using the provided Makefile but to save you some
+hassle, here are some commands you can run to setup Fidgety for your specific
+distribution.
+
+The following commands assume you are running as a regular user in the project
+root and you want to build the unit tests.
+
+### Arch Linux
+
+```shell
+# Dependencies (using qt6)
+sudo pacman -Syu \
+    boost \
+    boost-libs \
+    spdlog \
+    fmt \
+    nlohmann_json \
+    qt6-base
+
+__cpu=$(nproc)
+__mem=$(($(cat /proc/meminfo | grep "MemTotal" | awk '{ print $2 }') / 2000000))
+command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __mem))
+```
+
+### Debian
+
+```shell
+# Dependencies (using qt5)
+sudo apt update
+sudo apt install \
+    libboost-all-dev \
+    libspdlog-dev \
+    libfmt-dev \
+    nlohmann-json3-dev \
+    qtbase5-dev
+
+__cpu=$(nproc)
+__mem=$(($(cat /proc/meminfo | grep "MemTotal" | awk '{ print $2 }') / 2000000))
+command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __mem))
+./fgmk s fidgety_qt_major 5
+```
+
+### Fedora
+
+```shell
+# Dependencies (using qt5)
+sudo dnf install \
+    boost \
+    spdlog-devel \
+    fmt-devel \
+    qt6-qtbase
+
+__cpu=$(nproc)
+__mem=$(($(cat /proc/meminfo | grep "MemTotal" | awk '{ print $2 }') / 2000000))
+command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __mem))
+./fgmk s fidgety_nlohmannjson_from_source on
+```
+
+### Ubuntu
+
+```shell
+# Dependencies (using qt5)
+sudo apt update
+sudo apt install \
+    libboost-all-dev \
+    libspdlog-dev \
+    libfmt-dev \
+    nlohmann-json3-dev \
+    qtbase5-dev
+
+__cpu=$(nproc)
+__mem=$(($(cat /proc/meminfo | grep "MemTotal" | awk '{ print $2 }') / 2000000))
+command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __mem))
+./fgmk s fidgety_qt_major 5
+```
+
+If you don't want to build any tests, run:
+
+```shell
+./fgmk s build_testing off
+```
+
 ## Subcommands
 
 `fgmk` has 8 subcommands for editing build configurations and building Fidgety.
