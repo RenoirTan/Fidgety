@@ -24,6 +24,20 @@ macro(fidgety_link_fmt)
     endif()
 endmacro()
 
+macro(fidgety_link_qt)
+    # ARGV0: name of the library (no namespace)
+    if(ARGC LESS 1)
+        message(
+            FATAL_ERROR
+            "to link libraries to a target, you must provide the name of the target"
+        )
+    endif()
+    target_link_libraries(
+        ${ARGV0} PRIVATE
+        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS}
+    )
+endmacro()
+
 macro(fidgety_link_common_libraries)
     # ARGV0: name of the library (no namespace)
     if(ARGC LESS 1)
