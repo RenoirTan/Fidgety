@@ -9,6 +9,16 @@ macro(fidgety_add_my_library)
     add_library("Fidgety::${ARGV0}" ALIAS ${ARGV0})
 endmacro()
 
+macro(fidgety_add_my_executable)
+    # ARGV0: name of the executable (no namespace)
+    # ARGV1..N: sources
+    if (ARGC LESS 1)
+        message(FATAL_ERROR "bad call to fidgety_add_my_executable: must have 1 or more arguments")
+    endif()
+    add_executable(${ARGN})
+    add_executable("Fidgety::${ARGV0}" ALIAS ${ARGV0})
+endmacro()
+
 macro(fidgety_link_fmt)
     # ARGV0: name of the library (no namespace)
     if(ARGC LESS 1)

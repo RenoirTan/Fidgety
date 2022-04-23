@@ -11,14 +11,16 @@
 #ifndef FIDGETY_EDITOR_HPP
 #   define FIDGETY_EDITOR_HPP
 
-#   include <QPushButton>
 #   include <QWidget>
+
+class QPushButton;
 
 namespace Fidgety {
     class Editor : public QWidget {
-        Q_OBJECT
+        // DO NOT FUCKING ADD Q_OBJECT
+
         public:
-            Editor(QWidget *parent = nullptr);
+            explicit Editor(QWidget *parent = 0);
 
         signals:
         public slots:
