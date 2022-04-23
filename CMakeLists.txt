@@ -87,7 +87,7 @@ set(
     FIDGETY_QT_FROM_SOURCE OFF
     CACHE BOOL "whether to download Qt and build it from source"
 )
-set(FIDGETY_QT_MAJOR 6 CACHE STRING "The major version number of Qt being used to build Fidgety")
+set(FIDGETY_QT_MAJOR 5 CACHE STRING "The major version number of Qt being used to build Fidgety")
 set(
     FIDGETY_QT_REPO_URL
     "https://code.qt.io/qt/qtbase.git"
