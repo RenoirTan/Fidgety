@@ -158,10 +158,10 @@ ship Qt5 with no convenient way of installing Qt6 through that distro's package
 manager using some workaround (I'm looking at you, Debian). For backwards
 compatibility, Fidgety allows you to select which major version of Qt to use
 using the variable `FIDGETY_QT_MAJOR`. This variable only accepts `5` or `6`
-as a value and defaults to using Qt6 if no value was specified. Just like the in
+as a value and defaults to using Qt5 if no value was specified. Just like in
 the [building tests](#opting-out-of-building-tests) section, you can specify
 which major version of Qt to use through the Makefile using this command:
 
 ```shell
-make generate CMAKE_GENERATE_SUPPFLAGS="-DFIDGETY_QT_MAJOR=5"
+make generate CMAKE_GENERATE_SUPPFLAGS="-DFIDGETY_QT_MAJOR=6" # to force qt6
 ```
