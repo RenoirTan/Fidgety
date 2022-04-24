@@ -9,16 +9,17 @@
  */
 
 #include <QGuiApplication>
-#include <QPushButton>
 #include <QScreen>
+#include <fidgety/_utils_qt.hpp>
 #include <fidgety/editor.hpp>
 
 using namespace Fidgety;
 
 Editor::Editor(QWidget *parent) : QWidget(parent) {
     QRect screenDimensions = QGuiApplication::primaryScreen()->geometry();
-    setFixedSize(screenDimensions.width() * 0.7, screenDimensions.height() * 0.7);
+    setMinimumSize(480, 270); // 16:9
+    setBaseSize(screenDimensions.width() * 0.7, screenDimensions.height() * 0.7);
     setWindowTitle("Fidgety");
-    mButton = new QPushButton("Test button", this);
-    mButton->setGeometry(10, 10, 150, 50);
+    mAppList = new QListView(this);
+    mAppList->setGeometry(getGeometry(this->geometry(), QSize(150, 100), 10));
 }

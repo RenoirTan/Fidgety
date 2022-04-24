@@ -14,3 +14,9 @@ target_link_libraries(
 )
 fidgety_link_fmt(_FidgetyUtilsJson)
 fidgety_install_library(_FidgetyUtilsJson _fidgety_utils_json_config.cmake)
+
+fidgety_add_my_library(_FidgetyUtilsQt STATIC qt.cpp)
+set_target_properties(_FidgetyUtilsQt PROPERTIES OUTPUT_NAME __fidgety_utils_qt)
+target_link_libraries(_FidgetyUtilsQt PRIVATE FidgetyHeaders)
+fidgety_link_qt_base(_FidgetyUtilsQt)
+fidgety_install_library(_FidgetyUtilsQt _fidgety_utils_qt_config.cmake)

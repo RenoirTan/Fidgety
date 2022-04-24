@@ -11,9 +11,9 @@
 #ifndef FIDGETY_EDITOR_HPP
 #   define FIDGETY_EDITOR_HPP
 
+#   include <QPushButton>
+#   include <QListView>
 #   include <QWidget>
-
-class QPushButton;
 
 namespace Fidgety {
     class Editor : public QWidget {
@@ -26,7 +26,7 @@ namespace Fidgety {
         public slots:
 
         protected:
-            QPushButton *mButton;
+            QListView *mAppList;
     };
 }
 
