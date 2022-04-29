@@ -23,3 +23,12 @@ Editor::Editor(QWidget *parent) : QWidget(parent) {
     mAppList = new QListView(this);
     mAppList->setGeometry(getGeometry(this->geometry(), QSize(150, 100), 10));
 }
+
+EditorStatus Fidgety::initFidgety(bool debugMode) {
+    if (debugMode) {
+        QCoreApplication::addLibraryPath("../../resources/qml/");
+    } else {
+        QCoreApplication::addLibraryPath("/usr/share/fidgety/resources/qml/");
+    }
+    return EditorStatus::Ok;
+}

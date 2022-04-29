@@ -14,8 +14,30 @@
 #   include <QPushButton>
 #   include <QListView>
 #   include <QWidget>
+#   include <fidgety/exception.hpp>
 
 namespace Fidgety {
+    enum class EditorStatus : int32_t {
+        Ok = 0,
+        FileNotFound = 1,
+        CannotReadFile = 2,
+        CannotWriteFile = 3,
+        CannotCloseFile = 4,
+        ResourceBusy = 5,
+        CannotOpenMultipleFiles = 6,
+        FilesNotOpen = 7,
+        SyntaxError = 8
+    };
+
+    class EditorException : public Exception {
+        public:
+            using Exception::Exception;
+            std::string codeAsErrorType(void) const;
+        
+        protected:
+            const char *getSimpleWhat(void) const noexcept;
+    };
+
     class Editor : public QWidget {
         // DO NOT FUCKING ADD Q_OBJECT
 
@@ -28,6 +50,8 @@ namespace Fidgety {
         protected:
             QListView *mAppList;
     };
+
+    EditorStatus initFidgety(bool debugMode=false);
 }
 
 #endif

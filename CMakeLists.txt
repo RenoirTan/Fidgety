@@ -147,7 +147,7 @@ configure_file(${FIDGETY_CONFIG_HEADER_IN} ${FIDGETY_CONFIG_HEADER_OUT})
 
 #~~~~ CONFIG.H.IN ~~~~#
 
-##### BUILD DEPENDENCIES #####
+##### QT #####
 
 set(FIDGETY_COMPONENTS_UPPER CORE GUI WIDGETS QUICK QML)
 set(FIDGETY_COMPONENTS_PASCAL Core Gui Widgets Quick Qml)
@@ -163,6 +163,12 @@ Fidgety only targets Qt6 or Qt5 (legacy)")
     endif()
     message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
 endif()
+
+fidgety_compat_qt_callable(add_resources)
+
+#~~~~ QT ~~~~#
+
+##### BUILD DEPENDENCIES #####
 
 #set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")

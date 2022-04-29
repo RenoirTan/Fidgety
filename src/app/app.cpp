@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <fidgety/editor.hpp>
 #include <QApplication>
+#include <QQmlApplicationEngine>
+#include <QUrl>
 #include <spdlog/spdlog.h>
 
 using namespace Fidgety;
@@ -21,9 +23,14 @@ int32_t main(int32_t argc, char **argv, char **env) {
     spdlog::debug("[main] Fidgety is starting up!");
     
     QApplication app(argc, argv);
-    Editor editor;
-    
-    editor.show();
+    initFidgety(true);
+
+    spdlog::debug("[main] Fidgety has been initialised");
+    spdlog::debug("[main] setting up QQmlApplicationEngine");
+
+    QQmlApplicationEngine engine;
+    spdlog::trace("[main] loading homepage.qml");
+    engine.load(QUrl("qrc:/homepage.qml"));
 
     int32_t status = app.exec();
     if (status == 0) {
