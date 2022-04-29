@@ -7,6 +7,7 @@ include(GNUInstallDirs)
 include(FetchContent)
 include(cmake/add_my_library.cmake)
 include(cmake/add_dependencies.cmake)
+include(cmake/qt_major_compat.cmake)
 
 #~~~~ INCLUDES ~~~~#
 
@@ -148,23 +149,14 @@ configure_file(${FIDGETY_CONFIG_HEADER_IN} ${FIDGETY_CONFIG_HEADER_OUT})
 
 ##### BUILD DEPENDENCIES #####
 
+set(FIDGETY_COMPONENTS_UPPER CORE GUI WIDGETS QUICK QML)
+set(FIDGETY_COMPONENTS_PASCAL Core Gui Widgets Quick Qml)
+
 if(${FIDGETY_QT_FROM_SOURCE})
     fidgety_add_dependency_sourced_git(Qt ${FIDGETY_QT_REPO_URL} ${FIDGETY_QT_REPO_TAG})
 else()
-    if(FIDGETY_QT_MAJOR STREQUAL 6)
-        find_package(Qt6 COMPONENTS Core Gui Widgets Quick Qml REQUIRED)
-        set(FIDGETY_QT_CORE Qt6::Core)
-        set(FIDGETY_QT_GUI Qt6::Gui)
-        set(FIDGETY_QT_WIDGETS Qt6::Widgets)
-        set(FIDGETY_QT_QUICK Qt6::Quick)
-        set(FIDGETY_QT_QML Qt6::Qml)
-    elseif(FIDGETY_QT_MAJOR STREQUAL 5)
-        find_package(Qt5 COMPONENTS Core Gui Widgets Quick Qml REQUIRED)
-        set(FIDGETY_QT_CORE Qt5::Core)
-        set(FIDGETY_QT_GUI Qt5::Gui)
-        set(FIDGETY_QT_WIDGETS Qt5::Widgets)
-        set(FIDGETY_QT_QUICK Qt5::Quick)
-        set(FIDGETY_QT_QML Qt5::Qml)
+    if(FIDGETY_QT_MAJOR STREQUAL 6 OR FIDGETY_QT_MAJOR STREQUAL 5)
+        fidgety_setup_qt_dependency()
     else()
         message(FATAL_ERROR "Invalid value for FIDGETY_QT_MAJOR: ${FIDGETY_QT_MAJOR}. \
 Fidgety only targets Qt6 or Qt5 (legacy)")
