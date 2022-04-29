@@ -59,7 +59,7 @@ macro(fidgety_link_qt)
     target_link_libraries(
         ${ARGV0} PRIVATE
         _FidgetyUtilsQt
-        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS}
+        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS} ${FIDGETY_QT_QUICK}
     )
 endmacro()
 
