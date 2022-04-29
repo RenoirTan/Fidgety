@@ -11,6 +11,7 @@
 #include <iostream>
 #include <cstddef>
 #include <cstdint>
+#include <fidgety/_general.hpp>
 #include <fidgety/editor.hpp>
 #include <QApplication>
 #include <QQmlApplicationEngine>
@@ -20,6 +21,8 @@
 using namespace Fidgety;
 
 int32_t main(int32_t argc, char **argv, char **env) {
+    _FIDGETY_INIT_APP();
+
     spdlog::debug("[main] Fidgety is starting up!");
     
     QApplication app(argc, argv);
