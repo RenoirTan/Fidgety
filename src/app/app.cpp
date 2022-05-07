@@ -26,14 +26,14 @@ int32_t main(int32_t argc, char **argv, char **env) {
     spdlog::debug("[main] Fidgety is starting up!");
     
     QApplication app(argc, argv);
-    initFidgety(true);
+    // initFidgety(true);
 
     spdlog::debug("[main] Fidgety has been initialised");
     spdlog::debug("[main] setting up QQmlApplicationEngine");
 
     QQmlApplicationEngine engine;
     spdlog::trace("[main] loading homepage.qml");
-    engine.load(QUrl("qrc:/homepage.qml"));
+    engine.load(QString("../../../resources/qml/homepage.qml"));
 
     int32_t status = app.exec();
     if (status == 0) {

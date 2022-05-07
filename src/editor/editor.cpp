@@ -26,7 +26,7 @@ Editor::Editor(QWidget *parent) : QWidget(parent) {
 
 EditorStatus Fidgety::initFidgety(bool debugMode) {
     if (debugMode) {
-        QCoreApplication::addLibraryPath("../../resources/qml/");
+        QCoreApplication::addLibraryPath("./resources/qml/");
     } else {
         QCoreApplication::addLibraryPath("/usr/share/fidgety/resources/qml/");
     }
