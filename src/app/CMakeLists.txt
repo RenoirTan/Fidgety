@@ -10,6 +10,8 @@ target_link_libraries(
     _FidgetyUtils
     FidgetySelector
     FidgetyVerifier
+    Boost::boost
+    Boost::filesystem
 )
 fidgety_link_exception(FidgetyApp)
 fidgety_link_qt(FidgetyApp)

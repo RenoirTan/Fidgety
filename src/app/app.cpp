@@ -9,33 +9,57 @@
  */
 
 #include <iostream>
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 #include <fidgety/_general.hpp>
 #include <fidgety/editor.hpp>
-#include <QApplication>
+#include <fmt/core.h>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QResource>
 #include <QUrl>
 #include <spdlog/spdlog.h>
 
 using namespace Fidgety;
+namespace BoostFs = boost::filesystem;
+
+static BoostFs::path exeDir;
+static BoostFs::path qmlDir;
 
 static void _logLibraryPaths(const QStringList &paths) {
     spdlog::debug("[main] QGuiApplication app.libraryPaths():");
     for (const auto &path : paths) {
-        spdlog::debug("[main]    {}", path.toStdString());
+        spdlog::debug("[main]    {0}", path.toStdString());
     }
+}
+
+static void _init(const char *argv0) {
+    BoostFs::path path = BoostFs::system_complete(BoostFs::path(argv0));
+    exeDir = path.parent_path();
+    qmlDir = exeDir.parent_path() / "share/fidgety/qml";
+}
+
+static std::string _getRccPath(const std::string &rccRelPath) {
+    return fmt::format("{0}/{1}", qmlDir.string(), rccRelPath);
 }
 
 int32_t main(int32_t argc, char **argv, char **env) {
     _FIDGETY_INIT_APP();
 
     spdlog::debug("[main] Fidgety is starting up!");
-    
+
+    assert(argc >= 1);
+    _init(argv[0]);
+
     QGuiApplication app(argc, argv);
-    initFidgety(app, true);
+    // initFidgety(app, true);
     _logLibraryPaths(app.libraryPaths());
+    const std::string qmlRccPath = _getRccPath("qml.rcc");
+    spdlog::debug("[main] qmlRccPath: {}", qmlRccPath);
+    QResource::registerResource(QString(qmlRccPath.c_str()));
 
     spdlog::debug("[main] Fidgety has been initialised");
     spdlog::debug("[main] setting up QQmlApplicationEngine");
