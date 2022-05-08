@@ -30,10 +30,16 @@ list(APPEND resourcefilelist ${TARGETDIR}/qml.rcc)
 
 message(${resourcefilelist})
 
-add_custom_target(_FidgetyQmlResources DEPENDS ${resourcefilelist})
+add_custom_target(_FidgetyQmlResourcesCustom DEPENDS ${resourcefilelist})
+fidgety_add_my_library(_FidgetyQmlResources STATIC)
+add_dependencies(_FidgetyQmlResources _FidgetyQmlResourcesCustom)
+set_target_properties(_FidgetyQmlResources PROPERTIES OUTPUT_NAME __fidgety_qml_resources)
+fidgety_install_library(_FidgetyQmlResources _fidgety_qml_resources_config.cmake)
 
-add_library(_FidgetyShouldNotHaveUsedCMake)
-add_dependencies(_FidgetyShouldNotHaveUsedCMake _FidgetyQmlResources)
-
-install(DIRECTORY ${TARGETDIR} DESTINATION ${FIDGETY_EXPORT_QML_DIR} FILES_MATCHING PATTERN *.qrc)
-install(DIRECTORY ${TARGETDIR} DESTINATION ${FIDGETY_EXPORT_QML_DIR} FILES_MATCHING PATTERN *.qml)
+install(
+    DIRECTORY ${TARGETDIR} DESTINATION ${FIDGETY_EXPORT_DATA_DIR} FILES_MATCHING
+    PATTERN *.qrc
+    PATTERN *.qml
+    PATTERN *.rcc
+)
+#install(DIRECTORY ${TARGETDIR} DESTINATION ${FIDGETY_EXPORT_DATA_DIR} FILES_MATCHING PATTERN *.qml)

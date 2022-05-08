@@ -7,6 +7,11 @@ macro(fidgety_add_my_library)
     endif()
     add_library(${ARGN})
     add_library("Fidgety::${ARGV0}" ALIAS ${ARGV0})
+    set_target_properties(
+        ${ARGV0} PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+    )
 endmacro()
 
 macro(fidgety_add_my_executable)
@@ -17,6 +22,10 @@ macro(fidgety_add_my_executable)
     endif()
     add_executable(${ARGN})
     add_executable("Fidgety::${ARGV0}" ALIAS ${ARGV0})
+    set_target_properties(
+        ${ARGV0} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    )
 endmacro()
 
 macro(fidgety_link_fmt)
