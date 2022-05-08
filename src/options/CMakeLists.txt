@@ -3,6 +3,7 @@ fidgety_add_my_library(
     options.cpp option_identifier.cpp option_value.cpp validator.cpp
 )
 set_target_properties(FidgetyOptions PROPERTIES OUTPUT_NAME fidgety_options)
+fidgety_set_output_directory(FidgetyOptions)
 fidgety_link_common_libraries(FidgetyOptions)
 fidgety_link_exception(FidgetyOptions)
 target_link_libraries(FidgetyOptions PRIVATE Boost::boost)

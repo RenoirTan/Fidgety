@@ -1,4 +1,5 @@
 fidgety_add_my_library(FidgetyException STATIC exception.cpp)
 set_target_properties(FidgetyException PROPERTIES OUTPUT_NAME fidgety_exception)
+fidgety_set_output_directory(FidgetyException)
 fidgety_link_common_libraries(FidgetyException)
 fidgety_install_library(FidgetyException fidgety_exception_config.cmake)
