@@ -17,9 +17,6 @@
 #include <fidgety/_general.hpp>
 #include <fidgety/editor.hpp>
 #include <fmt/core.h>
-#include <QApplication>
-#include <QQmlApplicationEngine>
-#include <QResource>
 #include <QUrl>
 #include <spdlog/spdlog.h>
 
@@ -41,20 +38,15 @@ int32_t main(int32_t argc, char **argv, char **env) {
 
     spdlog::debug("[main] Fidgety is starting up!");
 
-    // QApplication app(argc, argv);
-
     Editor editor(argc, argv);
     editor.getPathsMut().populateFieldsWithArgv0(argv[0]);
     _logLibraryPaths(editor.libraryPaths());
     editor.registerRcc("qml.rcc");
-    // QResource::registerResource("build/share/fidgety/qml/qml.rcc");
 
     spdlog::debug("[main] Fidgety has been initialised");
 
-    // QQmlApplicationEngine engine;
     spdlog::trace("[main] loading homepage.qml");
     const QUrl homepageQurl("qrc:/homepage.qml");
-    // engine.load(homepageQurl);
     editor.load(homepageQurl);
 
     spdlog::debug("[main] loaded homepage.qml");
