@@ -1,12 +1,39 @@
-set(CURDIR ${PROJECT_SOURCE_DIR}/resources/qml/)
+set(CURDIR ${PROJECT_SOURCE_DIR}/resources/qml)
 set(TARGETDIR ${CMAKE_BINARY_DIR}/share/fidgety/qml)
+set(QMLRES qml.qrc homepage.qml)
 
-add_custom_target(_FidgetyQmlResources)
+# xiexie laotianye
+# https://stackoverflow.com/a/2362222
 
+execute_process(COMMAND mkdir -p ${TARGETDIR})
+
+set(resourcefilelist)
+foreach(resourcefile ${QMLRES})
+    set(resourcefilesrc ${CURDIR}/${resourcefile})
+    set(resourcefiledest ${TARGETDIR}/${resourcefile})
+    message(STATUS "copying ${resourcefilesrc} to ${resourcefiledest}")
+    add_custom_command(
+        OUTPUT ${resourcefiledest}
+        COMMAND ${CMAKE_COMMAND} -E copy ${resourcefilesrc} ${resourcefiledest}
+        DEPENDS ${resourcefilesrc}
+    )
+    list(APPEND resourcefilelist ${resourcefiledest})
+endforeach()
+
+message(STATUS "compiling qml.qrc to qml.rcc")
 add_custom_command(
-    TARGET _FidgetyQmlResources
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CURDIR} ${TARGETDIR}
-    VERBATIM
+    OUTPUT ${TARGETDIR}/qml.rcc
+    COMMAND ${FIDGETY_RCC} -binary ${CURDIR}/qml.qrc -o ${TARGETDIR}/qml.rcc
+    DEPENDS ${CURDIR}/qml.qrc
 )
+list(APPEND resourcefilelist ${TARGETDIR}/qml.rcc)
 
-install(DIRECTORY ${CURDIR} DESTINATION ${TARGETDIR})
+message(${resourcefilelist})
+
+add_custom_target(_FidgetyQmlResources DEPENDS ${resourcefilelist})
+
+add_library(_FidgetyShouldNotHaveUsedCMake)
+add_dependencies(_FidgetyShouldNotHaveUsedCMake _FidgetyQmlResources)
+
+install(DIRECTORY ${TARGETDIR} DESTINATION ${FIDGETY_EXPORT_QML_DIR} FILES_MATCHING PATTERN *.qrc)
+install(DIRECTORY ${TARGETDIR} DESTINATION ${FIDGETY_EXPORT_QML_DIR} FILES_MATCHING PATTERN *.qml)

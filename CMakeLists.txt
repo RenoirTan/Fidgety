@@ -29,6 +29,11 @@ set(
     CACHE STRING "The directory to dump all the *.cmake files used to find fidgety"
 )
 set(
+    FIDGETY_EXPORT_BIN_DIR
+    "${CMAKE_INSTALL_BINDIR}"
+    CACHE STRING "The directory for executables"
+)
+set(
     FIDGETY_EXPORT_LIB_DIR
     "${CMAKE_INSTALL_LIBDIR}/fidgety"
     CACHE STRING "The directory to dump all of fidgety's library files"
@@ -37,6 +42,16 @@ set(
     FIGETY_EXPORT_EXTLIB_DIR
     "${CMAKE_INSTALL_LIBDIR}/fidgety/extensions"
     CACHE STRING "The directory where fidgety's extension libraries are installed to"
+)
+set(
+    FIDGETY_EXPORT_DATA_DIR
+    "${CMAKE_INSTALL_DATAROOTDIR}/fidgety"
+    CACHE STRING "The directory where fidgety's read-only data is stored"
+)
+set(
+    FIDGETY_EXPORT_QML_DIR
+    "${FIDGETY_EXPORT_DATA_DIR}/qml"
+    CACHE STRING "The directory where fidgety's QML files are stored"
 )
 set(
     FIDGETY_GTEST_FROM_SOURCE ON
@@ -137,6 +152,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 #~~~~ CMAKE SETTINGS ~~~~#
 
@@ -163,6 +181,14 @@ else()
 Fidgety only targets Qt6 or Qt5 (legacy)")
     endif()
     message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
+endif()
+
+find_program(FIDGETY_RCC rcc)
+if(FIDGETY_RCC_NOTFOUND)
+    message(FATAL_ERROR "Fidgety requires rcc to compile qrc files. \
+Make sure that Qt has been installed correctly")
+else()
+    message(STATUS "rcc found at ${FIDGETY_RCC}")
 endif()
 
 fidgety_compat_qt_callable(add_resources)
