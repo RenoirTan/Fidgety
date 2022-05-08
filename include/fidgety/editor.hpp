@@ -12,7 +12,7 @@
 #   define FIDGETY_EDITOR_HPP
 
 #   include <boost/filesystem/path.hpp>
-#   include <QGuiApplication>
+#   include <QApplication>
 #   include <QQmlApplicationEngine>
 #   include <QUrl>
 #   include <fidgety/exception.hpp>
@@ -52,7 +52,7 @@ namespace Fidgety {
         EditorStatus populateFieldsWithArgv0(const boost::filesystem::path &exePath);
     };
 
-    class Editor : public QGuiApplication {
+    class Q_WIDGETS_EXPORT Editor : public QApplication {
         // Q_OBJECT
 
         public:
@@ -74,8 +74,6 @@ namespace Fidgety {
             EditorAppPaths mPaths;
             QQmlApplicationEngine *mEngine;
     };
-
-    EditorStatus initFidgety(QCoreApplication &app, bool debugMode=false);
 }
 
 #endif

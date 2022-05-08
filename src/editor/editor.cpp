@@ -82,8 +82,9 @@ EditorStatus EditorAppPaths::populateFieldsWithArgv0(const boost::filesystem::pa
     return EditorStatus::Ok;
 }
 
-Editor::Editor(int32_t argc, char **argv) : QGuiApplication(argc, argv) {
-    mEngine = new QQmlApplicationEngine();
+Editor::Editor(int32_t argc, char **argv) : QApplication(argc, argv) {
+    mEngine = new QQmlApplicationEngine(this);
+    // spdlog::trace("[Fidgety::Editor::Editor] mEngine: {0}", (void *) mEngine);
     if (!mEngine) {
         FIDGETY_CRITICAL(
             EditorException,
@@ -126,6 +127,7 @@ BoostFs::path Editor::getRccPath(const std::string &relative) const {
 }
 
 EditorStatus Editor::registerRcc(const std::string &relative) const {
+    spdlog::debug("[Fidgety::Editor::registerRcc] getRccPath for '{0}'", relative);
     std::string rccPath = getRccPath(relative).string();
     spdlog::debug("[Fidgety::Editor::registerRcc] registering '{0}'", rccPath);
     if (!BoostFs::exists(rccPath)) {
@@ -136,8 +138,17 @@ EditorStatus Editor::registerRcc(const std::string &relative) const {
             rccPath
         );
     }
-    QResource::registerResource(QString(rccPath.c_str()));
-    return EditorStatus::Ok;
+    bool hmm = QResource::registerResource(QString(rccPath.c_str()));
+    if (hmm) {
+        return EditorStatus::Ok;
+    } else {
+        FIDGETY_ERROR(
+            EditorException,
+            EditorStatus::QtError,
+            "[Fidgety::Editor::registerRcc] could not register '{0}'",
+            rccPath
+        );
+    }
 }
 
 EditorStatus Editor::load(const QUrl &qurl) {
@@ -148,15 +159,8 @@ EditorStatus Editor::load(const QUrl &qurl) {
             "[Fidgety::Editor::load] mEngine is null"
         );
     }
+    spdlog::trace("[Fidgety::Editor::load] loading '{}'", qurl.toString().toStdString());
     mEngine->load(qurl);
-    return EditorStatus::Ok;
-}
-
-EditorStatus Fidgety::initFidgety(QCoreApplication &app, bool debugMode) {
-    if (debugMode) {
-        app.addLibraryPath("./resources/qml/");
-    } else {
-        app.addLibraryPath("/usr/share/fidgety/resources/qml/");
-    }
+    spdlog::trace("[Fidgety::Editor::load] loaded");
     return EditorStatus::Ok;
 }
