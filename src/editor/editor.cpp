@@ -82,7 +82,7 @@ EditorStatus EditorAppPaths::populateFieldsWithArgv0(const boost::filesystem::pa
     return EditorStatus::Ok;
 }
 
-Editor::Editor(int32_t argc, char **argv) : QApplication(argc, argv) {
+Editor::Editor(int32_t &argc, char **argv) : QApplication(argc, argv) {
     mEngine = new QQmlApplicationEngine(this);
     // spdlog::trace("[Fidgety::Editor::Editor] mEngine: {0}", (void *) mEngine);
     if (!mEngine) {

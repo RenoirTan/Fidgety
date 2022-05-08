@@ -56,7 +56,7 @@ namespace Fidgety {
         // Q_OBJECT
 
         public:
-            Editor(int32_t argc, char **argv);
+            Editor(int32_t &argc, char **argv);
             ~Editor(void);
 
             const EditorAppPaths &getPaths(void) const noexcept;
