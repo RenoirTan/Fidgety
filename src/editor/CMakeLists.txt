@@ -1,4 +1,4 @@
-fidgety_add_my_library(FidgetyEditor STATIC editor.cpp ${PROJECT_SOURCE_DIR}/resources/qml/qml.qrc)
+fidgety_add_my_library(FidgetyEditor STATIC editor.cpp)
 set_target_properties(FidgetyEditor PROPERTIES OUTPUT_NAME fidgety_editor)
 fidgety_link_common_libraries(FidgetyEditor)
 fidgety_link_exception(FidgetyEditor)
