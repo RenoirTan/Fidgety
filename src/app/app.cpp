@@ -51,25 +51,23 @@ int32_t main(int32_t argc, char **argv, char **env) {
 
     spdlog::debug("[main] Fidgety is starting up!");
 
-    assert(argc >= 1);
+    assert(argc >= 1); // if not true then linus torvalds is going to have a fun time
     _init(argv[0]);
 
-    QGuiApplication app(argc, argv);
+    Editor editor(argc, argv);
+    editor.getPathsMut().populateFieldsWithArgv0(argv[0]);
+
     // initFidgety(app, true);
-    _logLibraryPaths(app.libraryPaths());
-    const std::string qmlRccPath = _getRccPath("qml.rcc");
-    spdlog::debug("[main] qmlRccPath: {}", qmlRccPath);
-    QResource::registerResource(QString(qmlRccPath.c_str()));
+    _logLibraryPaths(editor.getApp()->libraryPaths());
+    editor.registerRcc("qml.rcc");
 
     spdlog::debug("[main] Fidgety has been initialised");
-    spdlog::debug("[main] setting up QQmlApplicationEngine");
 
-    QQmlApplicationEngine engine;
     spdlog::trace("[main] loading homepage.qml");
     const QUrl homepageQurl("qrc:/homepage.qml");
-    engine.load(homepageQurl);
+    editor.load(homepageQurl);
 
-    int32_t status = app.exec();
+    int32_t status = editor.getApp()->exec();
     if (status == 0) {
         spdlog::debug("[main] Fidgety exited with code 0");
     } else {

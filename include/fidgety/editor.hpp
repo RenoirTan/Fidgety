@@ -11,10 +11,10 @@
 #ifndef FIDGETY_EDITOR_HPP
 #   define FIDGETY_EDITOR_HPP
 
-#   include <QCoreApplication>
-#   include <QPushButton>
-#   include <QListView>
-#   include <QWidget>
+#   include <boost/filesystem/path.hpp>
+#   include <QGuiApplication>
+#   include <QQmlApplicationEngine>
+#   include <QUrl>
 #   include <fidgety/exception.hpp>
 
 namespace Fidgety {
@@ -27,7 +27,10 @@ namespace Fidgety {
         ResourceBusy = 5,
         CannotOpenMultipleFiles = 6,
         FilesNotOpen = 7,
-        SyntaxError = 8
+        SyntaxError = 8,
+        TraversalError = 9,
+        QtError = 10,
+        UninitializedError = 11
     };
 
     class EditorException : public Exception {
@@ -39,17 +42,40 @@ namespace Fidgety {
             const char *getSimpleWhat(void) const noexcept;
     };
 
-    class Editor : public QWidget {
-        // DO NOT FUCKING ADD Q_OBJECT
+    struct EditorAppPaths {
+        boost::filesystem::path prefixDir;
+        boost::filesystem::path exePath;
+        boost::filesystem::path resourceDir;
+        boost::filesystem::path qmlDir;
 
+        EditorStatus populateFieldsWithArgv0(const char *exePath);
+        EditorStatus populateFieldsWithArgv0(const boost::filesystem::path &exePath);
+    };
+
+    class Editor {
         public:
-            explicit Editor(QWidget *parent = 0);
+            Editor(void);
+            Editor(int32_t argc, char **argv);
+            Editor(EditorAppPaths &&paths, QGuiApplication *app, QQmlApplicationEngine *engine);
+            ~Editor(void);
 
-        signals:
-        public slots:
+            const EditorAppPaths &getPaths(void) const noexcept;
+            EditorAppPaths &getPathsMut(void) noexcept;
+            EditorStatus setPaths(EditorAppPaths &&paths);
+
+            QGuiApplication *getApp(void) noexcept;
+            EditorStatus setApp(QGuiApplication *app);
+            QQmlApplicationEngine *getEngine(void) noexcept;
+            EditorStatus setEngine(QQmlApplicationEngine *engine);
+
+            boost::filesystem::path getRccPath(const std::string &relative) const;
+            EditorStatus registerRcc(const std::string &relative) const;
+            EditorStatus load(const QUrl &qurl);
 
         protected:
-            QListView *mAppList;
+            EditorAppPaths mPaths;
+            QGuiApplication *mApp;
+            QQmlApplicationEngine *mEngine;
     };
 
     EditorStatus initFidgety(QCoreApplication &app, bool debugMode=false);

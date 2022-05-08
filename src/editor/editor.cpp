@@ -8,20 +8,179 @@
  * @copyright Copyright (c) 2022
  */
 
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 #include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QResource>
 #include <QScreen>
+#include <spdlog/spdlog.h>
+#include <fidgety/_utils.hpp>
 #include <fidgety/_utils_qt.hpp>
 #include <fidgety/editor.hpp>
 
 using namespace Fidgety;
+namespace BoostFs = boost::filesystem;
 
-Editor::Editor(QWidget *parent) : QWidget(parent) {
-    QRect screenDimensions = QGuiApplication::primaryScreen()->geometry();
-    setMinimumSize(480, 270); // 16:9
-    setBaseSize(screenDimensions.width() * 0.7, screenDimensions.height() * 0.7);
-    setWindowTitle("Fidgety");
-    mAppList = new QListView(this);
-    mAppList->setGeometry(getGeometry(this->geometry(), QSize(150, 100), 10));
+std::string EditorException::codeAsErrorType(void) const {
+    switch (mCode) {
+        case 0: return "Ok";
+        case 1: return "FileNotFound";
+        case 2: return "CannotReadFile";
+        case 3: return "CannotWriteFile";
+        case 4: return "CannotCloseFile";
+        case 5: return "ResourceBusy";
+        case 6: return "CannotOpenMultipleFiles";
+        case 7: return "FilesNotOpen";
+        case 8: return "SyntaxError";
+        case 9: return "TraversalError";
+        case 10: return "QtError";
+        case 11: return "UninitializedError";
+        default: return "Other";
+    }
+}
+
+const char *EditorException::getSimpleWhat(void) const noexcept {
+    return "A Fidgety::EditorException occurred.";
+}
+
+EditorStatus EditorAppPaths::populateFieldsWithArgv0(const char *exePath) {
+    return this->populateFieldsWithArgv0(BoostFs::path(exePath));
+}
+
+EditorStatus EditorAppPaths::populateFieldsWithArgv0(const boost::filesystem::path &exePath) {
+    this->exePath = exePath;
+    if (!exePath.has_parent_path() || !exePath.parent_path().has_parent_path()) {
+        FIDGETY_ERROR(
+            EditorException,
+            EditorStatus::TraversalError,
+            "[Fidgety::EditorAppPaths::populateFieldsWithArgv0] exePath ('{0}') has no parent path",
+            exePath.string()
+        );
+    }
+    this->prefixDir = exePath.parent_path().parent_path();
+    this->resourceDir = this->prefixDir / "share/fidgety";
+    if (!BoostFs::exists(this->resourceDir)) {
+        FIDGETY_ERROR(
+            EditorException,
+            EditorStatus::TraversalError,
+            "[Fidgety::EditorAppPaths::populateFieldsWithArgv0] "
+            "this->resourceDir ('{0}') does not exist",
+            this->resourceDir.string()
+        );
+    }
+    this->qmlDir = this->resourceDir / "qml";
+    if (!BoostFs::exists(this->qmlDir)) {
+        FIDGETY_ERROR(
+            EditorException,
+            EditorStatus::TraversalError,
+            "[Fidgety::EditorAppPaths::populateFieldsWithArgv0] "
+            "this->qmlDir ('{0}') does not exist",
+            this->qmlDir.string()
+        );
+    }
+    return EditorStatus::Ok;
+}
+
+Editor::Editor(void) :
+    mPaths{},
+    mApp(0),
+    mEngine(0)
+{ }
+
+Editor::Editor(int32_t argc, char **argv) : Editor() {
+    mApp = new QGuiApplication(argc, argv);
+    if (!mApp) {
+        FIDGETY_CRITICAL(
+            EditorException,
+            EditorStatus::QtError,
+            "[Fidgety::Editor::Editor] could not create mApp"
+        );
+    }
+    mEngine = new QQmlApplicationEngine();
+    if (!mEngine) {
+        FIDGETY_CRITICAL(
+            EditorException,
+            EditorStatus::QtError,
+            "[Fidgety::Editor::Editor] could not create mApp"
+        );
+    }
+}
+
+Editor::Editor(EditorAppPaths &&paths, QGuiApplication *app, QQmlApplicationEngine *engine) :
+    mPaths(std::move(paths))
+{
+    mApp = app;
+    mEngine = engine;
+}
+
+Editor::~Editor(void) {
+    if (mApp) delete mApp;
+    if (mEngine) delete mEngine;
+}
+
+const EditorAppPaths &Editor::getPaths(void) const noexcept {
+    return mPaths;
+}
+
+EditorAppPaths &Editor::getPathsMut(void) noexcept {
+    return mPaths;
+}
+
+EditorStatus Editor::setPaths(EditorAppPaths &&paths) {
+    mPaths = std::move(paths);
+    return EditorStatus::Ok;
+}
+
+QGuiApplication *Editor::getApp(void) noexcept {
+    return mApp;
+}
+
+EditorStatus Editor::setApp(QGuiApplication *app) {
+    if (mApp) delete mApp;
+    mApp = app;
+    return EditorStatus::Ok;
+}
+
+QQmlApplicationEngine *Editor::getEngine(void) noexcept {
+    return mEngine;
+}
+
+EditorStatus Editor::setEngine(QQmlApplicationEngine *engine) {
+    if (mEngine) delete mEngine;
+    mEngine = engine;
+    return EditorStatus::Ok;
+}
+
+BoostFs::path Editor::getRccPath(const std::string &relative) const {
+    return mPaths.qmlDir / relative;
+}
+
+EditorStatus Editor::registerRcc(const std::string &relative) const {
+    std::string rccPath = getRccPath(relative).string();
+    spdlog::debug("[Fidgety::Editor::registerRcc] registering '{0}'", rccPath);
+    if (!BoostFs::exists(rccPath)) {
+        FIDGETY_ERROR(
+            EditorException,
+            EditorStatus::FileNotFound,
+            "[Fidgety::Editor::registerRcc] file does not exist: {0}",
+            rccPath
+        );
+    }
+    QResource::registerResource(QString(rccPath.c_str()));
+    return EditorStatus::Ok;
+}
+
+EditorStatus Editor::load(const QUrl &qurl) {
+    if (!mEngine) {
+        FIDGETY_ERROR(
+            EditorException,
+            EditorStatus::UninitializedError,
+            "[Fidgety::Editor::load] mEngine is null"
+        );
+    }
+    mEngine->load(qurl);
+    return EditorStatus::Ok;
 }
 
 EditorStatus Fidgety::initFidgety(QCoreApplication &app, bool debugMode) {
