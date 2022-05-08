@@ -113,6 +113,30 @@ macro(fidgety_install_library)
     endif()
 endmacro()
 
+macro(fidgety_install_executable)
+    # ARGV0: name of the executable
+    # ARGV1: name of the CMake file
+    if(ARGC LESS 2)
+        message(
+            FATAL_ERROR
+            "you need to provide the name of the executable and the name its CMake file"
+        )
+    endif()
+    if(FIDGETY_MASTER_PROJECT)
+        install(
+            TARGETS ${ARGV0}
+            EXPORT ${ARGV0}
+            DESTINATION ${FIDGETY_EXPORT_BIN_DIR}
+        )
+        install(
+            EXPORT ${ARGV0}
+            DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
+            NAMESPACE Fidgety::
+            FILE ${ARGV1}
+        )
+    endif()
+endmacro()
+
 macro(fidgety_install_extension)
     # ARGV0: name of the extension
     # ARGV1: name of the CMake file

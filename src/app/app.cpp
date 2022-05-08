@@ -14,26 +14,36 @@
 #include <fidgety/_general.hpp>
 #include <fidgety/editor.hpp>
 #include <QApplication>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QUrl>
 #include <spdlog/spdlog.h>
 
 using namespace Fidgety;
 
+static void _logLibraryPaths(const QStringList &paths) {
+    spdlog::debug("[main] QGuiApplication app.libraryPaths():");
+    for (const auto &path : paths) {
+        spdlog::debug("[main]    {}", path.toStdString());
+    }
+}
+
 int32_t main(int32_t argc, char **argv, char **env) {
     _FIDGETY_INIT_APP();
 
     spdlog::debug("[main] Fidgety is starting up!");
     
-    QApplication app(argc, argv);
-    // initFidgety(true);
+    QGuiApplication app(argc, argv);
+    initFidgety(app, true);
+    _logLibraryPaths(app.libraryPaths());
 
     spdlog::debug("[main] Fidgety has been initialised");
     spdlog::debug("[main] setting up QQmlApplicationEngine");
 
     QQmlApplicationEngine engine;
     spdlog::trace("[main] loading homepage.qml");
-    engine.load(QString("../../../resources/qml/homepage.qml"));
+    const QUrl homepageQurl("qrc:/homepage.qml");
+    engine.load(homepageQurl);
 
     int32_t status = app.exec();
     if (status == 0) {

@@ -11,6 +11,7 @@
 #ifndef FIDGETY_EDITOR_HPP
 #   define FIDGETY_EDITOR_HPP
 
+#   include <QCoreApplication>
 #   include <QPushButton>
 #   include <QListView>
 #   include <QWidget>
@@ -51,7 +52,7 @@ namespace Fidgety {
             QListView *mAppList;
     };
 
-    EditorStatus initFidgety(bool debugMode=false);
+    EditorStatus initFidgety(QCoreApplication &app, bool debugMode=false);
 }
 
 #endif

@@ -13,4 +13,4 @@ target_link_libraries(
 )
 fidgety_link_exception(FidgetyApp)
 fidgety_link_qt(FidgetyApp)
-fidgety_install_library(FidgetyApp fidgety_app_config.cmake)
+fidgety_install_executable(FidgetyApp fidgety_app_config.cmake)
