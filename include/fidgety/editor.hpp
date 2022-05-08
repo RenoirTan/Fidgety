@@ -52,19 +52,17 @@ namespace Fidgety {
         EditorStatus populateFieldsWithArgv0(const boost::filesystem::path &exePath);
     };
 
-    class Editor {
+    class Editor : public QGuiApplication {
+        // Q_OBJECT
+
         public:
-            Editor(void);
             Editor(int32_t argc, char **argv);
-            Editor(EditorAppPaths &&paths, QGuiApplication *app, QQmlApplicationEngine *engine);
             ~Editor(void);
 
             const EditorAppPaths &getPaths(void) const noexcept;
             EditorAppPaths &getPathsMut(void) noexcept;
             EditorStatus setPaths(EditorAppPaths &&paths);
 
-            QGuiApplication *getApp(void) noexcept;
-            EditorStatus setApp(QGuiApplication *app);
             QQmlApplicationEngine *getEngine(void) noexcept;
             EditorStatus setEngine(QQmlApplicationEngine *engine);
 
@@ -74,7 +72,6 @@ namespace Fidgety {
 
         protected:
             EditorAppPaths mPaths;
-            QGuiApplication *mApp;
             QQmlApplicationEngine *mEngine;
     };
 

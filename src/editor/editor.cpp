@@ -82,21 +82,7 @@ EditorStatus EditorAppPaths::populateFieldsWithArgv0(const boost::filesystem::pa
     return EditorStatus::Ok;
 }
 
-Editor::Editor(void) :
-    mPaths{},
-    mApp(0),
-    mEngine(0)
-{ }
-
-Editor::Editor(int32_t argc, char **argv) : Editor() {
-    mApp = new QGuiApplication(argc, argv);
-    if (!mApp) {
-        FIDGETY_CRITICAL(
-            EditorException,
-            EditorStatus::QtError,
-            "[Fidgety::Editor::Editor] could not create mApp"
-        );
-    }
+Editor::Editor(int32_t argc, char **argv) : QGuiApplication(argc, argv) {
     mEngine = new QQmlApplicationEngine();
     if (!mEngine) {
         FIDGETY_CRITICAL(
@@ -107,16 +93,9 @@ Editor::Editor(int32_t argc, char **argv) : Editor() {
     }
 }
 
-Editor::Editor(EditorAppPaths &&paths, QGuiApplication *app, QQmlApplicationEngine *engine) :
-    mPaths(std::move(paths))
-{
-    mApp = app;
-    mEngine = engine;
-}
-
 Editor::~Editor(void) {
-    if (mApp) delete mApp;
     if (mEngine) delete mEngine;
+    QGuiApplication::~QGuiApplication();
 }
 
 const EditorAppPaths &Editor::getPaths(void) const noexcept {
@@ -129,16 +108,6 @@ EditorAppPaths &Editor::getPathsMut(void) noexcept {
 
 EditorStatus Editor::setPaths(EditorAppPaths &&paths) {
     mPaths = std::move(paths);
-    return EditorStatus::Ok;
-}
-
-QGuiApplication *Editor::getApp(void) noexcept {
-    return mApp;
-}
-
-EditorStatus Editor::setApp(QGuiApplication *app) {
-    if (mApp) delete mApp;
-    mApp = app;
     return EditorStatus::Ok;
 }
 
