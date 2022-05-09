@@ -13,7 +13,8 @@ You will also need to install Qt5/6, Boost, spdlog, fmt and nlohmann_json with
 the corresponding *.cmake files in your system directories. This allows CMake
 to search and load these packages through the `find_package` function.
 Your distribution's package manager should be able to handle the installation
-of these libraries for you without much trouble.
+of these libraries for you without much trouble. A handy set of commands for
+your distro can be found in [BUILD_FGMK.md](BUILD_FGMK.md).
 
 [fmt](https://github.com/fmtlib/fmt) is a critical component of Fidgety.
 However, spdlog already includes fmt as a dependency, so there should
@@ -23,9 +24,9 @@ Preferably, you should have a recent version of Make installed as Fidgety uses
 Make as part of the build pipeline.
 
 You can visit [**BUILD_MK.md**](BUILD_MK.md) to learn more about the Makefile
-Fidgety uses to simplify the build process. Directly calling make was the old
-way of building Fidgety, and instead you should use the `fgmk` script in the
-root of the project directory.
+Fidgety uses to simplify the build process. This document is pretty outdated
+and I suggest that you instead use the `fgmk` script mentioned in the
+[fgmk](#fgmk) section.
 
 ## **`fgmk`**
 

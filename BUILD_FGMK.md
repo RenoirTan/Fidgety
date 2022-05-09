@@ -54,6 +54,7 @@ command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __m
 ```
 
 ### Ubuntu
+
 ```shell
 # Dependencies (using qt5)
 sudo apt update
@@ -63,6 +64,7 @@ sudo apt install \
     libspdlog-dev \
     libfmt-dev \
     nlohmann-json3-dev \
+    qt5-default \
     qtbase5-dev \
     qtdeclarative5-dev
 
