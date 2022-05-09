@@ -54,15 +54,18 @@ command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __m
 ```shell
 # Dependencies (using qt5)
 sudo dnf install \
-    boost \
+    cmake \
+    gcc-c++ \
+    boost-devel \
     spdlog-devel \
     fmt-devel \
-    qt5-qtbase
+    json-devel \
+    qt5-qtbase-devel \
+    qt5-qtdeclarative-devel
 
 __cpu=$(nproc)
 __mem=$(($(cat /proc/meminfo | grep "MemTotal" | awk '{ print $2 }') / 2000000))
 command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __mem))
-./fgmk s fidgety_nlohmannjson_from_source on
 ```
 
 If you don't want to build any tests, run:
