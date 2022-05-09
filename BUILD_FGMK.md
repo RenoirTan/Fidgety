@@ -18,35 +18,58 @@ root and you want to build the unit tests.
 ### Arch Linux
 
 ```shell
-# Dependencies (using qt6)
+# Dependencies (using qt5)
 sudo pacman -Syu \
+    base-devel \
     boost \
     boost-libs \
     spdlog \
     fmt \
     nlohmann_json \
-    qt5-base
+    qt5-base \
+    qt5-declarative
 
 __cpu=$(nproc)
 __mem=$(($(cat /proc/meminfo | grep "MemTotal" | awk '{ print $2 }') / 2000000))
 command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __mem))
 ```
 
-### Debian, Ubuntu
+### Debian
 
 ```shell
 # Dependencies (using qt5)
 sudo apt update
 sudo apt install \
+    cmake \
     libboost-all-dev \
     libspdlog-dev \
     libfmt-dev \
     nlohmann-json3-dev \
-    qtbase5-dev
+    qtbase5-dev \
+    qtdeclarative5-dev
 
 __cpu=$(nproc)
 __mem=$(($(cat /proc/meminfo | grep "MemTotal" | awk '{ print $2 }') / 2000000))
 command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __mem))
+```
+
+### Ubuntu
+```shell
+# Dependencies (using qt5)
+sudo apt update
+sudo apt install \
+    cmake \
+    libboost-all-dev \
+    libspdlog-dev \
+    libfmt-dev \
+    nlohmann-json3-dev \
+    qtbase5-dev \
+    qtdeclarative5-dev
+
+__cpu=$(nproc)
+__mem=$(($(cat /proc/meminfo | grep "MemTotal" | awk '{ print $2 }') / 2000000))
+command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __mem))
+./fgmk s fidgety_fmtlib_header_only off
 ```
 
 ### Fedora

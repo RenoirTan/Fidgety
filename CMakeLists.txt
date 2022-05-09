@@ -180,7 +180,7 @@ Fidgety only targets Qt6 or Qt5 (legacy)")
     message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
 endif()
 
-find_program(FIDGETY_RCC rcc-qt${FIDGETY_QT_MAJOR})
+find_program(FIDGETY_RCC rcc rcc-qt${FIDGETY_QT_MAJOR})
 if(FIDGETY_RCC_NOTFOUND)
     message(FATAL_ERROR "Fidgety requires rcc-qt${FIDGETY_QT_MAJOR} to compile qrc files. \
 Make sure that Qt has been installed correctly")
