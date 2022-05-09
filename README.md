@@ -27,8 +27,8 @@ to this policy. You can try and contribute by porting this project to other
 operating systems (especially on Windows, where CMake's documentation really
 failed me with the find_package part). Due to differences between the versions
 of various dependencies in different distributions, Fidgety may fail to compile.
-Currently, Fidgety compiles *without warnings* on Arch Linux, while on Debian
-11, Fedora 35 and Ubuntu 20.04, I haven't gotten CMake to find Qt5::Quick yet.
+Currently, Fidgety compiles *without warnings* on Arch Linux and Debian
+11 but with errors on Fedora Linux 35 and Ubuntu 20.04.
 
 # Building Fidgety
 
