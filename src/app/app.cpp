@@ -50,12 +50,9 @@ int32_t run(int32_t argc, char **argv, char **env) {
     spdlog::debug("[run] loaded homepage.qml");
 
     int32_t status = editor.exec();
-    if (status == 0)
-    {
+    if (status == 0) {
         spdlog::debug("[run] Fidgety exited with code 0");
-    }
-    else
-    {
+    } else {
         spdlog::error("[run] Fidgety exited with code {}", status);
     }
 

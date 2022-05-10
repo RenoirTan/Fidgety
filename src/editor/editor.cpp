@@ -126,13 +126,13 @@ EditorStatus Editor::setEngine(QQmlApplicationEngine *engine) {
     return EditorStatus::Ok;
 }
 
-BoostFs::path Editor::getRccPath(const std::string &relative) const {
+BoostFs::path Editor::getPathToResource(const std::string &relative) const {
     return mPaths.qmlDir / relative;
 }
 
 EditorStatus Editor::registerRcc(const std::string &relative) const {
-    spdlog::debug("[Fidgety::Editor::registerRcc] getRccPath for '{0}'", relative);
-    std::string rccPath = getRccPath(relative).string();
+    spdlog::debug("[Fidgety::Editor::registerRcc] getPathToResource for '{0}'", relative);
+    std::string rccPath = getPathToResource(relative).string();
     spdlog::debug("[Fidgety::Editor::registerRcc] registering '{0}'", rccPath);
     if (!BoostFs::exists(rccPath)) {
         FIDGETY_ERROR(

@@ -66,7 +66,7 @@ namespace Fidgety {
             QQmlApplicationEngine *getEngine(void) noexcept;
             EditorStatus setEngine(QQmlApplicationEngine *engine);
 
-            boost::filesystem::path getRccPath(const std::string &relative) const;
+            boost::filesystem::path getPathToResource(const std::string &relative) const;
             EditorStatus registerRcc(const std::string &relative) const;
             EditorStatus load(const QUrl &qurl);
 
