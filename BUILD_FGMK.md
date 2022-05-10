@@ -40,6 +40,7 @@ command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __m
 # Dependencies (using qt5)
 sudo apt update
 sudo apt install \
+    build-essential \
     cmake \
     libboost-all-dev \
     libspdlog-dev \
@@ -59,6 +60,7 @@ command -v nproc &>/dev/null && ./fgmk s parallel $((__cpu < __mem ? __cpu : __m
 # Dependencies (using qt5)
 sudo apt update
 sudo apt install \
+    build-essential \
     cmake \
     libboost-all-dev \
     libspdlog-dev \
