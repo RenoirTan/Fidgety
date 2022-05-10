@@ -99,7 +99,6 @@ Editor::~Editor(void) {
     spdlog::trace("[Fidgety::Editor::~Editor] deleting");
     if (mEngine) delete mEngine;
     spdlog::trace("[Fidgety::Editor::~Editor] deleted mEngine");
-    spdlog::trace("[Fidgety::Editor::~Editor] now calling parent destructor: ~QApplication");
 }
 
 const EditorAppPaths &Editor::getPaths(void) const noexcept {
@@ -111,6 +110,7 @@ EditorAppPaths &Editor::getPathsMut(void) noexcept {
 }
 
 EditorStatus Editor::setPaths(EditorAppPaths &&paths) {
+    spdlog::trace("[Fidgety::Editor::setPaths] setting new mPaths");
     mPaths = std::move(paths);
     return EditorStatus::Ok;
 }
@@ -120,6 +120,7 @@ QQmlApplicationEngine *Editor::getEngine(void) noexcept {
 }
 
 EditorStatus Editor::setEngine(QQmlApplicationEngine *engine) {
+    spdlog::trace("[Fidgety::Editor::setEngine] replacing mEngine");
     if (mEngine) delete mEngine;
     mEngine = engine;
     return EditorStatus::Ok;
@@ -143,6 +144,7 @@ EditorStatus Editor::registerRcc(const std::string &relative) const {
     }
     bool hmm = QResource::registerResource(QString(rccPath.c_str()));
     if (hmm) {
+        spdlog::trace("[Fidgety::Editor::registerRcc] ok");
         return EditorStatus::Ok;
     } else {
         FIDGETY_ERROR(
@@ -155,6 +157,7 @@ EditorStatus Editor::registerRcc(const std::string &relative) const {
 }
 
 EditorStatus Editor::load(const QUrl &qurl) {
+    spdlog::trace("[Fidgety::Editor::load] loading '{}'", qurl.toString().toStdString());
     if (!mEngine) {
         FIDGETY_ERROR(
             EditorException,
@@ -162,7 +165,6 @@ EditorStatus Editor::load(const QUrl &qurl) {
             "[Fidgety::Editor::load] mEngine is null"
         );
     }
-    spdlog::trace("[Fidgety::Editor::load] loading '{}'", qurl.toString().toStdString());
     mEngine->load(qurl);
     spdlog::trace("[Fidgety::Editor::load] loaded");
     return EditorStatus::Ok;
