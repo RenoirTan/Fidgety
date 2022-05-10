@@ -27,36 +27,45 @@ static BoostFs::path exeDir;
 static BoostFs::path qmlDir;
 
 static void _logLibraryPaths(const QStringList &paths) {
-    spdlog::debug("[main] app.libraryPaths():");
+    spdlog::debug("[_logLibraryPaths] app.libraryPaths():");
     for (const auto &path : paths) {
-        spdlog::debug("[main]    {0}", path.toStdString());
+        spdlog::debug("[_logLibraryPaths]    {0}", path.toStdString());
     }
 }
 
-int32_t main(int32_t argc, char **argv, char **env) {
-    _FIDGETY_INIT_APP();
-
-    spdlog::debug("[main] Fidgety is starting up!");
+int32_t run(int32_t argc, char **argv, char **env) {
+    spdlog::debug("[run] Fidgety is starting up!");
 
     Editor editor(argc, argv);
     editor.getPathsMut().populateFieldsWithArgv0(argv[0]);
     _logLibraryPaths(editor.libraryPaths());
     editor.registerRcc("qml.rcc");
 
-    spdlog::debug("[main] Fidgety has been initialised");
+    spdlog::debug("[run] Fidgety has been initialised");
 
-    spdlog::trace("[main] loading homepage.qml");
+    spdlog::trace("[run] loading homepage.qml");
     const QUrl homepageQurl("qrc:/homepage.qml");
     editor.load(homepageQurl);
 
-    spdlog::debug("[main] loaded homepage.qml");
+    spdlog::debug("[run] loaded homepage.qml");
 
     int32_t status = editor.exec();
-    if (status == 0) {
-        spdlog::debug("[main] Fidgety exited with code 0");
-    } else {
-        spdlog::error("[main] Fidgety exited with code {}", status);
+    if (status == 0)
+    {
+        spdlog::debug("[run] Fidgety exited with code 0");
+    }
+    else
+    {
+        spdlog::error("[run] Fidgety exited with code {}", status);
     }
 
+    return status;
+}
+
+int32_t main(int32_t argc, char **argv, char **env) {
+    _FIDGETY_INIT_APP();
+    spdlog::debug("[main] entry point");
+    int32_t status = run(argc, argv, env);
+    spdlog::debug("[main] exiting");
     return status;
 }

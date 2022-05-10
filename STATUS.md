@@ -5,10 +5,6 @@ environments and the problems that have been encountered. You can consult this
 document to find out which distros and operating systems Fidgety is being
 tested on and *maybe* find workarounds for build errors.
 
-## Common Problems
-
-When closing the window spawned by `fidgety`, a segfault happens.
-
 ## Arch Linux
 
 Works fine (if you've been diligently updating your packages).

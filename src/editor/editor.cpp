@@ -83,6 +83,7 @@ EditorStatus EditorAppPaths::populateFieldsWithArgv0(const boost::filesystem::pa
 }
 
 Editor::Editor(int32_t &argc, char **argv) : QApplication(argc, argv) {
+    spdlog::trace("[Fidgety::Editor::Editor] initialising");
     mEngine = new QQmlApplicationEngine(this);
     if (!mEngine) {
         FIDGETY_CRITICAL(
@@ -91,11 +92,14 @@ Editor::Editor(int32_t &argc, char **argv) : QApplication(argc, argv) {
             "[Fidgety::Editor::Editor] could not create mApp"
         );
     }
+    spdlog::trace("[Fidgety::Editor::Editor] successfully created mEngine");
 }
 
 Editor::~Editor(void) {
+    spdlog::trace("[Fidgety::Editor::~Editor] deleting");
     if (mEngine) delete mEngine;
-    QGuiApplication::~QGuiApplication();
+    spdlog::trace("[Fidgety::Editor::~Editor] deleted mEngine");
+    spdlog::trace("[Fidgety::Editor::~Editor] now calling parent destructor: ~QApplication");
 }
 
 const EditorAppPaths &Editor::getPaths(void) const noexcept {
