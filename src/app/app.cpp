@@ -23,9 +23,6 @@
 using namespace Fidgety;
 namespace BoostFs = boost::filesystem;
 
-static BoostFs::path exeDir;
-static BoostFs::path qmlDir;
-
 static void _logLibraryPaths(const QStringList &paths) {
     spdlog::debug("[_logLibraryPaths] app.libraryPaths():");
     for (const auto &path : paths) {
