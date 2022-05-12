@@ -1,6 +1,6 @@
 set(CURDIR ${PROJECT_SOURCE_DIR}/resources/qml)
 set(TARGETDIR ${CMAKE_BINARY_DIR}/share/fidgety/qml)
-set(QMLRES qml.qrc homepage.qml)
+set(QMLRES qml.qrc Homepage.qml ConfigFilesModel.qml)
 
 # xiexie laotianye
 # https://stackoverflow.com/a/2362222
@@ -24,7 +24,7 @@ message(STATUS "compiling qml.qrc to qml.rcc")
 add_custom_command(
     OUTPUT ${TARGETDIR}/qml.rcc
     COMMAND ${FIDGETY_RCC} -binary ${CURDIR}/qml.qrc -o ${TARGETDIR}/qml.rcc
-    DEPENDS ${CURDIR}/qml.qrc
+    DEPENDS ${CURDIR}/qml.qrc ${resourcefilelist}
 )
 list(APPEND resourcefilelist ${TARGETDIR}/qml.rcc)
 

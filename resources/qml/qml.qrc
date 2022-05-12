@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>homepage.qml</file>
+        <file>Homepage.qml</file>
+        <file>ConfigFilesModel.qml</file>
     </qresource>
 </RCC>
