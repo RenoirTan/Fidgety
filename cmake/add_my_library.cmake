@@ -54,7 +54,8 @@ macro(fidgety_link_qt_base)
     endif()
     target_link_libraries(
         ${ARGV0} PRIVATE
-        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS}
+        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS} ${FIDGETY_QT_QUICK}
+        ${FIDGETY_QT_QML}
     )
 endmacro()
 
@@ -66,12 +67,8 @@ macro(fidgety_link_qt)
             "to link libraries to a target, you must provide the name of the target"
         )
     endif()
-    target_link_libraries(
-        ${ARGV0} PRIVATE
-        _FidgetyUtilsQt
-        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS} ${FIDGETY_QT_QUICK}
-        ${FIDGETY_QT_QML}
-    )
+    fidgety_link_qt_base(${ARGN})
+    target_link_libraries(${ARGV0} PRIVATE _FidgetyUtilsQt)
 endmacro()
 
 macro(fidgety_link_common_libraries)
