@@ -7,16 +7,6 @@ ApplicationWindow {
     width: 640
     height: 480
     title: "Fidgety"
-    ListView {
-        id: configFileList
-        width: 300
-        height: 440
-        model: ConfigFilesModel {}
-        delegate: Text {
-            text: name + ": " + path
-            color: "white"
-        }
-    }
     menuBar: MenuBar {
         Menu {
             title: "Configuration Files"
@@ -30,9 +20,21 @@ ApplicationWindow {
             }
         }
     }
+    ListView {
+        id: configFileList
+        width: 300
+        height: 200
+        visible: true
+        model: ConfigFilesModel {}
+        delegate: Text {
+            text: name + ": " + path
+            color: "white"
+        }
+    }
     Button {
         id: editButton
         text: "Edit"
+        visible: true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: configFileList.bottom
         anchors.topMargin: 10
