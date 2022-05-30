@@ -48,17 +48,19 @@ EditorStatus EditorAppPaths::populateFieldsWithArgv0(const char *exePath) {
     return this->populateFieldsWithArgv0(BoostFs::path(exePath));
 }
 
-EditorStatus EditorAppPaths::populateFieldsWithArgv0(const boost::filesystem::path &exePath) {
-    this->exePath = exePath;
-    if (!exePath.has_parent_path() || !exePath.parent_path().has_parent_path()) {
+EditorStatus EditorAppPaths::populateFieldsWithArgv0(const BoostFs::path &exePath) {
+    this->exePath = BoostFs::canonical(exePath);
+    if (!this->exePath.has_parent_path() || !this->exePath.parent_path().has_parent_path()) {
         FIDGETY_ERROR(
             EditorException,
             EditorStatus::TraversalError,
-            "[Fidgety::EditorAppPaths::populateFieldsWithArgv0] exePath ('{0}') has no parent path",
-            exePath.string()
+            "[Fidgety::EditorAppPaths::populateFieldsWithArgv0] "
+            "exePath ('{0}', '{1}') has no parent path",
+            exePath.string(),
+            this->exePath.string()
         );
     }
-    this->prefixDir = exePath.parent_path().parent_path();
+    this->prefixDir = this->exePath.parent_path().parent_path();
     this->resourceDir = this->prefixDir / "share/fidgety";
     if (!BoostFs::exists(this->resourceDir)) {
         FIDGETY_ERROR(
