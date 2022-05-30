@@ -9,26 +9,33 @@ ApplicationWindow {
     title: "Fidgety"
     menuBar: MenuBar {
         Menu {
-            title: "Configuration Files"
+            title: "File"
             MenuItem {
-                text: "/etc/default/grub"
-                onTriggered: console.log("User has selected '/etc/default/grub'")
-            }
-            MenuItem {
-                text: "/etc/tlp.conf"
-                onTriggered: console.log("User has selected '/etc/tlp.conf'")
+                text: "Exit"
+                onTriggered: console.log("Not implemented")
             }
         }
     }
     ListView {
         id: configFileList
-        width: 300
-        height: 200
+        width: parent.width-30
+        height: parent.height-100
         visible: true
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 25
         model: ConfigFilesModel {}
-        delegate: Text {
-            text: name + ": " + path
-            color: "white"
+        ButtonGroup {
+            id: configFileListButtons
+        }
+        delegate: Item {
+            width: parent.width-20
+            height: 30
+            RadioButton {
+                text: name + ": " + path
+                // anchors.right: parent.right
+                onClicked: console.log("User has selected '" + path + "'")
+                ButtonGroup.group: configFileListButtons
+            }
         }
     }
     Button {
