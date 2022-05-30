@@ -8,7 +8,9 @@ ApplicationWindow {
     height: 480
     title: "Fidgety"
     ListView {
-        width: 300, 440
+        id: configFileList
+        width: 300
+        height: 440
         model: ConfigFilesModel {}
         delegate: Text {
             text: name + ": " + path
@@ -29,7 +31,10 @@ ApplicationWindow {
         }
     }
     Button {
+        id: editButton
         text: "Edit"
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: configFileList.bottom
+        anchors.topMargin: 10
     }
 }
