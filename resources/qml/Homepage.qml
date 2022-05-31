@@ -22,9 +22,14 @@ ApplicationWindow {
         width: parent.width-30
         height: parent.height-100
         visible: true
+        // alternatingRowColors: true
+        //anchors.horizontalCenter: parent.horizontalCenter
+        //anchors.topMargin: 25
+        anchors.fill: parent
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 25
+        boundsBehavior: Flickable.StopAtBounds
         model: TableModel {
+            id: configFileListModel
             TableModelColumn { display: "name" }
             TableModelColumn { display: "path" }
             rows: [
@@ -42,15 +47,26 @@ ApplicationWindow {
         columnWidthProvider: function (column) {
             return columnWidths[column];
         }
-        delegate: Rectangle {
-            implicitHeight: 100
-            color: homepage.color
-            border.width: 1
-            border.color: "#ffffff"
-            Text {
-                text: display
-                color: "#ffffff"
-                anchors.centerIn: parent
+        delegate: DelegateChooser {
+            DelegateChoice {
+                delegate: Rectangle {
+                    implicitWidth: 100
+                    implicitHeight: 50
+                    Text { text: display }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            let index = configFileListModel.index(row, column);
+                            console.log("Selected " + index);
+                            console.log("Row: ");
+                            for (let i = 0; i < configFileListModel.columnCount; i++) {
+                                let colindex = configFileListModel.index(row, i);
+                                let data = configFileListModel.data(colindex, "");
+                                console.log(data);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
