@@ -1,11 +1,12 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import Qt.labs.qmlmodels 1.0
 
 ApplicationWindow {
     id: homepage
     visible: true
-    width: 640
-    height: 480
+    minimumWidth: 640
+    minimumHeight: 480
     title: "Fidgety"
     menuBar: MenuBar {
         Menu {
@@ -16,25 +17,40 @@ ApplicationWindow {
             }
         }
     }
-    ListView {
+    TableView {
         id: configFileList
         width: parent.width-30
         height: parent.height-100
         visible: true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 25
-        model: ConfigFilesModel {}
-        ButtonGroup {
-            id: configFileListButtons
+        model: TableModel {
+            TableModelColumn { display: "name" }
+            TableModelColumn { display: "path" }
+            rows: [
+                {
+                    name: "GRand Unified Bootloader",
+                    path: "/etc/default/grub"
+                },
+                {
+                    name: "TLP",
+                    path: "/etc/tlp.conf"
+                }
+            ]
         }
-        delegate: Item {
-            width: parent.width-20
-            height: 30
-            RadioButton {
-                text: name + ": " + path
-                // anchors.right: parent.right
-                onClicked: console.log("User has selected '" + path + "'")
-                ButtonGroup.group: configFileListButtons
+        property var columnWidths: [250, 300]
+        columnWidthProvider: function (column) {
+            return columnWidths[column];
+        }
+        delegate: Rectangle {
+            implicitHeight: 100
+            color: homepage.color
+            border.width: 1
+            border.color: "#ffffff"
+            Text {
+                text: display
+                color: "#ffffff"
+                anchors.centerIn: parent
             }
         }
     }
@@ -45,5 +61,6 @@ ApplicationWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: configFileList.bottom
         anchors.topMargin: 10
+        onClicked: console.log("editButton pressed")
     }
 }

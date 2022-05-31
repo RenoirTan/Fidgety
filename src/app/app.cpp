@@ -41,7 +41,7 @@ int32_t run(int32_t argc, char **argv, char **env) {
     spdlog::debug("[run] Fidgety has been initialised");
 
     spdlog::trace("[run] loading Homepage.qml");
-    const QUrl homepageQurl("qrc:/Homepage.qml");
+    const QUrl homepageQurl("qrc:/fidgety/Homepage.qml");
     editor.load(homepageQurl);
 
     spdlog::debug("[run] loaded Homepage.qml");
