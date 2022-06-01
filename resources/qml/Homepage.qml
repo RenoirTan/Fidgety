@@ -18,39 +18,57 @@ ApplicationWindow {
             }
         }
     }
-    Rectangle {
-        id: cflBox
+    TableView {
+        id: cflTable
         width: parent.width-30
         height: parent.height-100
         visible: true
         anchors.horizontalCenter: parent.horizontalCenter
-        color: parent.color
-        TableView {
-                anchors.fill: parent
-                clip: true
-            TableViewColumn {
-                role: "name"
-                title: "Name"
-            }
-            TableViewColumn {
-                role: "path"
-                title: "Path"
-            }
-            model: TableModel {
-                id: cflModel
-                TableModelColumn { display: "name" }
-                TableModelColumn { display: "path" }
-                rows: [
-                    {
-                        name: "GRand Unified Bootloader",
-                        path: "/etc/default/grub"
-                    },
-                    {
-                        name: "TLP",
-                        path: "/etc/tlp.conf"
-                    }
-                ]
-            }
+        clip: true
+        property int selectedRow: 0
+        TableViewColumn {
+            role: "name"
+            title: "Name"
+        }
+        TableViewColumn {
+            role: "path"
+            title: "Path"
+        }
+        // columnWidthProvider: function (column) { return [250, 300][column]; }
+        model: TableModel {
+            id: cflModel
+            TableModelColumn { display: "name" }
+            TableModelColumn { display: "path" }
+            rows: [
+                {
+                    name: "GRand Unified Bootloader",
+                    path: "/etc/default/grub"
+                },
+                {
+                    name: "Linux Advanced Power Management",
+                    path: "/etc/tlp.conf"
+                },
+                {
+                    name: "Xorg",
+                    path: "/etc/X11/xorg.conf"
+                },
+                {
+                    name: "Hosts",
+                    path: "/etc/hosts"
+                },
+                {
+                    name: "Simple Desktop Display Manager",
+                    path: "/etc/tlp.conf"
+                },
+                {
+                    name: "Domain Name Server",
+                    path: "/etc/resolv.conf"
+                },
+                {
+                    name: "Filesystem Table",
+                    path: "/etc/fstab"
+                }
+            ]
         }
     }
     Button {
@@ -58,7 +76,7 @@ ApplicationWindow {
         text: "Edit"
         visible: true
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: cflBox.bottom
+        anchors.top: cflTable.bottom
         anchors.topMargin: 10
         onClicked: console.log("editButton pressed")
     }
