@@ -251,8 +251,13 @@ fidgety_install_library(FidgetyHeaders fidgety_headers_config.cmake)
 
 #~~~~ FIDGETY HEADERS ~~~~#
 
+##### SUBDIRECTORIES #####
+
+set(FIDGETY_QML_DIR "${PROJECT_SOURCE_DIR}/resources/qml")
 add_subdirectory(src)
 add_subdirectory(resources/qml)
+
+#~~~~ SUBDIRECTORIES ~~~~#
 
 ##### TESTING #####
 

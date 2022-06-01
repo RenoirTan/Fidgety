@@ -16,7 +16,11 @@
 #include <boost/filesystem/path.hpp>
 #include <fidgety/_general.hpp>
 #include <fidgety/editor.hpp>
+#include <fidgety/editor/homepage.hpp>
 #include <fmt/core.h>
+#include <QObject>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QUrl>
 #include <spdlog/spdlog.h>
 
@@ -35,13 +39,29 @@ int32_t run(int32_t argc, char **argv, char **env) {
 
     Editor editor(argc, argv);
     editor.getPathsMut().populateFieldsWithArgv0(argv[0]);
+    HomepageBackend homepageBackend;
+    editor.getEngine()
+        ->rootContext()
+        ->setContextProperty("HomepageBackend", &homepageBackend);
+
     _logLibraryPaths(editor.libraryPaths());
-    editor.registerRcc("qml.rcc");
+    // editor.registerRcc("qml.rcc");
 
     spdlog::debug("[run] Fidgety has been initialised");
 
     spdlog::trace("[run] loading Homepage.qml");
     const QUrl homepageQurl("qrc:/fidgety/Homepage.qml");
+    QObject::connect(
+        editor.getEngine(),
+        &QQmlApplicationEngine::objectCreated,
+        &editor,
+        [homepageQurl](QObject *object, const QUrl &objectQurl) {
+            if (!object && homepageQurl == objectQurl) {
+                QCoreApplication::exit(-1);
+            }
+        },
+        Qt::QueuedConnection
+    );
     editor.load(homepageQurl);
 
     spdlog::debug("[run] loaded Homepage.qml");

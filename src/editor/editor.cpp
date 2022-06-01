@@ -91,7 +91,7 @@ Editor::Editor(int32_t &argc, char **argv) : QApplication(argc, argv) {
         FIDGETY_CRITICAL(
             EditorException,
             EditorStatus::QtError,
-            "[Fidgety::Editor::Editor] could not create mApp"
+            "[Fidgety::Editor::Editor] could not create mEngine"
         );
     }
     spdlog::trace("[Fidgety::Editor::Editor] successfully created mEngine");
