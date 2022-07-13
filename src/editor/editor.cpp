@@ -11,7 +11,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
 #include <QResource>
 #include <QScreen>
 #include <spdlog/spdlog.h>
@@ -62,45 +61,16 @@ EditorStatus EditorAppPaths::populateFieldsWithArgv0(const BoostFs::path &exePat
     }
     this->prefixDir = this->exePath.parent_path().parent_path();
     this->resourceDir = this->prefixDir / "share/fidgety";
-    if (!BoostFs::exists(this->resourceDir)) {
-        FIDGETY_ERROR(
-            EditorException,
-            EditorStatus::TraversalError,
-            "[Fidgety::EditorAppPaths::populateFieldsWithArgv0] "
-            "this->resourceDir ('{0}') does not exist",
-            this->resourceDir.string()
-        );
-    }
     this->qmlDir = this->resourceDir / "qml";
-    if (!BoostFs::exists(this->qmlDir)) {
-        FIDGETY_ERROR(
-            EditorException,
-            EditorStatus::TraversalError,
-            "[Fidgety::EditorAppPaths::populateFieldsWithArgv0] "
-            "this->qmlDir ('{0}') does not exist",
-            this->qmlDir.string()
-        );
-    }
     return EditorStatus::Ok;
 }
 
 Editor::Editor(int32_t &argc, char **argv) : QApplication(argc, argv) {
     spdlog::trace("[Fidgety::Editor::Editor] initialising");
-    mEngine = new QQmlApplicationEngine(this);
-    if (!mEngine) {
-        FIDGETY_CRITICAL(
-            EditorException,
-            EditorStatus::QtError,
-            "[Fidgety::Editor::Editor] could not create mEngine"
-        );
-    }
-    spdlog::trace("[Fidgety::Editor::Editor] successfully created mEngine");
 }
 
 Editor::~Editor(void) {
     spdlog::trace("[Fidgety::Editor::~Editor] deleting");
-    if (mEngine) delete mEngine;
-    spdlog::trace("[Fidgety::Editor::~Editor] deleted mEngine");
 }
 
 const EditorAppPaths &Editor::getPaths(void) const noexcept {
@@ -114,60 +84,5 @@ EditorAppPaths &Editor::getPathsMut(void) noexcept {
 EditorStatus Editor::setPaths(EditorAppPaths &&paths) {
     spdlog::trace("[Fidgety::Editor::setPaths] setting new mPaths");
     mPaths = std::move(paths);
-    return EditorStatus::Ok;
-}
-
-QQmlApplicationEngine *Editor::getEngine(void) noexcept {
-    return mEngine;
-}
-
-EditorStatus Editor::setEngine(QQmlApplicationEngine *engine) {
-    spdlog::trace("[Fidgety::Editor::setEngine] replacing mEngine");
-    if (mEngine) delete mEngine;
-    mEngine = engine;
-    return EditorStatus::Ok;
-}
-
-BoostFs::path Editor::getPathToResource(const std::string &relative) const {
-    return mPaths.qmlDir / relative;
-}
-
-EditorStatus Editor::registerRcc(const std::string &relative) const {
-    spdlog::debug("[Fidgety::Editor::registerRcc] getPathToResource for '{0}'", relative);
-    std::string rccPath = getPathToResource(relative).string();
-    spdlog::debug("[Fidgety::Editor::registerRcc] registering '{0}'", rccPath);
-    if (!BoostFs::exists(rccPath)) {
-        FIDGETY_ERROR(
-            EditorException,
-            EditorStatus::FileNotFound,
-            "[Fidgety::Editor::registerRcc] file does not exist: {0}",
-            rccPath
-        );
-    }
-    bool hmm = QResource::registerResource(QString(rccPath.c_str()));
-    if (hmm) {
-        spdlog::trace("[Fidgety::Editor::registerRcc] ok");
-        return EditorStatus::Ok;
-    } else {
-        FIDGETY_ERROR(
-            EditorException,
-            EditorStatus::QtError,
-            "[Fidgety::Editor::registerRcc] could not register '{0}'",
-            rccPath
-        );
-    }
-}
-
-EditorStatus Editor::load(const QUrl &qurl) {
-    spdlog::trace("[Fidgety::Editor::load] loading '{}'", qurl.toString().toStdString());
-    if (!mEngine) {
-        FIDGETY_ERROR(
-            EditorException,
-            EditorStatus::UninitializedError,
-            "[Fidgety::Editor::load] mEngine is null"
-        );
-    }
-    mEngine->load(qurl);
-    spdlog::trace("[Fidgety::Editor::load] loaded");
     return EditorStatus::Ok;
 }

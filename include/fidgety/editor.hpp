@@ -13,7 +13,6 @@
 
 #   include <boost/filesystem/path.hpp>
 #   include <QApplication>
-#   include <QQmlApplicationEngine>
 #   include <QUrl>
 #   include <fidgety/exception.hpp>
 
@@ -63,16 +62,8 @@ namespace Fidgety {
             EditorAppPaths &getPathsMut(void) noexcept;
             EditorStatus setPaths(EditorAppPaths &&paths);
 
-            QQmlApplicationEngine *getEngine(void) noexcept;
-            EditorStatus setEngine(QQmlApplicationEngine *engine);
-
-            boost::filesystem::path getPathToResource(const std::string &relative) const;
-            EditorStatus registerRcc(const std::string &relative) const;
-            EditorStatus load(const QUrl &qurl);
-
         protected:
             EditorAppPaths mPaths;
-            QQmlApplicationEngine *mEngine;
     };
 }
 

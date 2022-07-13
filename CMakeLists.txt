@@ -165,8 +165,8 @@ configure_file(${FIDGETY_CONFIG_HEADER_IN} ${FIDGETY_CONFIG_HEADER_OUT})
 
 ##### QT #####
 
-set(FIDGETY_COMPONENTS_UPPER CORE GUI WIDGETS QUICK QML)
-set(FIDGETY_COMPONENTS_PASCAL Core Gui Widgets Quick Qml)
+set(FIDGETY_COMPONENTS_UPPER CORE GUI WIDGETS)
+set(FIDGETY_COMPONENTS_PASCAL Core Gui Widgets)
 
 if(${FIDGETY_QT_FROM_SOURCE})
     fidgety_add_dependency_sourced_git(Qt ${FIDGETY_QT_REPO_URL} ${FIDGETY_QT_REPO_TAG})
@@ -180,13 +180,13 @@ Fidgety only targets Qt6 or Qt5 (legacy)")
     message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
 endif()
 
-find_program(FIDGETY_RCC rcc rcc-qt${FIDGETY_QT_MAJOR})
-if(FIDGETY_RCC_NOTFOUND)
-    message(FATAL_ERROR "Fidgety requires rcc-qt${FIDGETY_QT_MAJOR} to compile qrc files. \
-Make sure that Qt has been installed correctly")
-else()
-    message(STATUS "rcc found at ${FIDGETY_RCC}")
-endif()
+#find_program(FIDGETY_RCC rcc rcc-qt${FIDGETY_QT_MAJOR})
+#if(FIDGETY_RCC_NOTFOUND)
+#    message(FATAL_ERROR "Fidgety requires rcc-qt${FIDGETY_QT_MAJOR} to compile qrc files. \
+#Make sure that Qt has been installed correctly")
+#else()
+#    message(STATUS "rcc found at ${FIDGETY_RCC}")
+#endif()
 
 fidgety_compat_qt_callable(add_resources)
 
@@ -253,9 +253,9 @@ fidgety_install_library(FidgetyHeaders fidgety_headers_config.cmake)
 
 ##### SUBDIRECTORIES #####
 
-set(FIDGETY_QML_DIR "${PROJECT_SOURCE_DIR}/resources/qml")
+#set(FIDGETY_QML_DIR "${PROJECT_SOURCE_DIR}/resources/qml")
 add_subdirectory(src)
-add_subdirectory(resources/qml)
+#add_subdirectory(resources/qml)
 
 #~~~~ SUBDIRECTORIES ~~~~#
 

@@ -1,6 +1,6 @@
 fidgety_add_my_library(
     FidgetyEditor SHARED
-    editor.cpp homepage.cpp ${FIDGETY_QML_DIR}/qml.qrc
+    editor.cpp homepage.cpp
 )
 set_target_properties(FidgetyEditor PROPERTIES OUTPUT_NAME fidgety_editor)
 fidgety_set_output_directory(FidgetyEditor)
