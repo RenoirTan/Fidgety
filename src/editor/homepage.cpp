@@ -12,7 +12,6 @@
 #include <fmt/core.h>
 #include <QObject>
 #include <QScreen>
-#include <QSizePolicy>
 #include <QString>
 #include <spdlog/spdlog.h>
 #include <fidgety/editor/homepage.hpp>
@@ -32,15 +31,14 @@ void HomepageBackend::printSelectedConfigFile(
         << std::endl;
 }
 
-const QRect HomepageWidget::DEFAULT_FRAME_GEOMETRY = QRect(0, 0, 480, 320);
+const QSize HomepageWidget::DEFAULT_SIZE = QSize(480, 320);
+const QSize HomepageWidget::MINIMUM_SIZE = QSize(720, 480);
 const char *HomepageWidget::WINDOW_TITLE = "Fidgety";
 
 HomepageWidget::HomepageWidget(QWidget *parent, Qt::WindowFlags f) :
-    QWidget(parent, f)
+    WindowWidget(parent, f)
 {
     spdlog::trace("[Fidgety::HomepageWidget::HomepageWidget] initialising");
-    QSizePolicy sizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
-    setSizePolicy(sizePolicy);
 }
 
 HomepageWidget::~HomepageWidget(void) {
@@ -49,13 +47,18 @@ HomepageWidget::~HomepageWidget(void) {
 }
 
 QSize HomepageWidget::sizeHint(void) const {
-    return QSize(DEFAULT_FRAME_GEOMETRY.width(), DEFAULT_FRAME_GEOMETRY.height());
+    return DEFAULT_SIZE;
 }
 
-EditorStatus HomepageWidget::openNewWindow(QApplication *app) {
-    spdlog::debug("[Fidgety::HomepageWidget::openNewWindow] opening new window");
-    show();
+QSize HomepageWidget::minimumSizeHint(void) const {
+    return MINIMUM_SIZE;
+}
+
+EditorStatus HomepageWidget::initializeWindow(QApplication *app) {
+    spdlog::debug("[Fidgety::HomepageWidget::openNewWindow] initialising window");
+    setMinimumSize(MINIMUM_SIZE);
     setWindowTitle(app->translate("toplevel", HomepageWidget::WINDOW_TITLE));
+    resize(DEFAULT_SIZE);
     spdlog::debug("[Fidgety::HomepageWidget::openNewWindow] new window opened");
     return EditorStatus::Ok;
 }

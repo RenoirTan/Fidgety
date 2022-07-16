@@ -13,13 +13,13 @@
 
 #   include <QApplication>
 #   include <QObject>
-#   include <QRect>
 #   include <QScreen>
 #   include <QSize>
 #   include <QString>
 #   include <QWidget>
 #   include <QWindow>
 #   include <fidgety/editor.hpp>
+#   include <fidgety/editor/windowwidget.hpp>
 
 namespace Fidgety {
     class HomepageBackend : public QObject {
@@ -33,17 +33,20 @@ namespace Fidgety {
             );
     };
 
-    class HomepageWidget : public QWidget {
+    class HomepageWidget : public WindowWidget {
+
         public:
-            static const QRect DEFAULT_FRAME_GEOMETRY; // QRect(0, 0, 480, 320)
+            static const QSize DEFAULT_SIZE; // QSize(720, 480)
+            static const QSize MINIMUM_SIZE; // QSize(480, 320)
             static const char *WINDOW_TITLE; // "Fidgety"
 
             HomepageWidget(QWidget *parent, Qt::WindowFlags f=Qt::WindowFlags());
             ~HomepageWidget(void);
 
             QSize sizeHint(void) const;
+            QSize minimumSizeHint(void) const;
 
-            EditorStatus openNewWindow(QApplication *app);
+            EditorStatus initializeWindow(QApplication *app);
         protected:
     };
 }
