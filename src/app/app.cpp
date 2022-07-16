@@ -16,6 +16,7 @@
 #include <boost/filesystem/path.hpp>
 #include <fidgety/_general.hpp>
 #include <fidgety/editor.hpp>
+#include <fidgety/editor/app.hpp>
 #include <fidgety/editor/homepage.hpp>
 #include <fmt/core.h>
 #include <QObject>
@@ -41,6 +42,9 @@ int32_t run(int32_t argc, char **argv, char **env) {
     _logLibraryPaths(editor.libraryPaths());
 
     spdlog::debug("[run] Fidgety has been initialised");
+
+    spdlog::info("[run] launched homepage");
+    editor.launchHomepage();
 
     int32_t status = editor.exec();
     if (status == 0) {

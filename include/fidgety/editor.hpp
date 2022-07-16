@@ -12,7 +12,6 @@
 #   define FIDGETY_EDITOR_HPP
 
 #   include <boost/filesystem/path.hpp>
-#   include <QApplication>
 #   include <QUrl>
 #   include <fidgety/exception.hpp>
 
@@ -29,7 +28,8 @@ namespace Fidgety {
         SyntaxError = 8,
         TraversalError = 9,
         QtError = 10,
-        UninitializedError = 11
+        UninitializedError = 11,
+        NotFreeError = 12
     };
 
     class EditorException : public Exception {
@@ -49,21 +49,6 @@ namespace Fidgety {
 
         EditorStatus populateFieldsWithArgv0(const char *exePath);
         EditorStatus populateFieldsWithArgv0(const boost::filesystem::path &exePath);
-    };
-
-    class Q_WIDGETS_EXPORT Editor : public QApplication {
-        // Q_OBJECT
-
-        public:
-            Editor(int32_t &argc, char **argv);
-            ~Editor(void);
-
-            const EditorAppPaths &getPaths(void) const noexcept;
-            EditorAppPaths &getPathsMut(void) noexcept;
-            EditorStatus setPaths(EditorAppPaths &&paths);
-
-        protected:
-            EditorAppPaths mPaths;
     };
 }
 

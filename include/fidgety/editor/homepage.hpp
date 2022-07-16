@@ -11,8 +11,15 @@
 #ifndef FIDGETY_EDITOR_HOMEPAGE_HPP
 #   define FIDGETY_EDITOR_HOMEPAGE_HPP
 
+#   include <QApplication>
 #   include <QObject>
+#   include <QRect>
+#   include <QScreen>
+#   include <QSize>
 #   include <QString>
+#   include <QWidget>
+#   include <QWindow>
+#   include <fidgety/editor.hpp>
 
 namespace Fidgety {
     class HomepageBackend : public QObject {
@@ -24,6 +31,20 @@ namespace Fidgety {
                 const QString &name,
                 const QString &path
             );
+    };
+
+    class HomepageWidget : public QWidget {
+        public:
+            static const QRect DEFAULT_FRAME_GEOMETRY; // QRect(0, 0, 480, 320)
+            static const char *WINDOW_TITLE; // "Fidgety"
+
+            HomepageWidget(QWidget *parent, Qt::WindowFlags f=Qt::WindowFlags());
+            ~HomepageWidget(void);
+
+            QSize sizeHint(void) const;
+
+            EditorStatus openNewWindow(QApplication *app);
+        protected:
     };
 }
 

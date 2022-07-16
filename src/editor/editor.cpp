@@ -35,6 +35,7 @@ std::string EditorException::codeAsErrorType(void) const {
         case 9: return "TraversalError";
         case 10: return "QtError";
         case 11: return "UninitializedError";
+        case 12: return "NotFreeError";
         default: return "Other";
     }
 }
@@ -62,27 +63,5 @@ EditorStatus EditorAppPaths::populateFieldsWithArgv0(const BoostFs::path &exePat
     this->prefixDir = this->exePath.parent_path().parent_path();
     this->resourceDir = this->prefixDir / "share/fidgety";
     this->qmlDir = this->resourceDir / "qml";
-    return EditorStatus::Ok;
-}
-
-Editor::Editor(int32_t &argc, char **argv) : QApplication(argc, argv) {
-    spdlog::trace("[Fidgety::Editor::Editor] initialising");
-}
-
-Editor::~Editor(void) {
-    spdlog::trace("[Fidgety::Editor::~Editor] deleting");
-}
-
-const EditorAppPaths &Editor::getPaths(void) const noexcept {
-    return mPaths;
-}
-
-EditorAppPaths &Editor::getPathsMut(void) noexcept {
-    return mPaths;
-}
-
-EditorStatus Editor::setPaths(EditorAppPaths &&paths) {
-    spdlog::trace("[Fidgety::Editor::setPaths] setting new mPaths");
-    mPaths = std::move(paths);
     return EditorStatus::Ok;
 }
