@@ -35,23 +35,16 @@ const QSize HomepageWidget::DEFAULT_SIZE = QSize(480, 320);
 const QSize HomepageWidget::MINIMUM_SIZE = QSize(720, 480);
 const char *HomepageWidget::WINDOW_TITLE = "Fidgety";
 
-HomepageWidget::HomepageWidget(QWidget *parent, Qt::WindowFlags f) :
-    WindowWidget(parent, f)
-{
-    spdlog::trace("[Fidgety::HomepageWidget::HomepageWidget] initialising");
-}
-
-HomepageWidget::~HomepageWidget(void) {
-    spdlog::trace("[Fidgety::HomepageWidget::HomepageWidget] destroying");
-    QWidget::~QWidget();
-}
-
 QSize HomepageWidget::sizeHint(void) const {
     return DEFAULT_SIZE;
 }
 
 QSize HomepageWidget::minimumSizeHint(void) const {
     return MINIMUM_SIZE;
+}
+
+const char *HomepageWidget::windowClassName(void) const noexcept {
+    return "Fidgety::HomepageWidget";
 }
 
 EditorStatus HomepageWidget::initializeWindow(QApplication *app) {

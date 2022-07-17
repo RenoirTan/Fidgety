@@ -19,11 +19,18 @@
 namespace Fidgety {
     class WindowWidget : public QWidget {
         public:
-            using QWidget::QWidget;
+            Q_DISABLE_COPY(WindowWidget);
+            WindowWidget(QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
+            ~WindowWidget(void);
 
+            virtual const char *windowClassName(void) const noexcept;
             virtual EditorStatus initializeWindow(QApplication *app);
             virtual EditorStatus openNewWindow(QApplication *app);
     };
 }
+
+#   define FIDGETY_WINDOWWIDGET \
+    public: \
+        using Fidgety::WindowWidget::WindowWidget; \
 
 #endif

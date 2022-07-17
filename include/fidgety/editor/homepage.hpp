@@ -40,12 +40,12 @@ namespace Fidgety {
             static const QSize MINIMUM_SIZE; // QSize(480, 320)
             static const char *WINDOW_TITLE; // "Fidgety"
 
-            HomepageWidget(QWidget *parent, Qt::WindowFlags f=Qt::WindowFlags());
-            ~HomepageWidget(void);
+            FIDGETY_WINDOWWIDGET;
 
             QSize sizeHint(void) const;
             QSize minimumSizeHint(void) const;
 
+            const char *windowClassName(void) const noexcept;
             EditorStatus initializeWindow(QApplication *app);
         protected:
     };
