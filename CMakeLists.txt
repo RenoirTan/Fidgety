@@ -7,6 +7,7 @@ include(GNUInstallDirs)
 include(FetchContent)
 include(cmake/add_my_library.cmake)
 include(cmake/add_dependencies.cmake)
+include(cmake/qt_major_compat.cmake)
 
 #~~~~ INCLUDES ~~~~#
 
@@ -28,6 +29,11 @@ set(
     CACHE STRING "The directory to dump all the *.cmake files used to find fidgety"
 )
 set(
+    FIDGETY_EXPORT_BIN_DIR
+    "${CMAKE_INSTALL_BINDIR}"
+    CACHE STRING "The directory for executables"
+)
+set(
     FIDGETY_EXPORT_LIB_DIR
     "${CMAKE_INSTALL_LIBDIR}/fidgety"
     CACHE STRING "The directory to dump all of fidgety's library files"
@@ -36,6 +42,16 @@ set(
     FIGETY_EXPORT_EXTLIB_DIR
     "${CMAKE_INSTALL_LIBDIR}/fidgety/extensions"
     CACHE STRING "The directory where fidgety's extension libraries are installed to"
+)
+set(
+    FIDGETY_EXPORT_DATA_DIR
+    "${CMAKE_INSTALL_DATAROOTDIR}/fidgety"
+    CACHE STRING "The directory where fidgety's read-only data is stored"
+)
+set(
+    FIDGETY_EXPORT_QML_DIR
+    "${FIDGETY_EXPORT_DATA_DIR}/qml"
+    CACHE STRING "The directory where fidgety's QML files are stored"
 )
 set(
     FIDGETY_GTEST_FROM_SOURCE ON
@@ -121,6 +137,7 @@ will used a constant char[] expression instead."
 set(FIDGETY_FMTLIB_HEADER_ONLY ON CACHE BOOL "Whether to use the header-only version of fmt")
 set(FIDGETY_BUILD_TESTING ON CACHE BOOL "Whether to build fidgety's tests")
 set(FIDGETY_TEST_LOGLEVEL "info" CACHE STRING "Spdlog level to use when running tests")
+set(FIDGETY_APP_LOGLEVEL "info" CACHE STRING "Spdlog level to use for executable binaries")
 set(MICROSOFT_BULLSHIT OFF CACHE BOOL "Fix for intellisense. Do not use for release")
 
 #~~~~ PROJECT BUILD OPTIONS ~~~~#
@@ -146,27 +163,36 @@ configure_file(${FIDGETY_CONFIG_HEADER_IN} ${FIDGETY_CONFIG_HEADER_OUT})
 
 #~~~~ CONFIG.H.IN ~~~~#
 
-##### BUILD DEPENDENCIES #####
+##### QT #####
+
+set(FIDGETY_COMPONENTS_UPPER CORE GUI WIDGETS)
+set(FIDGETY_COMPONENTS_PASCAL Core Gui Widgets)
 
 if(${FIDGETY_QT_FROM_SOURCE})
     fidgety_add_dependency_sourced_git(Qt ${FIDGETY_QT_REPO_URL} ${FIDGETY_QT_REPO_TAG})
 else()
-    if(FIDGETY_QT_MAJOR STREQUAL 6)
-        find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
-        set(FIDGETY_QT_CORE Qt6::Core)
-        set(FIDGETY_QT_GUI Qt6::Gui)
-        set(FIDGETY_QT_WIDGETS Qt6::Widgets)
-    elseif(FIDGETY_QT_MAJOR STREQUAL 5)
-        find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
-        set(FIDGETY_QT_CORE Qt5::Core)
-        set(FIDGETY_QT_GUI Qt5::Gui)
-        set(FIDGETY_QT_WIDGETS Qt5::Widgets)
+    if(FIDGETY_QT_MAJOR STREQUAL 6 OR FIDGETY_QT_MAJOR STREQUAL 5)
+        fidgety_setup_qt_dependency()
     else()
         message(FATAL_ERROR "Invalid value for FIDGETY_QT_MAJOR: ${FIDGETY_QT_MAJOR}. \
 Fidgety only targets Qt6 or Qt5 (legacy)")
     endif()
     message(STATUS "Using Qt${FIDGETY_QT_MAJOR} to build Fidgety")
 endif()
+
+#find_program(FIDGETY_RCC rcc rcc-qt${FIDGETY_QT_MAJOR})
+#if(FIDGETY_RCC_NOTFOUND)
+#    message(FATAL_ERROR "Fidgety requires rcc-qt${FIDGETY_QT_MAJOR} to compile qrc files. \
+#Make sure that Qt has been installed correctly")
+#else()
+#    message(STATUS "rcc found at ${FIDGETY_RCC}")
+#endif()
+
+fidgety_compat_qt_callable(add_resources)
+
+#~~~~ QT ~~~~#
+
+##### BUILD DEPENDENCIES #####
 
 #set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
@@ -219,14 +245,19 @@ target_include_directories(
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 if(FIDGETY_MASTER_PROJECT)
-    install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.hpp)
-    install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.h)
+    install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN *.hpp PATTERN *.h)
 endif()
 fidgety_install_library(FidgetyHeaders fidgety_headers_config.cmake)
 
 #~~~~ FIDGETY HEADERS ~~~~#
 
+##### SUBDIRECTORIES #####
+
+#set(FIDGETY_QML_DIR "${PROJECT_SOURCE_DIR}/resources/qml")
 add_subdirectory(src)
+#add_subdirectory(resources/qml)
+
+#~~~~ SUBDIRECTORIES ~~~~#
 
 ##### TESTING #####
 

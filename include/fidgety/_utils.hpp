@@ -65,4 +65,7 @@ namespace Fidgety {
     spdlog::error(__error_msg);                               \
     return exc_code;
 
+#   define FIDGETY_TYPENAME(thing) \
+    typeid((thing)).name()
+
 #endif

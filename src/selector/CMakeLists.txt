@@ -1,5 +1,6 @@
 fidgety_add_my_library(FidgetySelector STATIC selector.cpp loader.cpp)
 set_target_properties(FidgetySelector PROPERTIES OUTPUT_NAME fidgety_selector)
+fidgety_set_output_directory(FidgetySelector)
 target_link_libraries(
     FidgetySelector PUBLIC
     FidgetyDecoder FidgetyDecoder FidgetyOptions FidgetyVerifier FidgetyDylib

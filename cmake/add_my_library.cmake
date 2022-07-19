@@ -19,6 +19,16 @@ macro(fidgety_add_my_executable)
     add_executable("Fidgety::${ARGV0}" ALIAS ${ARGV0})
 endmacro()
 
+macro(fidgety_set_output_directory)
+    # ARGV0: name of the target
+    set_target_properties(
+        ${ARGV0} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+    )
+endmacro()
+
 macro(fidgety_link_fmt)
     # ARGV0: name of the library (no namespace)
     if(ARGC LESS 1)
@@ -44,7 +54,8 @@ macro(fidgety_link_qt_base)
     endif()
     target_link_libraries(
         ${ARGV0} PRIVATE
-        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS}
+        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS} ${FIDGETY_QT_QUICK}
+        ${FIDGETY_QT_QML}
     )
 endmacro()
 
@@ -56,11 +67,8 @@ macro(fidgety_link_qt)
             "to link libraries to a target, you must provide the name of the target"
         )
     endif()
-    target_link_libraries(
-        ${ARGV0} PRIVATE
-        _FidgetyUtilsQt
-        ${FIDGETY_QT_CORE} ${FIDGETY_QT_GUI} ${FIDGETY_QT_WIDGETS}
-    )
+    fidgety_link_qt_base(${ARGN})
+    target_link_libraries(${ARGV0} PRIVATE _FidgetyUtilsQt)
 endmacro()
 
 macro(fidgety_link_common_libraries)
@@ -102,6 +110,30 @@ macro(fidgety_install_library)
             TARGETS ${ARGV0}
             EXPORT ${ARGV0}
             DESTINATION ${FIDGETY_EXPORT_LIB_DIR}
+        )
+        install(
+            EXPORT ${ARGV0}
+            DESTINATION ${FIDGETY_EXPORT_CMAKE_DIR}
+            NAMESPACE Fidgety::
+            FILE ${ARGV1}
+        )
+    endif()
+endmacro()
+
+macro(fidgety_install_executable)
+    # ARGV0: name of the executable
+    # ARGV1: name of the CMake file
+    if(ARGC LESS 2)
+        message(
+            FATAL_ERROR
+            "you need to provide the name of the executable and the name its CMake file"
+        )
+    endif()
+    if(FIDGETY_MASTER_PROJECT)
+        install(
+            TARGETS ${ARGV0}
+            EXPORT ${ARGV0}
+            DESTINATION ${FIDGETY_EXPORT_BIN_DIR}
         )
         install(
             EXPORT ${ARGV0}
