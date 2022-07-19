@@ -24,13 +24,13 @@ namespace Fidgety {
             ~WindowWidget(void);
 
             virtual const char *windowClassName(void) const noexcept;
-            virtual EditorStatus initializeWindow(QApplication *app);
-            virtual EditorStatus openNewWindow(QApplication *app);
+            virtual EditorStatus deleteWindowElements(void);
+            EditorStatus initializeWindow(QApplication *app);
+            EditorStatus openNewWindow(QApplication *app);
+        
+        protected:
+            virtual EditorStatus initializeWindowElements(QApplication *app);
     };
 }
-
-#   define FIDGETY_WINDOWWIDGET \
-    public: \
-        using Fidgety::WindowWidget::WindowWidget; \
 
 #endif

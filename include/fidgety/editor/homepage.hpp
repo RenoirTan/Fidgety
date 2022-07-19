@@ -12,6 +12,7 @@
 #   define FIDGETY_EDITOR_HOMEPAGE_HPP
 
 #   include <QApplication>
+#   include <QGridLayout>
 #   include <QObject>
 #   include <QScreen>
 #   include <QSize>
@@ -40,14 +41,18 @@ namespace Fidgety {
             static const QSize MINIMUM_SIZE; // QSize(480, 320)
             static const char *WINDOW_TITLE; // "Fidgety"
 
-            FIDGETY_WINDOWWIDGET;
+            HomepageWidget(QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
+            ~HomepageWidget(void);
 
             QSize sizeHint(void) const;
             QSize minimumSizeHint(void) const;
 
             const char *windowClassName(void) const noexcept;
-            EditorStatus initializeWindow(QApplication *app);
+            EditorStatus deleteWindowElements(void);
+
         protected:
+            QGridLayout *mMainGrid;
+            EditorStatus initializeWindowElements(QApplication *app);
     };
 }
 
