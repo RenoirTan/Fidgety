@@ -39,6 +39,7 @@ HomepageFilelistWidget::~HomepageFilelistWidget(void) {
     spdlog::trace(
         "[Fidgety::HomepageFilelistWidget::~HomepageFilelistWidget] deleting"
     );
+    cleanWidget();
 }
 
 const char *HomepageFilelistWidget::widgetClassName(void) const noexcept {
