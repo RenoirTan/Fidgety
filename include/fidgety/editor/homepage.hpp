@@ -17,9 +17,12 @@
 #   include <QScreen>
 #   include <QSize>
 #   include <QString>
+#   include <QStringList>
+#   include <QTableWidget>
 #   include <QWidget>
 #   include <QWindow>
 #   include <fidgety/editor.hpp>
+#   include <fidgety/editor/elementwidget.hpp>
 #   include <fidgety/editor/windowwidget.hpp>
 
 namespace Fidgety {
@@ -32,6 +35,18 @@ namespace Fidgety {
                 const QString &name,
                 const QString &path
             );
+    };
+
+    class HomepageFilelistWidget : public ElementWidget, public QTableWidget {
+        public:
+            static const QStringList COLUMN_NAMES; // {"App", "File"}
+
+            using QTableWidget::QTableWidget;
+            ~HomepageFilelistWidget(void);
+
+            const char *widgetClassName(void) const noexcept;
+            EditorStatus initializeWidget(QApplication *app);
+            EditorStatus cleanWidget(void);
     };
 
     class HomepageWidget : public WindowWidget {
@@ -52,6 +67,8 @@ namespace Fidgety {
 
         protected:
             QGridLayout *mMainGrid;
+            HomepageFilelistWidget *mFilelist;
+
             EditorStatus initializeWindowElements(QApplication *app);
     };
 }

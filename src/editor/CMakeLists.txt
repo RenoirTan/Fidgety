@@ -1,6 +1,6 @@
 fidgety_add_my_library(
     FidgetyEditor SHARED
-    editor.cpp app.cpp homepage.cpp windowwidget.cpp
+    editor.cpp app.cpp elementwidget.cpp homepage.cpp windowwidget.cpp
 )
 set_target_properties(FidgetyEditor PROPERTIES OUTPUT_NAME fidgety_editor)
 fidgety_set_output_directory(FidgetyEditor)

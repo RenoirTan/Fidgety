@@ -33,6 +33,31 @@ void HomepageBackend::printSelectedConfigFile(
         << std::endl;
 }
 
+const QStringList HomepageFilelistWidget::COLUMN_NAMES = {"App", "File"};
+
+HomepageFilelistWidget::~HomepageFilelistWidget(void) {
+    spdlog::trace(
+        "[Fidgety::HomepageFilelistWidget::~HomepageFilelistWidget] deleting"
+    );
+}
+
+const char *HomepageFilelistWidget::widgetClassName(void) const noexcept {
+    return "Fidgety::HomepageFilelistWidget";
+}
+
+EditorStatus HomepageFilelistWidget::initializeWidget(QApplication *app) {
+    spdlog::trace("[Fidgety::HomepageFilelistWidget::initializeWidget] initialising");
+    setColumnCount(COLUMN_NAMES.length());
+    setHorizontalHeaderLabels(COLUMN_NAMES);
+    spdlog::trace("[Fidgety::HomepageFilelistWidget::initializeWidget] columns setup");
+    return EditorStatus::Ok;
+}
+
+EditorStatus HomepageFilelistWidget::cleanWidget(void) {
+    spdlog::trace("[Fidgety::HomepageFilelistWidget::initializeWidget] cleaning");
+    return EditorStatus::Ok;
+}
+
 const QSize HomepageWidget::DEFAULT_SIZE = QSize(480, 320);
 const QSize HomepageWidget::MINIMUM_SIZE = QSize(720, 480);
 const char *HomepageWidget::WINDOW_TITLE = "Fidgety";
@@ -42,6 +67,7 @@ HomepageWidget::HomepageWidget(QWidget *parent, Qt::WindowFlags f) :
 {
     spdlog::debug("[Fidgety::HomepageWidget::HomepageWidget] creating");
     mMainGrid = nullptr;
+    mFilelist = nullptr;
 }
 
 HomepageWidget::~HomepageWidget(void) {
@@ -69,10 +95,17 @@ EditorStatus HomepageWidget::deleteWindowElements(void) {
         mMainGrid = nullptr;
         spdlog::trace("[Fidgety::HomepageWidget::deleteWindowElements] deleted mMainGrid");
     }
+    if (mFilelist != nullptr) {
+        spdlog::trace("[Fidgety::HomepageWidget::deleteWindowElements] deleting mFilelist");
+        delete mFilelist;
+        mFilelist = nullptr;
+        spdlog::trace("[Fidgety::HomepageWidget::deleteWindowElements] deleted mFilelist");
+    }
     return EditorStatus::Ok;
 }
 
 EditorStatus HomepageWidget::initializeWindowElements(QApplication *app) {
+    EditorStatus status = EditorStatus::Ok;
     spdlog::debug("[Fidgety::HomepageWidget::initializeWindowElements] initialising window");
     setMinimumSize(MINIMUM_SIZE);
     setWindowTitle(app->translate("toplevel", HomepageWidget::WINDOW_TITLE));
@@ -88,17 +121,18 @@ EditorStatus HomepageWidget::initializeWindowElements(QApplication *app) {
     }
     mMainGrid->setSpacing(5);
 
-    {
-        QTableWidget *fileList = new QTableWidget;
-        if (fileList == nullptr) {
-            FIDGETY_ERROR(
-                EditorException,
-                EditorStatus::QtError,
-                "[Fidgety::HomepageWidget::initializeWindowElements] could not create fileList"
-            );
-        }
-        mMainGrid->addWidget(fileList);
+    mFilelist = new HomepageFilelistWidget;
+    if (mFilelist == nullptr) {
+        FIDGETY_ERROR(
+            EditorException,
+            EditorStatus::QtError,
+            "[Fidgety::HomepageWidget::initializeWindowElements] could not create mFilelist"
+        );
     }
+    status = mFilelist->initializeWidget(app);
+    if (status != EditorStatus::Ok) return status;
+    
+    mMainGrid->addWidget(mFilelist);
 
     spdlog::debug("[Fidgety::HomepageWidget::initializeWindowElements] new window opened");
     return EditorStatus::Ok;
