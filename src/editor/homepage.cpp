@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <fmt/core.h>
+#include <QHeaderView>
 #include <QObject>
 #include <QScreen>
 #include <QString>
@@ -50,6 +51,8 @@ EditorStatus HomepageFilelistWidget::initializeWidget(QApplication *app) {
     spdlog::trace("[Fidgety::HomepageFilelistWidget::initializeWidget] initialising");
     setColumnCount(COLUMN_NAMES.length());
     setHorizontalHeaderLabels(COLUMN_NAMES);
+    QHeaderView *header = horizontalHeader();
+    header->setSectionResizeMode(QHeaderView::Stretch);
     spdlog::trace("[Fidgety::HomepageFilelistWidget::initializeWidget] columns setup");
     return EditorStatus::Ok;
 }
