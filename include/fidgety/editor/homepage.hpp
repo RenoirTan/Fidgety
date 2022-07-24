@@ -11,6 +11,7 @@
 #ifndef FIDGETY_EDITOR_HOMEPAGE_HPP
 #   define FIDGETY_EDITOR_HOMEPAGE_HPP
 
+#   include <vector>
 #   include <QApplication>
 #   include <QGridLayout>
 #   include <QObject>
@@ -21,6 +22,7 @@
 #   include <QTableWidget>
 #   include <QWidget>
 #   include <QWindow>
+#   include <fidgety/appdata.hpp>
 #   include <fidgety/editor.hpp>
 #   include <fidgety/editor/elementwidget.hpp>
 #   include <fidgety/editor/windowwidget.hpp>
@@ -47,6 +49,9 @@ namespace Fidgety {
             const char *widgetClassName(void) const noexcept;
             EditorStatus initializeWidget(QApplication *app);
             EditorStatus cleanWidget(void);
+
+            EditorStatus addAppdata(const Appdata &appdata);
+            EditorStatus addAppdata(const std::vector<Appdata> &appdata);
     };
 
     class HomepageWidget : public WindowWidget {
@@ -64,6 +69,8 @@ namespace Fidgety {
 
             const char *windowClassName(void) const noexcept;
             EditorStatus deleteWindowElements(void);
+
+            HomepageFilelistWidget *getFilelistWidget(void) const noexcept;
 
         protected:
             QGridLayout *mMainGrid;

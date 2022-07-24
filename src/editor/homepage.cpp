@@ -15,6 +15,7 @@
 #include <QScreen>
 #include <QString>
 #include <QTableWidget>
+#include <QTableWidgetItem>
 #include <spdlog/spdlog.h>
 #include <fidgety/_utils.hpp>
 #include <fidgety/editor/homepage.hpp>
@@ -62,6 +63,34 @@ EditorStatus HomepageFilelistWidget::cleanWidget(void) {
     return EditorStatus::Ok;
 }
 
+EditorStatus HomepageFilelistWidget::addAppdata(const Appdata &appdata) {
+    spdlog::trace("[Fidgety::HomepageFilelistWidget::addAppdata] creating one row");
+    insertRow(rowCount());
+    QTableWidgetItem *app = new QTableWidgetItem((QString) appdata.appName.c_str());
+    QTableWidgetItem *file = new QTableWidgetItem((QString) appdata.configFilePath.c_str());
+    int lastRowIndex = rowCount()-1;
+    setItem(lastRowIndex, 0, app);
+    setItem(lastRowIndex, 1, file);
+    spdlog::trace("[Fidgety::HomepageFilelistWidget::addAppdata] row set");
+    return EditorStatus::Ok;
+}
+
+EditorStatus HomepageFilelistWidget::addAppdata(const std::vector<Appdata> &appdata) {
+    spdlog::trace("[Fidgety::HomepageFilelistWidget::addAppdata] adding a bunch of data");
+    for (const auto &data : appdata) {
+        spdlog::trace("[Fidgety::HomepageFilelistWidget::addAppdata] creating one row");
+        insertRow(rowCount());
+        QTableWidgetItem *app = new QTableWidgetItem((QString) data.appName.c_str());
+        QTableWidgetItem *file = new QTableWidgetItem((QString) data.configFilePath.c_str());
+        int lastRowIndex = rowCount() - 1;
+        setItem(lastRowIndex, 0, app);
+        setItem(lastRowIndex, 1, file);
+        spdlog::trace("[Fidgety::HomepageFilelistWidget::addAppdata] row set");
+    }
+    spdlog::trace("[Fidgety::HomepageFilelistWidget::addAppdata] done");
+    return EditorStatus::Ok;
+}
+
 const QSize HomepageWidget::DEFAULT_SIZE = QSize(480, 320);
 const QSize HomepageWidget::MINIMUM_SIZE = QSize(720, 480);
 const char *HomepageWidget::WINDOW_TITLE = "Fidgety";
@@ -106,6 +135,10 @@ EditorStatus HomepageWidget::deleteWindowElements(void) {
         spdlog::trace("[Fidgety::HomepageWidget::deleteWindowElements] deleted mFilelist");
     }
     return EditorStatus::Ok;
+}
+
+HomepageFilelistWidget *HomepageWidget::getFilelistWidget(void) const noexcept {
+    return mFilelist;
 }
 
 EditorStatus HomepageWidget::initializeWindowElements(QApplication *app) {

@@ -40,6 +40,7 @@ EditorStatus Editor::setPaths(EditorAppPaths &&paths) {
 }
 
 EditorStatus Editor::launchHomepage(void) {
+    EditorStatus status = EditorStatus::Ok;
     spdlog::debug("[Fidgety::Editor::launchHomepage] launching homepage...");
     if (mHomepageWidget != nullptr) {
         FIDGETY_ERROR(
@@ -57,7 +58,8 @@ EditorStatus Editor::launchHomepage(void) {
         );
     }
     spdlog::trace("[Fidgety::Editor::launchHomepage] got homepage handle");
-    return mHomepageWidget->openNewWindow(this);
+    status = mHomepageWidget->openNewWindow(this);
+    return status;
 }
 
 HomepageWidget *Editor::getHomepage(void) const noexcept {

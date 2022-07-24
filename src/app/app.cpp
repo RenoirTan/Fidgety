@@ -46,6 +46,13 @@ int32_t run(int32_t argc, char **argv, char **env) {
     spdlog::info("[run] launched homepage");
     editor.launchHomepage();
 
+    HomepageWidget *homepage = editor.getHomepage();
+    HomepageFilelistWidget *hflw = homepage->getFilelistWidget();
+    hflw->addAppdata(Appdata {
+        .configFilePath = "/etc/pacman.conf",
+        .appName = "Pacman"
+    });
+
     int32_t status = editor.exec();
     if (status == 0) {
         spdlog::debug("[run] Fidgety exited with code 0");
