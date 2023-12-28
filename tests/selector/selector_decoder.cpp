@@ -65,8 +65,8 @@ extern "C" {
     FIDGETY_DELETE(FIDGETY_DECODER_DELETE_PROT());
     /*
     void FIDGETY_DECODER_DELETE_SYMBOL(Exp2Decoder *thing) {
-        spdlog::info("WHAT THE FUCK: {0}", (void *) thing);
-        spdlog::info("is it a fucking valid pointer??? {0}", thing->isConfOpened());
+        spdlog::info("???: {0}", (void *) thing);
+        spdlog::info("is it a valid pointer??? {0}", thing->isConfOpened());
         delete thing;
     }
     */
