@@ -43,6 +43,9 @@ include/fidgety/config.h
 # VSCode
 .vscode/
 
+# CCLS
+.ccls-cache/
+
 # Testing
 tmp/
 

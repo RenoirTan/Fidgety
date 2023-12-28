@@ -13,6 +13,7 @@
 #   define _FIDGETY_UTILS_HPP
 
 #   include <string>
+#   include <cstdint>
 
 namespace Fidgety {
     class StringEditor {

@@ -48,7 +48,7 @@ KEY_TO_INTEGRAL = {
     "fidgety_export_lib_dir": "str",
     "fidgety_export_extlib_dir": "str",
     "fidgety_exception_what_use_description": "bool",
-    "microsoft_bullshit": "bool"
+    "intellisense_fix": "bool"
 }
 
 def create_default_config() -> t.Dict[str, t.Any]:
@@ -91,7 +91,7 @@ def create_default_config() -> t.Dict[str, t.Any]:
         "fidgety_export_lib_dir": None,
         "fidgety_export_extlib_dir": None,
         "fidgety_exception_what_use_description": None,
-        "microsoft_bullshit": None
+        "intellisense_fix": None
     }
 
 
@@ -278,7 +278,7 @@ def get_generate_suppflags(config: t.Dict[str, t.Any]) -> str:
             "fidgety_export_lib_dir",
             "fidgety_export_extlib_dir",
             "fidgety_exception_what_use_description",
-            "microsoft_bullshit"
+            "intellisense_fix"
         ]
     )
     return " ".join(suppflags) if len(suppflags) >= 1 else None
